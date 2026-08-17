@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The Magpie's Hoard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums;
+  }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 3.5rem 1.25rem 5rem; }
+  header { margin-bottom: 3.25rem; }
+  h1 {
+    margin: 0 0 0.6rem; font-size: clamp(2.1rem, 6vw, 3.4rem); line-height: 1.02;
+    letter-spacing: -0.03em; font-weight: 750; text-wrap: balance;
+  }
+  h1 .shine { color: var(--accent); }
+  .lede { margin: 0 0 1rem; max-width: 46ch; color: var(--muted); font-size: 1.05rem; }
+  .tally { color: var(--muted); }
+  section { margin-top: 3rem; }
+  .sec-head { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1rem; }
+  h2 { margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
+  .count { color: var(--muted); }
+  a.card, a.tile, a.ledger-row, a.chip {
+    text-decoration: none; color: var(--ink);
+    transition: border-color 0.18s ease, transform 0.18s ease;
+  }
+  a.card:hover, a.tile:hover, a.chip:hover { border-color: var(--accent); transform: translateY(-2px); }
+  a.card:hover .name, a.tile:hover .name, a.ledger-row:hover .name, a.chip:hover .name { color: var(--accent-ink); }
+  a.card:active, a.tile:active, a.ledger-row:active, a.chip:active { transform: translateY(1px); }
+  .name { font-weight: 600; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 0.9rem; }
+  .date { color: var(--muted); white-space: nowrap; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+  a.card {
+    display: flex; flex-direction: column; gap: 0.35rem;
+    padding: 1.05rem 1.1rem 1.15rem; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  a.card .name { font-size: 1.02rem; }
+  a.card .sub { flex: 1; }
+  a.card .date { margin-top: 0.5rem; }
+  .tiles { display: flex; flex-direction: column; gap: 0.9rem; }
+  a.tile {
+    display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,1.9fr) auto;
+    align-items: baseline; gap: 1.25rem; padding: 1rem 1.2rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  a.tile .name { font-size: 1.02rem; }
+  .ledger { border-top: 1px solid var(--line); }
+  a.ledger-row {
+    display: grid; grid-template-columns: 7.5rem 1fr; align-items: baseline;
+    gap: 1rem; padding: 0.85rem 0.25rem; border-bottom: 1px solid var(--line);
+  }
+  a.ledger-row .sub { display: block; margin-top: 0.1rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  a.chip {
+    display: inline-flex; align-items: baseline; gap: 0.7rem;
+    padding: 0.6rem 0.95rem; border: 1px solid var(--line); border-radius: var(--radius);
+  }
+  footer {
+    margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.9rem; max-width: 60ch;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    header, section, footer { animation: rise 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+    section:nth-of-type(1) { animation-delay: 0.06s; }
+    section:nth-of-type(2) { animation-delay: 0.12s; }
+    section:nth-of-type(3) { animation-delay: 0.18s; }
+    section:nth-of-type(4) { animation-delay: 0.24s; }
+    footer { animation-delay: 0.3s; }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  }
+  @media (max-width: 720px) {
+    .wrap { padding-top: 2.5rem; }
+    .grid { grid-template-columns: 1fr; }
+    a.tile { grid-template-columns: 1fr; gap: 0.15rem; }
+    a.ledger-row { grid-template-columns: 1fr; gap: 0.15rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>The Magpie's <span class="shine">Hoard</span></h1>
+    <p class="lede">Snapshots of the pages published from Carl's Claude sessions, collected in one place and grouped by series.</p>
+    <p class="tally mono">10 pages &middot; indexed 14 Aug 2026 &middot; snapshot edition</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><h2>Unusual Wealth Activity</h2><span class="count mono">3</span></div>
+    <div class="grid">
+      <a class="card" href="pages/uwa-2026-08-11.html">
+        <span class="name">11 Aug 2026</span>
+        <span class="sub">Latest entry in the series</span>
+        <span class="date mono">updated 11 Aug</span>
+      </a>
+      <a class="card" href="pages/uwa-entry-03.html">
+        <span class="name">Entry 03</span>
+        <span class="sub">9 Aug 2026 edition</span>
+        <span class="date mono">updated 09 Aug</span>
+      </a>
+      <a class="card" href="pages/uwa-issue-001.html">
+        <span class="name">Issue 001</span>
+        <span class="sub">7 Aug 2026 edition</span>
+        <span class="date mono">updated 07 Aug</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Intelligence briefs</h2><span class="count mono">2</span></div>
+    <div class="tiles">
+      <a class="tile" href="pages/signal-intelligence-brief.html">
+        <span class="name">Signal Intelligence Brief</span>
+        <span class="sub">9 Aug 2026 edition</span>
+        <span class="date mono">updated 09 Aug</span>
+      </a>
+      <a class="tile" href="pages/watch-brief.html">
+        <span class="name">Watch Brief</span>
+        <span class="sub">1 Aug 2026 edition</span>
+        <span class="date mono">updated 01 Aug</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Scrabble 50th Anniversary</h2><span class="count mono">3</span></div>
+    <div class="ledger">
+      <a class="ledger-row" href="pages/scrabble-watch-jul25.html">
+        <span class="date mono">25 Jul</span>
+        <span><span class="name">Anniversary Watch</span>
+        <span class="sub">Earlier edition, kept for reference</span></span>
+      </a>
+      <a class="ledger-row" href="pages/scrabble-watch-jul31.html">
+        <span class="date mono">31 Jul</span>
+        <span><span class="name">Anniversary Watch</span>
+        <span class="sub">Current edition</span></span>
+      </a>
+      <a class="ledger-row" href="pages/scrabble-deal-tracker.html">
+        <span class="date mono">07 Aug</span>
+        <span><span class="name">Deal Tracker</span>
+        <span class="sub">Price tracking for the anniversary edition</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>One-offs</h2><span class="count mono">2</span></div>
+    <div class="chips">
+      <a class="chip" href="pages/wings-at-the-trailhead.html">
+        <span class="name">Wings at the Trailhead</span>
+        <span class="date mono">07 Jul</span>
+      </a>
+      <a class="chip" href="pages/bisect-probe-2.html">
+        <span class="name">Bisect Probe 2</span>
+        <span class="date mono">05 Aug</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    Magpies collect shiny things. This page is the shelf they land on: every entry above is a full copy, readable right here with nothing else to open.
+  </footer>
+</div>
+</body>
+</html>

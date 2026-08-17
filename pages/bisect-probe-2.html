@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Bisect Probe 2</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums;
+  }
+
+  .wrap { max-width: 780px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+  .crumb {
+    display: inline-block; margin-bottom: 2rem; text-decoration: none;
+    color: var(--muted); font-size: 0.9rem;
+  }
+  .crumb:hover { color: var(--accent-ink); }
+  .crumb .mark { color: var(--accent); font-weight: 650; }
+  article h1 {
+    font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1;
+    letter-spacing: -0.02em; font-weight: 720; margin: 0 0 1rem; text-wrap: balance;
+  }
+  article h2 {
+    font-size: 1.3rem; letter-spacing: -0.01em; font-weight: 650;
+    margin: 2.5rem 0 0.75rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+  }
+  article h3 { font-size: 1.05rem; font-weight: 650; margin: 1.75rem 0 0.5rem; }
+  article p, article li { max-width: 68ch; }
+  article ul, article ol { padding-left: 1.4rem; }
+  article blockquote {
+    margin: 1.25rem 0; padding: 0.75rem 1.1rem;
+    background: var(--surface); border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0; color: var(--ink);
+  }
+  article blockquote p { margin: 0.35rem 0; }
+  article code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.85em; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 4px; padding: 0.08em 0.35em;
+  }
+  .table-scroll { overflow-x: auto; margin: 1.25rem 0; }
+  article table { border-collapse: collapse; min-width: 100%; font-size: 0.92rem; }
+  article th {
+    text-align: left; font-weight: 650; padding: 0.5rem 0.75rem;
+    border-bottom: 2px solid var(--line);
+  }
+  article td {
+    padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  article hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+  footer.page {
+    margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../index.html"><span class="mark">&larr;</span> The Magpie's Hoard</a>
+  <article>
+<h1>Bisect Probe 2</h1>
+<p>A diagnostic scratch page used to isolate a theme-token rendering bug in the artifact viewer.</p>
+<p><strong>A. HARD-CODED COLOR</strong> — if you see this, markup + CSS render.</p>
+<p><strong>B. VAR COLOR</strong> — if this is invisible, the theme tokens are the bug.</p>
+<p><strong>C. REPORT</strong> — on the live page, an inline script fills this block at load time with the computed <code>data-theme</code> attribute, body background and color, <code>--ground</code> and <code>--ink</code> token values, the <code>prefers-color-scheme: dark</code> match, and the html element's classes. This static copy shows the pre-render placeholder.</p>
+<hr />
+<p>Kept for reference: this probe confirmed that colors defined only inside <code>[data-theme]</code> blocks never apply in the un-stamped system-theme state.</p>
+  </article>
+  <footer class="page">
+    <span class="mono">One-offs &middot; snapshot updated 05 Aug</span>
+  </footer>
+</div>
+</body>
+</html>
