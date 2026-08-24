@@ -1,0 +1,706 @@
+
+<title>Unusual Wealth Activity — 15 Aug 2026</title>
+
+<style>
+/* ============================================================
+   Palette — verdigris & oxide. Cool paper ground with a faint
+   green bias; semantic pair is oxide red (deteriorating) and
+   patina green (improving), separate from the structural accent.
+   Light is the base; both dark states redefine tokens only.
+   ============================================================ */
+:root{
+  --ground:#EEF1EE;
+  --panel:#F9FAF8;
+  --panel-2:#E1E7E2;
+  --rule:#C9D3CD;
+  --rule-soft:#DBE2DD;
+  --ink:#161B18;
+  --ink-2:#485550;
+  --ink-3:#74827C;
+  --accent:#33564A;        /* verdigris — structure, links, rails */
+  --accent-soft:rgba(51,86,74,.10);
+  --worse:#9A3220;         /* oxide — indicator deteriorating */
+  --worse-soft:rgba(154,50,32,.11);
+  --better:#2C6B4E;        /* patina — indicator improving */
+  --better-soft:rgba(44,107,78,.11);
+  --hold:#8A6512;          /* brass — unchanged / caution */
+  --hold-soft:rgba(138,101,18,.12);
+  --shadow:0 1px 1px rgba(22,27,24,.04), 0 10px 26px -18px rgba(22,27,24,.30);
+
+  --display:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --quote:"Century Schoolbook","New Century Schoolbook","URW Bookman L",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1211;
+    --panel:#151B19;
+    --panel-2:#1D2522;
+    --rule:#2B3733;
+    --rule-soft:#222B28;
+    --ink:#DEE5E1;
+    --ink-2:#95A29C;
+    --ink-3:#65736D;
+    --accent:#6FAE97;
+    --accent-soft:rgba(111,174,151,.13);
+    --worse:#E37D66;
+    --worse-soft:rgba(227,125,102,.14);
+    --better:#61BE92;
+    --better-soft:rgba(97,190,146,.14);
+    --hold:#D3A845;
+    --hold-soft:rgba(211,168,69,.14);
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1211;
+  --panel:#151B19;
+  --panel-2:#1D2522;
+  --rule:#2B3733;
+  --rule-soft:#222B28;
+  --ink:#DEE5E1;
+  --ink-2:#95A29C;
+  --ink-3:#65736D;
+  --accent:#6FAE97;
+  --accent-soft:rgba(111,174,151,.13);
+  --worse:#E37D66;
+  --worse-soft:rgba(227,125,102,.14);
+  --better:#61BE92;
+  --better-soft:rgba(97,190,146,.14);
+  --hold:#D3A845;
+  --hold-soft:rgba(211,168,69,.14);
+  --shadow:none;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:15.5px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft)}
+a:hover{border-bottom-color:currentColor}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px 80px}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums}
+.label{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ── masthead ───────────────────────────────────────────── */
+.masthead{
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+  gap:24px 32px;padding:40px 0 18px;border-bottom:2px solid var(--ink);
+}
+.mast-id{flex:1 1 400px;min-width:0;display:flex;flex-direction:column;gap:10px}
+h1{
+  font-family:var(--display);
+  font-size:clamp(1.7rem,3.9vw,2.5rem);
+  font-weight:600;letter-spacing:-.035em;line-height:1.08;
+  text-wrap:balance;
+}
+.mast-meta{display:flex;flex-wrap:wrap;gap:7px 16px;align-items:center;font-family:var(--display);font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.readout{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px;padding-left:26px;border-left:1px solid var(--rule)}
+.readout__val{font-family:var(--display);font-variant-numeric:tabular-nums;font-size:58px;line-height:.9;font-weight:600;letter-spacing:-.05em;color:var(--hold)}
+.readout__val span{font-size:20px;color:var(--ink-3);letter-spacing:-.01em}
+.readout__delta{font-family:var(--display);font-size:11.5px;color:var(--worse);letter-spacing:.05em}
+.readout__band{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--display);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;border:1px solid transparent;white-space:nowrap;
+}
+.chip--worse{background:var(--worse-soft);color:var(--worse);border-color:var(--worse)}
+.chip--better{background:var(--better-soft);color:var(--better);border-color:var(--better)}
+.chip--hold{background:var(--hold-soft);color:var(--hold);border-color:var(--hold)}
+.chip--mute{background:var(--panel-2);color:var(--ink-3);border-color:var(--rule)}
+
+/* ── verdict ────────────────────────────────────────────── */
+.verdict{
+  background:var(--panel);border:1px solid var(--rule);border-left:3px solid var(--accent);
+  border-radius:3px;padding:20px 24px;margin-top:26px;box-shadow:var(--shadow);
+}
+.verdict p{font-family:var(--quote);font-size:17.5px;line-height:1.52;color:var(--ink-2);max-width:74ch}
+.verdict p + p{margin-top:12px}
+.verdict strong{color:var(--ink);font-weight:600}
+
+/* ── sections ───────────────────────────────────────────── */
+section{margin-top:56px}
+.sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:9px;margin-bottom:20px;border-bottom:1px solid var(--rule)}
+h2{font-family:var(--display);font-size:1.12rem;font-weight:600;letter-spacing:-.02em}
+.sec-head .label{margin-left:auto;text-align:right}
+.lede{color:var(--ink-2);max-width:70ch;margin-bottom:22px;font-size:15px}
+
+/* ── topics list ────────────────────────────────────────── */
+.topics{list-style:none;background:var(--panel);border:1px solid var(--rule);border-radius:3px;box-shadow:var(--shadow)}
+.topics li{
+  display:grid;grid-template-columns:104px 1fr;gap:16px;align-items:start;
+  padding:13px 20px;border-bottom:1px solid var(--rule-soft);font-size:14.8px;color:var(--ink-2);
+}
+.topics li:last-child{border-bottom:0}
+.topics li b{color:var(--ink);font-weight:600}
+.topics .fig{font-family:var(--display);font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+.topics .chip{margin-top:2px}
+
+/* ── ledger: held vs broke ──────────────────────────────── */
+.ledger{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden;box-shadow:var(--shadow)}
+.ledger__col{background:var(--panel);padding:20px 22px 24px}
+.ledger__col h3{font-family:var(--display);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:400;color:var(--ink-3);margin-bottom:3px}
+.ledger__col .sub{font-family:var(--quote);font-size:15px;color:var(--ink-2);margin-bottom:16px}
+.ledger__col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.ledger__col li{font-size:14.5px;color:var(--ink-2);padding-left:15px;position:relative}
+.ledger__col li b{color:var(--ink);font-weight:600}
+.ledger__col li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:1px}
+.col--broke li::before{background:var(--better)}
+.col--held li::before{background:var(--worse)}
+.ledger__note{grid-column:1/-1;background:var(--panel-2);padding:15px 22px;font-size:14.5px;color:var(--ink-2)}
+.ledger__note strong{color:var(--ink)}
+
+/* ── signal cards ───────────────────────────────────────── */
+.sig{display:flex;background:var(--panel);border:1px solid var(--rule);border-radius:3px;margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
+.sig__stripe{flex:0 0 4px}
+.sig--hard .sig__stripe{background:var(--worse)}
+.sig--firm .sig__stripe{background:var(--hold)}
+.sig--soft .sig__stripe{background:var(--accent)}
+.sig__body{flex:1;min-width:0;padding:18px 22px}
+.sig__top{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;margin-bottom:10px}
+.sig__title{font-family:var(--display);font-size:1rem;font-weight:600;letter-spacing:-.02em;line-height:1.3;flex:1 1 280px;text-wrap:balance}
+.sig__body > p, .sig__body p{font-size:14.6px;color:var(--ink-2);margin-bottom:12px;max-width:76ch}
+.facts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.fact{font-family:var(--display);font-size:11.5px;font-variant-numeric:tabular-nums;background:var(--panel-2);border:1px solid var(--rule-soft);border-radius:2px;padding:2px 8px;color:var(--ink)}
+.why{font-size:14.2px;color:var(--ink-2);background:var(--panel-2);border-left:2px solid var(--rule);padding:11px 15px;margin-bottom:12px;max-width:80ch}
+.why b{color:var(--ink);font-weight:600}
+.srcs{font-family:var(--display);font-size:11px;color:var(--ink-3);line-height:1.75}
+.srcs a{color:var(--ink-3);border-bottom-color:transparent}
+.srcs a:hover{color:var(--accent)}
+
+/* ── tables ─────────────────────────────────────────────── */
+.tscroll{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:var(--panel);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14.3px}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+thead th{font-family:var(--display);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:400;background:var(--panel-2);border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+td.topic{font-weight:600;color:var(--ink)}
+td.dim{color:var(--ink-2)}
+td .num{color:var(--accent);font-weight:600}
+
+/* ── panic meter — prior→now dumbbell ───────────────────── */
+.meter{border:1px solid var(--rule);border-radius:3px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden}
+.meter__head{
+  display:grid;grid-template-columns:26px minmax(150px,1.05fr) minmax(150px,2fr) 74px;
+  gap:16px;padding:10px 20px;background:var(--panel-2);border-bottom:1px solid var(--rule);
+  font-family:var(--display);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);
+}
+.meter__head .r{text-align:right}
+.ind{
+  display:grid;grid-template-columns:26px minmax(150px,1.05fr) minmax(150px,2fr) 74px;
+  gap:16px;align-items:center;padding:13px 20px;border-bottom:1px solid var(--rule-soft);
+}
+.ind:last-of-type{border-bottom:0}
+.ind__k{font-family:var(--display);font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ind__name{font-size:14.6px;line-height:1.3}
+.ind__name em{display:block;font-family:var(--display);font-style:normal;font-size:11px;color:var(--ink-3);line-height:1.45;margin-top:4px}
+.ind__track{
+  position:relative;height:16px;
+  background:
+    repeating-linear-gradient(to right,var(--rule-soft) 0 1px,transparent 1px 20%);
+  border-bottom:1px solid var(--rule-soft);
+}
+.ind__seg{position:absolute;top:50%;height:3px;transform:translateY(-50%);border-radius:2px;transform-origin:left center;animation:draw .7s cubic-bezier(.2,.7,.3,1) both}
+@keyframes draw{from{transform:translateY(-50%) scaleX(0)}to{transform:translateY(-50%) scaleX(1)}}
+.ind__was,.ind__now{position:absolute;top:50%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%)}
+.ind__was{background:var(--panel);border:1.5px solid var(--ink-3)}
+.ind__now{border:1.5px solid var(--panel)}
+.ind--worse .ind__seg{background:var(--worse)} .ind--worse .ind__now{background:var(--worse)}
+.ind--better .ind__seg{background:var(--better)} .ind--better .ind__now{background:var(--better)}
+.ind--flat .ind__now{background:var(--ink-3)}
+.ind__score{font-family:var(--display);font-size:13.5px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink-3);white-space:nowrap}
+.ind__score b{font-size:17px;font-weight:600;color:var(--ink)}
+.ind--worse .ind__score b{color:var(--worse)}
+.ind--better .ind__score b{color:var(--better)}
+
+.meter__foot{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;background:var(--panel-2);padding:14px 20px;border-top:1px solid var(--rule);font-family:var(--display);font-size:11px;color:var(--ink-2)}
+.meter__foot b{color:var(--ink);font-size:14px}
+.scale{display:flex;margin-top:18px;border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.scale div{flex:1;padding:8px 8px;text-align:center;font-family:var(--display);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);background:var(--panel);border-right:1px solid var(--rule)}
+.scale div:last-child{border-right:0}
+.scale .on{background:var(--hold);color:var(--ground);font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:14px;font-family:var(--display);font-size:11px;color:var(--ink-3);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.key{width:9px;height:9px;border-radius:50%;display:inline-block}
+.key--was{background:var(--panel);border:1.5px solid var(--ink-3)}
+.key--worse{background:var(--worse)}
+.key--better{background:var(--better)}
+.key--flat{background:var(--ink-3)}
+
+.triggers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.trigger{border:1px solid var(--rule);border-radius:3px;padding:16px 18px;background:var(--panel)}
+.trigger h4{font-family:var(--display);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:400;margin-bottom:9px}
+.trigger--up h4{color:var(--worse)}
+.trigger--dn h4{color:var(--better)}
+.trigger ul{margin-left:16px;font-size:14.2px;color:var(--ink-2)}
+.trigger li{margin:5px 0}
+
+/* ── noise ──────────────────────────────────────────────── */
+.noise{border:1px dashed var(--rule);border-radius:3px;padding:18px 22px}
+.noise ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.noise li{font-size:14.4px;color:var(--ink-2);padding-left:19px;position:relative;max-width:84ch}
+.noise li::before{content:"×";position:absolute;left:0;top:0;color:var(--ink-3);font-family:var(--display)}
+.noise li b{color:var(--ink);font-weight:600}
+
+.method{background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--accent);border-radius:3px;padding:24px 26px;box-shadow:var(--shadow)}
+.method p{color:var(--ink-2);max-width:78ch;font-size:14.6px}
+.method p + p{margin-top:12px}
+.method strong{color:var(--ink)}
+
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;font-family:var(--display);font-size:11px;color:var(--ink-3)}
+
+@media (max-width:760px){
+  .ledger,.triggers{grid-template-columns:1fr}
+  .readout{border-left:0;padding-left:0;align-items:flex-start}
+  .masthead{align-items:flex-start}
+  .topics li{grid-template-columns:1fr;gap:7px}
+  .meter__head{display:none}
+  .ind{grid-template-columns:24px 1fr 70px;row-gap:9px}
+  .ind__track{grid-column:2/-1}
+  .sec-head{flex-wrap:wrap}
+  .sec-head .label{margin-left:0;width:100%;text-align:left}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="mast-id">
+      <p class="label">Unusual Wealth Activity · Entry 05 · Scheduled sweep</p>
+      <h1>Two legs of the thesis broke. The bond market took their place.</h1>
+      <div class="mast-meta">
+        <span>15 AUG 2026</span>
+        <span>WINDOW 11 – 15 AUG</span>
+        <span class="chip chip--hold">Pattern persists, composition rotated</span>
+      </div>
+    </div>
+    <div class="readout">
+      <p class="label">Panic meter</p>
+      <div class="readout__val">7.4<span>/10</span></div>
+      <div class="readout__delta">▲ 0.2 vs 11 Aug (7.2)</div>
+      <div class="readout__band">Late-stage strain</div>
+    </div>
+  </header>
+
+  <div class="verdict">
+    <p><strong>Verdict.</strong> The elite-de-risking story this dashboard has run since 7 August lost its two strongest legs this week. Berkshire turned net buyer for the first time in three years, and 6,371 institutional filers reported a balanced book, not an exodus. In their place, a harder and less deniable signal appeared: on 13 August the United States sold thirty-year money at <strong>5.216%</strong> — the most expensive long-bond auction since 2001 — while the S&amp;P sat a whisker off its record and the VIX printed 14.63.</p>
+    <p><strong>Still no evidence of foreknowledge of a specific event.</strong> The one thing that actually broke this cycle — a $45B AI hedge fund liquidating in three weeks — was leverage, not prescience.</p>
+  </div>
+
+  <!-- ══ SUMMARY ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>Main topics</h2>
+      <p class="label">10 items · 3 new</p>
+    </div>
+    <ul class="topics">
+      <li><span class="chip chip--better">Reversal</span><span><b>Berkshire ended its 14-quarter selling streak.</b> Q2: bought <span class="fig">$23.5B</span> of equities against <span class="fig">$3.7B</span> sold — first net buyer in over three years. Cash fell from a record <span class="fig">$397.4B</span> to <span class="fig">$365.5B</span>. Buybacks jumped from <span class="fig">$235M</span> to <span class="fig">$4.5B</span>. The 11 Aug entry cited the cash record as evidence of elite de-risking; that reading is now wrong.</span></li>
+      <li><span class="chip chip--better">Reversal</span><span><b>The Q2 13Fs show no institutional exodus.</b> Across <span class="fig">6,371</span> filers, <span class="fig">44%</span> trimmed the Magnificent Seven against <span class="fig">42%</span> adding; in semiconductors <span class="fig">48%</span> were net buyers against <span class="fig">34.5%</span> net sellers. Cautious, not fleeing.</span></li>
+      <li><span class="chip chip--worse">New · hard</span><span><b>The costliest US long-bond sale in 25 years.</b> The 13 Aug 30-year cleared at <span class="fig">5.216%</span> against a <span class="fig">5.150%</span> median — it tailed — with bid-to-cover slipping to <span class="fig">2.39</span>. Foreign demand showed up at <span class="fig">66.8%</span> of awards, but only at that price.</span></li>
+      <li><span class="chip chip--worse">New · hard</span><span><b>The AI complex actually broke, and the cause was leverage.</b> Situational Awareness fell <span class="fig">67%</span> in July, from <span class="fig">~$45B</span> to <span class="fig">~$10B</span>, and sold its <span class="fig">$16B</span> public book to Citadel at roughly a <span class="fig">10%</span> discount to meet margin calls from three prime brokers.</span></li>
+      <li><span class="chip chip--worse">New</span><span><b>July was the worst month on record for tech-focused hedge funds</b> — down <span class="fig">10.2%</span> per JPMorgan — with the sharpest industry deleveraging since 2022. This did not show up in the VIX.</span></li>
+      <li><span class="chip chip--worse">Deepening</span><span><b>Household sentiment resumed falling.</b> Michigan's preliminary August print came in at <span class="fig">51.0</span> against <span class="fig">54.5</span> expected, down <span class="fig">8%</span> on the month; expected business conditions fell <span class="fig">11%</span> short-run and <span class="fig">17%</span> long-run.</span></li>
+      <li><span class="chip chip--hold">Structural</span><span><b>The reserve rotation is now a completed fact.</b> Foreign central-bank gold (<span class="fig">~$4.0T</span>) has passed their Treasury holdings (<span class="fig">~$3.9T</span>) — gold is the largest reserve asset for the first time since 1996. Q2 official buying set a record <span class="fig">289t</span>, <span class="fig">+62%</span> year on year, into a falling price.</span></li>
+      <li><span class="chip chip--hold">Unresolved</span><span><b>Hormuz is still shut.</b> Traffic is running at <span class="fig">17%</span> of the pre-conflict average — <span class="fig">151</span> ships in seven days — with <span class="fig">56</span> vessels damaged since 28 February and two UAE ships struck on 14 August.</span></li>
+      <li><span class="chip chip--mute">Counterweight</span><span><b>The largest family-office survey contradicts the hard-asset narrative.</b> J.P. Morgan finds <span class="fig">72%</span> hold zero gold and <span class="fig">89%</span> zero crypto, even as <span class="fig">64%</span> name geopolitics their top risk. Note the vintage — fielded mid-2025.</span></li>
+      <li><span class="chip chip--mute">Filtered</span><span><b>Two viral threads closed out as noise.</b> The "Project Anchor" gravity date passed on 12 August with nothing, and the missing-scientists theory is assessed by colleagues, families and investigators as pattern-matching on unrelated deaths.</span></li>
+    </ul>
+  </section>
+
+  <!-- ══ LEDGER ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>What survived contact with the filings</h2>
+      <p class="label">11 Aug thesis, retested 15 Aug</p>
+    </div>
+    <p class="lede">The 11 August entry rested on five classes of actor de-risking at once. Two of them filed this week. Here is what held and what did not — scored honestly, because a watchlist that only ratchets upward is not a watchlist.</p>
+
+    <div class="ledger">
+      <div class="ledger__col col--broke">
+        <h3>Failed retest</h3>
+        <p class="sub">Claims this week's data contradicts</p>
+        <ul>
+          <li><b>"Berkshire's record cash pile is defensive."</b> The $397.4B figure was end-of-Q1. By 30 June it was $365.5B, with $23.5B put into equities and $10B of that into Alphabet. Greg Abel is deploying, not hoarding.</li>
+          <li><b>"Institutions are quietly reducing risk."</b> The Q2 13F universe is close to evenly split on megacap tech and net-long semis. There is no aggregate exit visible in the filings.</li>
+          <li><b>"Elites are rotating into gold."</b> Central banks are. Private family offices, per J.P. Morgan's survey of the segment, overwhelmingly are not — 72% hold none at all.</li>
+        </ul>
+      </div>
+      <div class="ledger__col col--held">
+        <h3>Held or strengthened</h3>
+        <p class="sub">Claims this week's data supports</p>
+        <ul>
+          <li><b>Sovereign borrowing cost.</b> Not a forecast any more: 5.216% at the long end, against a 3.447% average rate on all outstanding federal debt. Every refinancing now reprices 177bp higher.</li>
+          <li><b>AI-capex fragility.</b> The BIS named it in June; in July a fund carrying 4× leverage against SanDisk and Micron proved the transmission mechanism in three weeks.</li>
+          <li><b>Official-sector gold accumulation.</b> Record Q2 tonnage into a falling price, and the reserve crossover with Treasuries is now behind us rather than ahead.</li>
+          <li><b>Household stress.</b> Michigan at 51.0 and falling, against an all-time series low of 44.8 set in May.</li>
+        </ul>
+      </div>
+      <div class="ledger__note">
+        <strong>Net effect.</strong> The composite barely moved — 7.2 to 7.4 — but its internals rotated substantially. What this dashboard was reading as <em>elite anticipation</em> now looks more like <em>sovereign arithmetic plus a levered accident</em>. That is a less cinematic story and a better-evidenced one.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SIGNALS ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>Flagged signals</h2>
+      <p class="label">Ordered by strength of evidence</p>
+    </div>
+
+    <article class="sig sig--hard">
+      <div class="sig__stripe"></div>
+      <div class="sig__body">
+        <div class="sig__top">
+          <h3 class="sig__title">The US paid the most for thirty-year money since 2001 — and the auction still tailed</h3>
+          <span class="chip chip--worse">Treasury data</span>
+        </div>
+        <p>On 13 August the Treasury sold $25B of bonds maturing August 2056 at a high yield of 5.216%, against a median bid of 5.150% — a tail, meaning the auction cleared worse than the middle of the book. Bid-to-cover slipped to 2.39 from 2.44 at the July reopening. Indirect bidders, largely foreign central banks and international accounts, took 66.8% of competitive awards; dealers were left with only 11.5%. The 10-year closed the prior session at 4.68% and the 2-year at 4.20%, so the curve is steepening from the long end rather than flattening from the short end. Interest expense on the public debt has reached $1.170 trillion through July of fiscal 2026 against total debt of $39.91 trillion.</p>
+        <div class="facts">
+          <span class="fact">High yield 5.216%</span>
+          <span class="fact">Median bid 5.150% — tailed</span>
+          <span class="fact">Bid-to-cover 2.39 (was 2.44)</span>
+          <span class="fact">Indirects 66.8%</span>
+          <span class="fact">Dealers 11.5%</span>
+          <span class="fact">Avg rate on all debt 3.447%</span>
+          <span class="fact">FY26 interest $1.170T</span>
+        </div>
+        <div class="why"><b>Why it is significant:</b> this is not a failed auction — foreign demand turned up in size. The signal is the <em>price</em> they demanded. Buyers are charging term premium for duration risk in a currency whose central bank's reaction function they no longer feel they can model, and they are doing it while equity volatility sits at 14.63. Note also the composition: dealers took the smallest slice, which argues the clearing level was genuinely market-set rather than absorbed by obligation. The arithmetic is the story — at a 3.447% average coupon across $39.9T, every dollar refinanced at 5.216% adds 177bp to the interest bill, and Treasury has been shortening issuance to avoid exactly that.</div>
+        <div class="srcs">Sources: <a href="https://primerates.com/treasury-pays-5-216-percent-30-year-bond-costliest-since-2001/">Prime Rates auction breakdown</a> · <a href="https://www.bloomberg.com/news/articles/2026-08-13/us-braces-for-30-year-bond-auction-at-highest-yield-since-2001">Bloomberg — "Costliest US Bond Sale Since 2001 Is Investor Warning to Bessent"</a> · <a href="https://www.advisorperspectives.com/articles/2026/08/13/us-pay-most-30-year-debt-quarter-century">Advisor Perspectives</a> · <a href="https://home.treasury.gov/news/press-releases/sb0590">Treasury quarterly refunding statement</a></div>
+      </div>
+    </article>
+
+    <article class="sig sig--hard">
+      <div class="sig__stripe"></div>
+      <div class="sig__body">
+        <div class="sig__top">
+          <h3 class="sig__title">A $45B AI fund liquidated in three weeks, and the tape barely registered it</h3>
+          <span class="chip chip--worse">13F + reporting</span>
+        </div>
+        <p>Situational Awareness LP, run by 24-year-old former OpenAI researcher Leopold Aschenbrenner, lost roughly 67% in July and sold its entire $16B public equity portfolio to Citadel on 30 July at a discount of about 10%, to meet margin calls from Goldman Sachs, JPMorgan and Bank of America. The fund had run about 4× leverage into concentrated AI-hardware longs and had returned 439% through June, growing from $225M at inception to a peak near $45B. Its Q2 13F, filed 14 August, is a photograph of the portfolio the day before it went: $20.2B disclosed, SanDisk at 28% and Micron at 27.5% — 55% in two names — with the top ten at 92%. Citadel's Wellington fund gained 5.9% in July on the other side of the trade.</p>
+        <div class="facts">
+          <span class="fact">−67% in July</span>
+          <span class="fact">$45B → ~$10B AUM</span>
+          <span class="fact">$16B book sold 30 Jul</span>
+          <span class="fact">~10% discount</span>
+          <span class="fact">~4× leverage</span>
+          <span class="fact">Top 2 = 55% of 13F</span>
+          <span class="fact">Citadel Wellington +5.9%</span>
+        </div>
+        <div class="why"><b>Why it matters, and what it is not:</b> it is not foreknowledge — nobody positioned ahead of this; the fund <em>was</em> the position. What it is, is the AI-capex fragility the BIS named in June, demonstrated end-to-end in under a month: concentration, prime-broker leverage, a forced seller, and a single buyer setting the price. The broader read is worse than the single name — JPMorgan puts tech-focused hedge funds down 10.2% in July, their worst month on record, with global equity long/short at its second-worst month in four years and industry deleveraging the most pronounced since 2022. A stress event of that size passed through with the VIX under 15, which tells you how little the headline volatility gauge is now measuring.</div>
+        <div class="srcs">Sources: <a href="https://cryptobriefing.com/situational-awareness-67-percent-loss-citadel-sale/">Crypto Briefing on the Citadel sale</a> · <a href="https://www.cnbc.com/2026/07/31/why-leopold-aschenbrenner-situational-awareness-hedge-fund-imploded.html">CNBC, 31 Jul</a> · <a href="https://www.cnbc.com/2026/08/06/situational-awareness-wasnt-the-only-hedge-fund-that-had-a-bad-july.html">CNBC on the industry-wide July</a> · <a href="https://www.moomoo.com/community/feed/13f-tracker-before-the-unwind-situational-awareness-s-q2-filing-117097993011206">Q2 13F breakdown</a> · <a href="https://www.bloomberg.com/news/articles/2026-08-05/citadel-s-hedge-fund-soars-after-situational-awareness-bet">Bloomberg on Citadel's July</a></div>
+      </div>
+    </article>
+
+    <article class="sig sig--firm">
+      <div class="sig__stripe"></div>
+      <div class="sig__body">
+        <div class="sig__top">
+          <h3 class="sig__title">The 13F window opened and the exodus was not there</h3>
+          <span class="chip chip--better">Contradicts prior entry</span>
+        </div>
+        <p>Q2 filings landed on 14 August. Reuters' pass across 6,371 pension funds, hedge funds and wealth managers found the gap between accumulators and reducers narrow and only slightly negative: about 44% trimmed Magnificent Seven holdings against 42% adding, while semiconductors stayed net-accumulated at 48% buyers to 34.5% sellers. Berkshire, the single most-watched filer, bought $23.5B against $3.7B sold — its first net-buying quarter in over three years, ending a fourteen-quarter streak — added $10B to Alphabet, took a new position in D.R. Horton, added Delta, Lennar, Macy's and the New York Times, exited Constellation Brands, and repurchased $4.5B of its own shares against $235M the prior quarter. Cash fell to $365.5B from $397.4B. Tiger Global cut Microsoft, Nvidia and Meta and reduced Alphabet by 45.4%.</p>
+        <div class="facts">
+          <span class="fact">6,371 filers</span>
+          <span class="fact">Mag7: 44% trim / 42% add</span>
+          <span class="fact">Semis: 48% buy / 34.5% sell</span>
+          <span class="fact">BRK bought $23.5B, sold $3.7B</span>
+          <span class="fact">BRK cash $397.4B → $365.5B</span>
+          <span class="fact">Buybacks $235M → $4.5B</span>
+        </div>
+        <div class="why"><b>Why this is being flagged as a negative result:</b> the prior two entries leaned on Berkshire's cash hoard and on an assumed institutional de-risking. Both were built on the Q1 snapshot. The Q2 data reverses the first outright and fails to support the second. The honest reading is that visible, filing-level elite behaviour in Q2 was <em>mildly constructive</em>, and that the de-risking signal this dashboard has been tracking now rests on insider sales, official-sector gold and migration flows alone — a narrower base than a week ago. The caveat that cuts the other way: 13Fs are long-only US equity snapshots as of 30 June, six weeks stale, and exclude shorts, options and foreign listings. They are a floor on what was happening, not a ceiling.</div>
+        <div class="srcs">Sources: <a href="https://www.investing.com/news/stock-market-news/institutional-investors-reveal-cautious-approach-to-tech-favorites-in-us-quarterly-13f-filings-4861601">Reuters via Investing.com</a> · <a href="https://seekingalpha.com/news/4633523-berkshire-hathaway-bulks-up-on-alphabet-delta-air-exits-constellation-brands-among-q2-trades">Seeking Alpha on Berkshire's Q2 trades</a> · <a href="https://memeburn.com/berkshire-hathaway-breaks-14-quarter-selling-streak/">Memeburn on the streak ending</a> · <a href="https://www.cnbc.com/2026/08/08/berkshire-hathaway-earnings-q2-2026.html">CNBC on Q2 earnings</a></div>
+      </div>
+    </article>
+
+    <article class="sig sig--firm">
+      <div class="sig__stripe"></div>
+      <div class="sig__body">
+        <div class="sig__top">
+          <h3 class="sig__title">Gold has quietly passed Treasuries as the world's largest reserve asset</h3>
+          <span class="chip chip--hold">Official-sector data</span>
+        </div>
+        <p>Foreign central-bank gold holdings are worth roughly $4.0 trillion against approximately $3.9 trillion of US Treasuries — the first time gold has been the larger of the two since 1996. Gold's share of global central-bank reserves rose to 27% at the end of 2025 from 20% a year earlier, while the Treasury share fell to 22% from 25%. Q2 2026 official buying hit a record 289 tonnes, up 62% year on year, during gold's steepest quarterly decline in a decade; Q1 was 244 tonnes and the highest single-quarter dollar value on record at $37B. Of 76 central banks surveyed, 89% expect their gold reserves to rise over the next twelve months and 74% expect lower dollar holdings over five years. The largest additions since 2022 have come from China, Poland, Turkey and India. Spot gold has since recovered above $4,400.</p>
+        <div class="facts">
+          <span class="fact">Gold ~$4.0T vs USTs ~$3.9T</span>
+          <span class="fact">Gold 20% → 27% of reserves</span>
+          <span class="fact">USTs 25% → 22%</span>
+          <span class="fact">Q2 buying 289t · +62% YoY</span>
+          <span class="fact">89% of 76 CBs to add</span>
+          <span class="fact">First crossover since 1996</span>
+        </div>
+        <div class="why"><b>Why it is unusual:</b> buying more as the price falls is the signature of a mandate rather than a trade, and the crossover converts a five-year de-dollarisation talking point into a measured fact. It is also the one thread on this page with a clean, stated causal driver — reserve managers repeatedly cite the 2022 freezing of Russian reserves — which makes it insurance against a monetary event rather than a bet on one. Read against the 30-year auction above, the two datasets describe the same thing from opposite ends: the price the world now charges to hold US duration, and what it is holding instead.</div>
+        <div class="srcs">Sources: <a href="https://www.mining.com/gold-overtakes-us-treasuries-in-global-reserve-shift-ecb/">Mining.com on the ECB finding</a> · <a href="https://finance.yahoo.com/markets/commodities/articles/gold-overtakes-us-treasuries-top-100334717.html">Yahoo Finance</a> · <a href="https://goldsilver.com/industry-news/goldsilver-news/central-bank-gold-buying-record-q2-2026/">Q2 record tonnage via WGC data</a> · <a href="https://www.cruxinvestor.com/posts/gold-overtakes-us-treasuries-89-of-central-banks-expect-higher-gold-reserves">Crux Investor on the survey</a></div>
+      </div>
+    </article>
+
+    <article class="sig sig--firm">
+      <div class="sig__stripe"></div>
+      <div class="sig__body">
+        <div class="sig__top">
+          <h3 class="sig__title">Households are rolling over while the index sits at a record</h3>
+          <span class="chip chip--worse">Survey data</span>
+        </div>
+        <p>The University of Michigan's preliminary August sentiment index came in at 51.0 against a 54.5 consensus, down from 55.2 in July — an 8% monthly fall that ends two months of recovery. Expected business conditions dropped 11% short-run and 17% long-run. The series all-time low of 44.8 was set in May 2026; August is a rebound from that floor, not a new bottom, but the direction has turned again and the level sits far below August 2025's 58.2. The S&amp;P 500 closed the same session at 7,785.76, a fraction off its record, with VIX at 14.63 and a third consecutive weekly gain.</p>
+        <div class="facts">
+          <span class="fact">UMich 51.0 vs 54.5 exp.</span>
+          <span class="fact">−8% MoM · from 55.2</span>
+          <span class="fact">Expectations −11% / −17%</span>
+          <span class="fact">Series low 44.8 (May 2026)</span>
+          <span class="fact">S&amp;P 7,785.76 · VIX 14.63</span>
+        </div>
+        <div class="why"><b>Why it stays on the board:</b> this is not an elite-behaviour signal and it is not evidence of foreknowledge. It is the denominator. An empire-in-decline reading that only tracks what the wealthy are doing will miss the condition that makes their behaviour consequential — an index at a record and a population at 51 is a legitimacy gap, and legitimacy gaps are what convert financial stress into political events. Weigh it accordingly: sentiment surveys have been poor predictors of consumer <em>spending</em> for four years running.</div>
+        <div class="srcs">Sources: <a href="https://finance.yahoo.com/economy/articles/u-consumer-sentiment-falls-august-171815784.html">Yahoo Finance on the August print</a> · <a href="https://www.fxstreet.com/news/uom-consumer-sentiment-index-set-to-ease-as-inflation-labour-market-worries-loom-202608141000">FXStreet</a> · <a href="https://finance.yahoo.com/markets/live/stock-market-today-friday-august-14-dow-sp-500-nasdaq-102635519.html">Market close, 14 Aug</a></div>
+      </div>
+    </article>
+
+    <article class="sig sig--soft">
+      <div class="sig__stripe"></div>
+      <div class="sig__body">
+        <div class="sig__top">
+          <h3 class="sig__title">Hormuz remains closed in month six, and the ceasefire that was meant to reopen it has already collapsed</h3>
+          <span class="chip chip--hold">Continuing</span>
+        </div>
+        <p>Shipping through the Strait ran at 17% of the pre-conflict average over the past seven days — 151 vessels in or out. There have been 56 reports of damage to ships in and around the Strait since the war began on 28 February. The UAE reported Iran attacking two of its vessels, one on the evening of 13 August. A replacement carrier group is en route to relieve the USS Lincoln. The 8 April Pakistan-mediated ceasefire, which explicitly required reopening the Strait, collapsed on 8 July after mutual violations; the Islamabad Memorandum signed on 17 June set a 60-day window to reach final terms. The EIA's August outlook has Brent averaging about $85 in Q3, with US LNG exports revised down to 16.5 Bcf/d.</p>
+        <div class="facts">
+          <span class="fact">Traffic 17% of normal</span>
+          <span class="fact">151 ships in 7 days</span>
+          <span class="fact">56 vessels damaged since 28 Feb</span>
+          <span class="fact">Ceasefire collapsed 8 Jul</span>
+          <span class="fact">Brent ~$85 Q3 (EIA)</span>
+        </div>
+        <div class="why"><b>Why it is on the page at all:</b> it is the largest single gap between what is happening and what the volatility surface is pricing. Roughly a fifth of the world's seaborne oil and LNG moves through a waterway that is operating at a sixth of capacity, in an active shooting war, and index volatility is at a yearly low. That is not a claim that anyone has inside knowledge; it is an observation that the market has decided to treat a live chokepoint closure as background noise, which is the sort of decision that reverses without warning.</div>
+        <div class="srcs">Sources: <a href="https://www.cnn.com/2026/08/14/world/live-news/iran-war-trump">CNN live coverage, 14 Aug</a> · <a href="https://www.foxnews.com/live-news/iran-war-trump-strait-of-hormuz-08-14-26">Fox on the UAE tanker attacks</a> · <a href="https://en.wikipedia.org/wiki/2026_Iran_war_ceasefire">Ceasefire timeline</a> · <a href="https://www.eia.gov/outlooks/steo/archives/aug26.pdf">EIA Short-Term Energy Outlook, August</a></div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- ══ GAP ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>The mainstream gap</h2>
+      <p class="label">Week of 11 – 15 Aug</p>
+    </div>
+    <p class="lede">What institutional, trade and filing-level sources spent the week on, against how the same facts reached general readers.</p>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th scope="col" style="width:24%">Thread</th><th scope="col" style="width:38%">Mainstream framing</th><th scope="col">What is missing from it</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="topic">The 30-year auction</td>
+            <td class="dim">Covered as a rates story on the day, then dropped. The week's market narrative was "third straight weekly gain."</td>
+            <td class="dim">The arithmetic. A <span class="num">3.447%</span> average coupon rolling into <span class="num">5.216%</span> issuance, against <span class="num">$1.170T</span> of interest already booked this fiscal year, is a compounding fiscal fact and not a one-day print.</td>
+          </tr>
+          <tr>
+            <td class="topic">Situational Awareness</td>
+            <td class="dim">Reported as a personality story — youngest-ever blow-up, Citadel's clever trade, a cautionary tale about a 24-year-old.</td>
+            <td class="dim">That it is a working model of the transmission chain the BIS warned about: concentration → prime-broker leverage → forced seller → single buyer. And that <span class="num">10.2%</span> was the sector-wide July, not one fund's bad luck.</td>
+          </tr>
+          <tr>
+            <td class="topic">The 13F window</td>
+            <td class="dim">Covered as stock tips — what Buffett's successor bought, which names to follow.</td>
+            <td class="dim">That the aggregate is the news. A near-even split across 6,371 filers is a meaningful <em>absence</em> of the de-risking narrative that has been circulating all summer, including on this dashboard.</td>
+          </tr>
+          <tr>
+            <td class="topic">Reserve crossover</td>
+            <td class="dim">Reported in January as a gold-price story and largely dropped since.</td>
+            <td class="dim">The share shift is the substance: gold <span class="num">20%→27%</span> of reserves while Treasuries went <span class="num">25%→22%</span>. That is a change in what sovereign balance sheets consider safe.</td>
+          </tr>
+          <tr>
+            <td class="topic">Hormuz</td>
+            <td class="dim">Daily war coverage of strikes and diplomacy, decoupled from market commentary.</td>
+            <td class="dim">No sustained piece connecting <span class="num">17%</span> throughput in month six to a <span class="num">14.63</span> VIX. The two facts are reported by different desks and never in the same paragraph.</td>
+          </tr>
+          <tr>
+            <td class="topic">Consumer condition</td>
+            <td class="dim">One-day survey story: "sentiment falls, Americans don't feel like they're thriving."</td>
+            <td class="dim">The gap between a record index and a 51-handle sentiment print is not being treated as a single subject by anyone.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ NOISE ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>Checked and discarded</h2>
+      <p class="label">Filtering is half the job</p>
+    </div>
+    <div class="noise">
+      <ul>
+        <li><b>"Project Anchor" — closed.</b> The claim that a leaked NASA document predicted Earth losing gravity for seven seconds at 10:33 ET on 12 August 2026 was flagged in the 11 Aug entry as a hoax with a date inside the window. The date passed. Nothing occurred. NASA, Snopes and Newsweek had all published explicit debunkings; no such document was ever found. The genuine 12 August events — a total solar eclipse, the Perseid peak and a six-planet alignment — appear to be what the hoax was built around. <a href="https://www.snopes.com/fact-check/nasa-project-anchor-earth-gravity/">Snopes</a></li>
+        <li><b>The missing-scientists theory.</b> A cluster of 10–11 deaths and disappearances of researchers between 2021 and 2026, presented online as coordinated killings tied to secret energy or materials knowledge. The cited cases include deaths from Alzheimer's, heart disease, a carjacking and a suicide. Colleagues, families and investigators describe it as apophenia; the FBI found no terrorism nexus in the one homicide examined. Logged because it is circulating in the same forums this sweep monitors, not because it survives scrutiny. <a href="https://en.wikipedia.org/wiki/Missing_scientists_conspiracy_theory">Overview and expert assessment</a></li>
+        <li><b>Recycled bunker and New Zealand content.</b> This week's crop of "billionaires are accelerating doomsday prep" pieces re-reports Thiel's rejected 2022 Wanaka consent, Zuckerberg's Kaua'i compound and Hoffman's 2017 "apocalypse insurance" quote. The underlying facts are real and years old. No new acquisition, permit or construction start was identified in this window. Unchanged from the 9 and 11 August assessments.</li>
+        <li><b>Market-manipulation filter.</b> No signal on this page originates from a single individual's public statement, post or promotional appearance. Every flagged item is a regulatory filing, an auction result, an official-sector dataset, a survey with a published methodology, or multi-source reporting of a completed transaction.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ PANIC METER ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>Panic meter</h2>
+      <p class="label">Conditions of an empire in decline</p>
+    </div>
+    <p class="lede">Ten indicators, each scored 0–10 against a cited metric and averaged. High is worse. The hollow dot is the 11 August reading, the filled dot is today, and the bar between them is the week's move — which is the point of this chart: the composite is nearly flat while four of its ten components moved. Indicator ten is a deliberate counterweight measuring whether anything is <em>actually breaking</em>, which keeps the score honest when structural readings are bleak and markets are functioning.</p>
+
+    <div class="meter">
+      <div class="meter__head">
+        <span>#</span><span>Indicator</span><span>11 Aug → 15 Aug</span><span class="r">Score</span>
+      </div>
+
+      <div class="ind ind--flat">
+        <div class="ind__k">01</div>
+        <div class="ind__name">Asset-bubble fragility<em>Hyperscaler capex guided to $635–690B, +67–74% YoY; ~$1.5T of tech debt issuance needed by 2029</em></div>
+        <div class="ind__track"><span class="ind__now" style="left:90%"></span></div>
+        <div class="ind__score">9 → <b>9</b></div>
+      </div>
+
+      <div class="ind ind--better">
+        <div class="ind__k">02</div>
+        <div class="ind__name">Elite exit velocity<em>Berkshire net buyer; 13F universe evenly split. Offset by record 165,000 projected millionaire relocations</em></div>
+        <div class="ind__track"><span class="ind__seg" style="left:60%;width:20%"></span><span class="ind__was" style="left:80%"></span><span class="ind__now" style="left:60%"></span></div>
+        <div class="ind__score">8 → <b>6</b></div>
+      </div>
+
+      <div class="ind ind--flat">
+        <div class="ind__k">03</div>
+        <div class="ind__name">Currency &amp; reserve confidence<em>Gold passes Treasuries as the largest reserve asset; 89% of 76 central banks intend to add more</em></div>
+        <div class="ind__track"><span class="ind__now" style="left:80%"></span></div>
+        <div class="ind__score">8 → <b>8</b></div>
+      </div>
+
+      <div class="ind ind--flat">
+        <div class="ind__k">04</div>
+        <div class="ind__name">External conflict &amp; overstretch<em>Hormuz at 17% of normal traffic; ceasefire collapsed 8 Jul; carrier rotation under way</em></div>
+        <div class="ind__track"><span class="ind__now" style="left:80%"></span></div>
+        <div class="ind__score">8 → <b>8</b></div>
+      </div>
+
+      <div class="ind ind--flat">
+        <div class="ind__k">05</div>
+        <div class="ind__name">Institutional trust<em>No new data this window; prior reading carried forward unchanged rather than re-estimated</em></div>
+        <div class="ind__track"><span class="ind__now" style="left:80%"></span></div>
+        <div class="ind__score">8 → <b>8</b></div>
+      </div>
+
+      <div class="ind ind--worse">
+        <div class="ind__k">06</div>
+        <div class="ind__name">Household material stress<em>Michigan 51.0, −8% MoM; expectations −11% short-run, −17% long-run</em></div>
+        <div class="ind__track"><span class="ind__seg" style="left:80%;width:10%"></span><span class="ind__was" style="left:80%"></span><span class="ind__now" style="left:90%"></span></div>
+        <div class="ind__score">8 → <b>9</b></div>
+      </div>
+
+      <div class="ind ind--worse">
+        <div class="ind__k">07</div>
+        <div class="ind__name">Fiscal sustainability<em>30-year at 5.216%, tailed; $1.170T FY26 interest; $39.91T debt at a 3.447% average coupon</em></div>
+        <div class="ind__track"><span class="ind__seg" style="left:70%;width:20%"></span><span class="ind__was" style="left:70%"></span><span class="ind__now" style="left:90%"></span></div>
+        <div class="ind__score">7 → <b>9</b></div>
+      </div>
+
+      <div class="ind ind--flat">
+        <div class="ind__k">08</div>
+        <div class="ind__name">Infrastructure strain<em>PJM capacity shortfall and DOE emergency orders unchanged; no new grid event this window</em></div>
+        <div class="ind__track"><span class="ind__now" style="left:70%"></span></div>
+        <div class="ind__score">7 → <b>7</b></div>
+      </div>
+
+      <div class="ind ind--flat">
+        <div class="ind__k">09</div>
+        <div class="ind__name">Elite legitimacy &amp; cohesion<em>No new data this window; carried forward</em></div>
+        <div class="ind__track"><span class="ind__now" style="left:60%"></span></div>
+        <div class="ind__score">6 → <b>6</b></div>
+      </div>
+
+      <div class="ind ind--worse">
+        <div class="ind__k">10</div>
+        <div class="ind__name">Acute market dislocation<em>A $45B fund liquidated and tech hedge funds had their worst month on record — but it was contained, and credit did not gap</em></div>
+        <div class="ind__track"><span class="ind__seg" style="left:30%;width:10%"></span><span class="ind__was" style="left:30%"></span><span class="ind__now" style="left:40%"></span></div>
+        <div class="ind__score">3 → <b>4</b></div>
+      </div>
+
+      <div class="meter__foot">
+        <span>COMPOSITE <b>7.4</b> / 10</span>
+        <span>SUM 74 · N 10</span>
+        <span>PRIOR 7.2 · ▲ 0.2</span>
+        <span>BAND — LATE-STAGE STRAIN</span>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="key key--was"></i> 11 Aug reading</span>
+      <span><i class="key key--worse"></i> deteriorated</span>
+      <span><i class="key key--better"></i> improved</span>
+      <span><i class="key key--flat"></i> unchanged</span>
+      <span>Gridlines every 2 points</span>
+    </div>
+
+    <div class="scale">
+      <div>0.0–3.9 Stable</div>
+      <div>4.0–5.9 Elevated</div>
+      <div class="on">6.0–7.9 Strained</div>
+      <div>8.0–9.4 Critical</div>
+      <div>9.5–10 Terminal</div>
+    </div>
+
+    <div class="verdict" style="border-left-color:var(--hold)">
+      <p><strong>Reading.</strong> The band is unchanged and the composite moved two-tenths, but the source of the strain has shifted from private behaviour to public arithmetic. A week ago the case rested on what the wealthy were doing; today it rests on what the Treasury is paying, what households are reporting, and what a levered fund proved about the AI complex. Those are all measurable in public data — which makes the reading more defensible and considerably less mysterious.</p>
+    </div>
+
+    <div class="triggers">
+      <div class="trigger trigger--up">
+        <h4>↑ Would move this to 9+</h4>
+        <ul>
+          <li>A 30-year auction clearing above 5.5%, or a genuine failure</li>
+          <li>A second forced liquidation in the AI-hardware complex</li>
+          <li>An AI-capex guidance cut from a hyperscaler</li>
+          <li>Private-credit gating spreading to a fourth or fifth large vehicle</li>
+          <li>Hormuz escalation drawing in a Gulf state directly</li>
+        </ul>
+      </div>
+      <div class="trigger trigger--dn">
+        <h4>↓ Would move this to 5</h4>
+        <ul>
+          <li>The long end retracing below 4.75% on real demand</li>
+          <li>Hormuz reopening under the Islamabad framework</li>
+          <li>Insider sell-to-buy normalising below 5:1 in H2 filings</li>
+          <li>Michigan sentiment recovering above 60</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ METHOD ══ -->
+  <section>
+    <div class="sec-head">
+      <h2>Method and limits</h2>
+      <p class="label">Read this before acting on any of it</p>
+    </div>
+    <div class="method">
+      <p><strong>What this sweep looks for.</strong> Asset liquidation and repositioning, unusual money movement, property and jurisdiction purchases, relocation flows, coordinated behaviour among the ultra-wealthy, and cryptic or ominous public statements from people in a position to know something. Sources are weighted toward regulatory filings, auction results, official-sector datasets and surveys with published methodologies, and away from single-source claims, aggregator Substacks and anything traceable to one person's public posting.</p>
+      <p><strong>What was searched and found nothing.</strong> No credible instance surfaced this window of a wealthy individual or institution making a specific, dated, non-public claim about a coming event. The phrases this sweep monitors for — "on good authority", "sworn to secrecy", "a little birdie", "something big is coming" — returned only recycled 2024–25 bunker content, the two debunked theories above, and general macro warnings already public since February. <strong>Absence of a signal is the finding, and it is reported as such.</strong></p>
+      <p><strong>Known weaknesses.</strong> 13F data is long-only, US-equity-only and six weeks stale, and excludes shorts, options and foreign listings — the single biggest blind spot on this page. Insider selling is routinely driven by pre-scheduled 10b5-1 plans and is a poor market timer. The J.P. Morgan family-office survey cited as a counterweight was fielded mid-2025 and may no longer describe current behaviour. Sentiment surveys have decoupled from actual spending for four years. The panic meter is a subjective composite with no predictive record; its value is in tracking <em>changes</em> in its own components across entries, which is why this entry shows the deltas rather than just the levels.</p>
+      <p><strong>Standing conclusion, five entries in.</strong> A large, well-documented divergence between elite positioning and retail positioning existed in H1 2026 and has partially closed in the Q2 filings. What remains is a set of structural stresses — sovereign borrowing cost, concentration in the AI complex, household condition, a closed chokepoint — that are individually public and collectively under-assembled. None of it requires or evidences foreknowledge of a specific event.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Unusual Wealth Activity · Entry 05 · run 2026-08-15 · automated</span>
+    <span>Prior: <a href="https://claude.ai/code/artifact/c617f5bd-1794-4aae-9adb-10636c918552">11 Aug</a> · <a href="https://claude.ai/code/artifact/e639ca2f-4e6c-4eb1-8e71-605fec881080">9 Aug</a> · <a href="https://claude.ai/code/artifact/716cde7c-a5d4-4a23-b156-0c645ccc646f">7 Aug</a></span>
+  </footer>
+
+</div>
+

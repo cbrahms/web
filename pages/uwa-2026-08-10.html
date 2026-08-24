@@ -1,0 +1,410 @@
+
+<title>Unusual Wealth Activity — 2026-08-10</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-1: #fcfcfb;
+    --plane: #f9f9f7;
+    --ink-1: #0b0b0b;
+    --ink-2: #52514e;
+    --ink-muted: #898781;
+    --grid: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11, 11, 11, 0.10);
+    --good: #0ca30c;
+    --warning: #fab219;
+    --warning-ink: #8a6000;
+    --serious: #ec835a;
+    --critical: #d03b3b;
+    --seq-100: #cde2fb;
+    --seq-250: #86b6ef;
+    --seq-450: #2a78d6;
+    --seq-600: #184f95;
+    --track: #e1e0d9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-1: #1a1a19;
+      --plane: #0d0d0d;
+      --ink-1: #ffffff;
+      --ink-2: #c3c2b7;
+      --ink-muted: #898781;
+      --grid: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255, 255, 255, 0.10);
+      --seq-450: #3987e5;
+      --track: #2c2c2a;
+      --warning-ink: #fab219;
+      --good: #3fbf3f;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-1: #1a1a19;
+    --plane: #0d0d0d;
+    --ink-1: #ffffff;
+    --ink-2: #c3c2b7;
+    --ink-muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --seq-450: #3987e5;
+    --track: #2c2c2a;
+    --warning-ink: #fab219;
+    --good: #3fbf3f;
+  }
+
+  body { background: var(--plane); }
+  .uwa {
+    background: var(--plane);
+    color: var(--ink-1);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.55;
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 5rem;
+    -webkit-font-smoothing: antialiased;
+  }
+  .uwa h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .35rem; letter-spacing: -.02em; }
+  .uwa h2 {
+    font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--ink-2); margin: 3rem 0 1rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--grid);
+  }
+  .uwa h3 { font-size: 1.02rem; margin: 1.75rem 0 .4rem; }
+  .uwa p { color: var(--ink-2); margin: .6rem 0; }
+  .uwa a { color: var(--seq-450); text-decoration: none; border-bottom: 1px solid var(--border); }
+  .uwa a:hover { border-bottom-color: currentColor; }
+  .uwa a:focus-visible { outline: 2px solid var(--seq-450); outline-offset: 2px; border-radius: 2px; }
+  .uwa .dek { color: var(--ink-muted); font-size: .9rem; margin: 0 0 2rem; }
+  .uwa strong { color: var(--ink-1); }
+
+  /* ---- verdict banner ---- */
+  .verdict {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-left: 3px solid var(--critical);
+    border-radius: 8px; padding: 1.1rem 1.25rem; margin: 0 0 2rem;
+  }
+  .verdict .label {
+    font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-muted); display: block; margin-bottom: .3rem;
+  }
+  .verdict .headline { font-size: 1.12rem; color: var(--ink-1); font-weight: 600; margin: 0 0 .5rem; }
+
+  /* ---- KPI row of stat tiles ---- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .75rem; margin: 1.25rem 0; }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; padding: .9rem 1rem;
+  }
+  .tile .k { font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-muted); }
+  .tile .v { font-size: 1.65rem; font-weight: 650; color: var(--ink-1); line-height: 1.15; margin: .25rem 0 .1rem; font-variant-numeric: tabular-nums; }
+  .tile .n { font-size: .8rem; color: var(--ink-2); }
+
+  /* ---- signal cards ---- */
+  .sig {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem 1.15rem; margin: .75rem 0;
+  }
+  .sig-head { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; margin-bottom: .35rem; }
+  .sig-head .t { font-weight: 650; color: var(--ink-1); font-size: 1rem; }
+  .sig p { margin: .4rem 0; font-size: .93rem; }
+  .sig .why {
+    font-size: .89rem; color: var(--ink-2); border-left: 2px solid var(--grid);
+    padding-left: .7rem; margin-top: .6rem;
+  }
+  .badge {
+    font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 700;
+    padding: .13rem .45rem; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap;
+  }
+  .b-critical { color: var(--critical); }
+  .b-serious  { color: var(--serious); }
+  .b-warning  { color: var(--warning-ink); }
+  .b-counter  { color: var(--good); }
+
+  /* ---- meters ---- */
+  .meter { margin: .85rem 0 1.1rem; }
+  .meter-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font-size: .9rem; }
+  .meter-top .name { color: var(--ink-1); font-weight: 600; }
+  .meter-top .score { color: var(--ink-2); font-variant-numeric: tabular-nums; font-size: .85rem; }
+  .track { position: relative; height: 9px; background: var(--track); border-radius: 4px; margin-top: .38rem; overflow: hidden; }
+  .fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+  .meter .note { font-size: .84rem; color: var(--ink-muted); margin: .3rem 0 0; }
+  .delta { font-size: .78rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+
+  .composite {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.25rem 1.35rem; margin: 1.25rem 0 1.75rem;
+    display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+  }
+  .composite .hero { font-size: 3.2rem; font-weight: 680; line-height: 1; color: var(--ink-1); font-variant-numeric: tabular-nums; }
+  .composite .hero span { font-size: 1.2rem; color: var(--ink-muted); font-weight: 500; }
+  .composite .desc { flex: 1 1 16rem; min-width: 14rem; }
+  .composite .desc .stage { font-weight: 650; color: var(--ink-1); }
+
+  /* ---- table ---- */
+  .tw { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface-1); }
+  .uwa table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 34rem; }
+  .uwa th, .uwa td { padding: .6rem .8rem; text-align: left; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  .uwa th { font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-muted); font-weight: 600; }
+  .uwa td { color: var(--ink-2); }
+  .uwa tbody tr:last-child td { border-bottom: none; }
+  .uwa td.num { font-variant-numeric: tabular-nums; color: var(--ink-1); }
+
+  .uwa ul { color: var(--ink-2); padding-left: 1.15rem; }
+  .uwa li { margin: .35rem 0; }
+  .srcs { font-size: .84rem; }
+  .srcs li { margin: .2rem 0; }
+  .caveat {
+    background: var(--surface-1); border: 1px solid var(--border); border-left: 3px solid var(--seq-450);
+    border-radius: 8px; padding: 1rem 1.15rem; margin: 1.25rem 0;
+  }
+  .caveat p { font-size: .92rem; }
+  .timeline {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 8px; margin: 1rem 0; overflow: hidden;
+  }
+  .tl-row { display: flex; gap: 1rem; padding: .65rem .95rem; border-bottom: 1px solid var(--grid); font-size: .9rem; }
+  .tl-row:last-child { border-bottom: none; }
+  .tl-row .d { flex: 0 0 5.5rem; color: var(--ink-muted); font-variant-numeric: tabular-nums; font-size: .82rem; padding-top: .1rem; }
+  .tl-row .e { color: var(--ink-2); }
+  .tl-row.key { background: color-mix(in srgb, var(--critical) 7%, transparent); }
+  .tl-row.key .e { color: var(--ink-1); }
+</style>
+
+<div class="uwa">
+
+<h1>Unusual Wealth Activity</h1>
+<p class="dek">Scan of 2026-08-10 · issue 003 · covering roughly the trailing 90 days, weighted to the last two weeks · automated sweep, human judgment applied</p>
+
+<div class="verdict">
+  <span class="label">Verdict</span>
+  <p class="headline">A pattern emerged — but it is the opposite shape of the one this scan was built to look for.</p>
+  <p>The broad "every wealthy cohort is heading for the exits" thesis carried by the last run <strong>weakened materially</strong> this week: Berkshire Hathaway reversed 14 consecutive quarters of net selling and bought roughly $20B of equities. Meanwhile the sweep turned up something more concrete than a mood — a <strong>documented, record-setting instance of informed pre-positioning</strong> in the three days before a $45B fund's forced liquidation became public. That is not foreknowledge of a future event. It is proof that the channel exists and works.</p>
+</div>
+
+<h2>Summary — main topics</h2>
+<ul>
+  <li><strong>The Situational Awareness front-run</strong> — hedge funds dumped global tech at the fastest pace in the history of Goldman's prime dataset in the three days <em>before</em> the fire sale went public. The strongest single finding in three runs of this scan.</li>
+  <li><strong>A named mechanism, not a conspiracy</strong> — the same three banks were the fund's prime brokers and the counterparties to the selling</li>
+  <li><strong>Berkshire flips to net buyer</strong> — the loudest "smart money is de-risking" datapoint of the last two years reverses</li>
+  <li><strong>Central banks bought a record 289 tonnes of gold into a 16% price collapse</strong> — still the single most anomalous number in the sweep</li>
+  <li><strong>Leverage in the plumbing</strong> — hedge funds now own a record 8% of US Treasuries; repo and prime-brokerage borrowing exceeds $6T</li>
+  <li><strong>AI credit still dissenting from AI equity</strong> — Oracle CDS near 197bp while the same names print record highs</li>
+  <li><strong>Prediction markets as a functioning insider venue</strong> — 80+ flagged accounts, a federal indictment, a congressional probe</li>
+  <li><strong>Correction to the prior issue</strong> — the $4B Bezos sale was a scheduled 10b5-1 plan adopted in Nov 2025 and should not have been counted as a discretionary signal</li>
+  <li><strong>Panic meter</strong> — composite 74/100, essentially unchanged from 73, but with materially different composition</li>
+</ul>
+
+<h2>The finding: a record front-run</h2>
+
+<div class="kpis">
+  <div class="tile"><div class="k">Hedge fund tech selling</div><div class="v">#1</div><div class="n">Largest 3-day sale of global IT since Goldman's series began in 2016</div></div>
+  <div class="tile"><div class="k">Window</div><div class="v">Jul 26–28</div><div class="n">Liquidation became public Jul 30</div></div>
+  <div class="tile"><div class="k">Fund AUM before</div><div class="v">$45B</div><div class="n">Fell to roughly $10B</div></div>
+  <div class="tile"><div class="k">Leverage run</div><div class="v">~4×</div><div class="n">Positions fell 35–47% in July</div></div>
+</div>
+
+<div class="timeline">
+  <div class="tl-row"><span class="d">Jul (early)</span><span class="e">AI infrastructure and semiconductor names sell off; Situational Awareness positions fall 35–47%. Margin calls begin from prime brokers Goldman Sachs, JPMorgan and Bank of America.</span></div>
+  <div class="tl-row key"><span class="d">Jul 26–28</span><span class="e"><strong>Hedge funds sell more global information-technology equities over three days than in any comparable period since Goldman Sachs prime brokerage data begins in 2016.</strong> Reporting describes the funds as reducing exposure ahead of what they expected to become a compulsory liquidation.</span></div>
+  <div class="tl-row"><span class="d">Jul 30</span><span class="e">Situational Awareness sells its entire public equity portfolio to Citadel at a discount. CNBC breaks the story. The collapse becomes public knowledge.</span></div>
+  <div class="tl-row"><span class="d">Aug 5</span><span class="e">Bank of America CEO Brian Moynihan calls the meltdown "a warning shot" for leveraged markets.</span></div>
+  <div class="tl-row"><span class="d">Aug 6–8</span><span class="e">Chip stocks bounce. Nasdaq gains 5.2% on the week; S&amp;P 500 closes at a record 7,757.64.</span></div>
+</div>
+
+<p>This is the cleanest example of information asymmetry the scan has produced. The market's most sophisticated participants collectively executed a record-magnitude trade in a narrow window, positioned exactly correctly, immediately before a public disclosure that would have moved those same securities against them. The trade worked. The people on the other side were whoever was still holding.</p>
+
+<h2>Flagged signals</h2>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">1. Record hedge fund tech selling in the three days before the Situational Awareness liquidation was public</span><span class="badge b-critical">Highest anomaly</span></div>
+  <p>Goldman Sachs Prime reported that hedge funds sold more global information-technology equities in the three days ending July 28 than in any comparable period since the dataset began in 2016. The forced liquidation was announced July 30. Reporting characterizes the selling as funds "not waiting for the margin call" but front-running it.</p>
+  <p class="why"><strong>Why it's unusual:</strong> this is the rare case where the scan can point at a specific, dated, record-magnitude repositioning that preceded a specific, dated public event — rather than inferring intent from a mood. It is also the rare case with a <strong>nameable mechanism</strong>. Goldman Sachs, JPMorgan and Bank of America were simultaneously (a) Situational Awareness's prime brokers, working its margin calls, and (b) the prime brokers whose other clients were executing the record sale. No secret cabal is required for that information to move — only a desk, a phone, and a structural conflict that the prime brokerage model creates by design. This is the most investigable item this scan has surfaced, and it is not currently being framed as an information-integrity story anywhere in mainstream coverage.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">2. Central banks bought a record 289 tonnes of gold into the worst quarterly price decline since 2013</span><span class="badge b-critical">Highest anomaly</span></div>
+  <p>Q2 2026 net official-sector purchases reached 288.9 tonnes, up 62% year on year and more than five times the revised Q1 figure of 57 tonnes. Poland's central bank was the largest buyer at 51 tonnes, taking reserves to 632 tonnes; the People's Bank of China added 33 tonnes, its biggest quarterly addition since Q4 2023, to reach 2,346 tonnes. Gold fell roughly 16% over the same quarter.</p>
+  <p class="why"><strong>Why it's unusual:</strong> carried forward from the prior issue and still the strangest number in the sweep. Buyers who accelerate <em>into</em> a 16% drawdown are not trading — they are converting. Price-insensitive accumulation by sovereigns is the behavior of a buyer optimizing for custody rather than return. The ordinary explanation is real and sufficient: reserve managers have been de-dollarizing since Russia's reserves were frozen in 2022. But the ordinary explanation does not account for the <em>acceleration</em> into the drawdown.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">3. Record leverage sitting in the market's plumbing</span><span class="badge b-serious">Strong</span></div>
+  <p>Hedge funds now own a record-high 8% of US Treasuries. Combined repo and prime-brokerage borrowing exceeds $6 trillion. Long Treasury exposure has expanded from roughly $600B in 2014 to $2.4T at the end of 2025. The Dallas Fed has published on how rising hedge fund leverage now affects monetary policy implementation itself; Apollo has flagged Treasury-basis leverage at record highs.</p>
+  <p class="why"><strong>Why it's unusual:</strong> Situational Awareness was a $45B fund at 4× leverage and its unwind was absorbed in 24 hours by a single buyer. The basis trade is a different order of magnitude in a market where the Fed is the only backstop. The signal is not that anyone knows something — it is that the system's capacity to absorb a forced seller has been tested once this month and the next test is larger.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">4. The AI credit market still disagrees with the AI equity market</span><span class="badge b-serious">Strong</span></div>
+  <p>Five-year CDS spreads: Oracle near 196.6bp, Meta near 93bp, Nvidia widened to 57.25bp from roughly 42bp in late June. Spreads on Alphabet, Amazon, Meta, Nvidia, Oracle, SpaceX and Broadcom have all risen sharply to record levels. Hyperscalers are set to spend over $750B on AI data center infrastructure in 2026, potentially $870B in 2027 — a figure expected to exceed even the largest hyperscalers' free cash flow, leaving debt as the funding route. The BIS has published on the on- and off-balance-sheet borrowing structures underneath it.</p>
+  <p class="why"><strong>Why it's unusual:</strong> credit and equity are pricing the same issuers with opposite conviction, and credit is historically the better-informed of the two. July's AI drawdown — the one that killed Situational Awareness — was the equity market briefly agreeing with the credit market, then changing its mind within a fortnight.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">5. Prediction markets are functioning as a working insider-trading venue</span><span class="badge b-serious">Strong</span></div>
+  <p>A New York Times investigation identified more than 80 Polymarket accounts placing suspiciously timed bets, including positions opened in the hours before undisclosed US and Israeli military operations against Iran. In April, US Army Master Sergeant Gannon Ken Van Dyke was federally indicted for allegedly using classified information about Operation Absolute Resolve to net over $409,000. Polymarket has referred nearly 100 wallets to law enforcement. Kalshi flagged a White House teleprompter operator to the CFTC. House Oversight Chair Comer opened a formal probe of both platforms on May 22.</p>
+  <p class="why"><strong>Why it's unusual:</strong> this is the scan's clearest evidence that people with genuine advance knowledge of state action monetize it — and it is now documented by indictment rather than inference. It is a <em>proof of concept</em> for the entire premise of this dashboard. Note the direction it points, though: the confirmed cases are mid-level government employees making six figures, not billionaires making ten. The leak channel is real and it is downstream, not upstream.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">6. Family offices still rewriting strategic allocation at roughly twice the normal rate</span><span class="badge b-serious">Strong</span></div>
+  <p>60% of family offices told UBS they plan to change strategic asset allocation within twelve months, the highest reading UBS has recorded and up from 35% a year earlier. De-risking and improving liquidity are the stated primary objectives, with many expecting cash to be the best-returning asset of the coming year. Among offices making active changes, private equity is trending from 21% toward 18% and real estate from roughly 11% to 8%, rotating into private credit, hedge funds and secondaries — shorter duration, more predictable cash flows.</p>
+  <p class="why"><strong>Why it's unusual:</strong> strategic asset allocation is by definition the slow-moving layer. A near-doubling in one year of the share of families rewriting it is a tactical move wearing a strategic label. Carried forward from the prior issue; unchanged this week.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">7. Executive protection spending keeps climbing — against the public, not against an event</span><span class="badge b-warning">Watch</span></div>
+  <p>Threats targeting AI leaders and data centers jumped sevenfold between late February and May. Days after an attempted firebombing at OpenAI CEO Sam Altman's home, an intruder entered Anthropic's lobby to warn that an executive was "going to be killed." Palantir's executive protection budget rose 150% to nearly $3M; Oracle's climbed 85% to $5.6M; Meta spent $27M on Zuckerberg and his family; Nvidia dedicated its entire $4M security budget to Jensen Huang. The share of tech companies disclosing executive protection spending grew from 26.8% in 2021 to 38.1% in 2025.</p>
+  <p class="why"><strong>Why it's unusual — and why it is <em>not</em> a foreknowledge signal:</strong> this is real, well-sourced, and accelerating, but it reads as elites hardening against domestic anger about AI and inequality, which is already fully public. It belongs in the panic meter as a cohesion indicator, not in the signal list as evidence anyone was told something. Included here explicitly so the distinction is on the record.</p>
+</div>
+
+<div class="sig">
+  <div class="sig-head"><span class="t">8. Counter-signal: Berkshire Hathaway flipped to net buyer after 14 quarters of selling</span><span class="badge b-counter">Contradicts the thesis</span></div>
+  <p>Berkshire's cash fell to $365.5B at the end of June from a record $397.4B three months earlier. The company was a net buyer of equities in Q2 with nearly $20B of net purchases, after 14 consecutive quarters as a net seller. It repurchased roughly $4.5B of its own shares, against $235M in Q1 — a nineteen-fold acceleration. Alphabet surged to the fifth-largest position.</p>
+  <p class="why"><strong>Why this matters more than the bullish signals it displaces:</strong> the prior issue of this dashboard led with Berkshire's record cash pile as evidence that the best-informed patient capital in the world was refusing to deploy. That evidence has now reversed, and intellectual honesty requires leading with the reversal rather than burying it. A firm that spent three and a half years declining to buy has started buying — including buying its own stock aggressively — which is the single most direct available refutation of "insiders think a crash is imminent." Any scan that only ever accumulates alarming data points is measuring its own method, not the world.</p>
+</div>
+
+<h2>Cross-reference: what the mainstream is not connecting</h2>
+
+<p>General news this week led with Mount Etna's eruption closing Catania airport, an Interlochen abuse investigation, military testosterone screening, a MyPillow primary endorsement fight, and a Kyiv strike. Financial press covered Situational Awareness thoroughly — but as a leverage story and a cautionary tale about a 20-something running 4× leverage, not as an information story.</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th>Mainstream is covering</th><th>It is not covering</th></tr></thead>
+  <tbody>
+    <tr><td>Situational Awareness as a leverage blow-up and a "warning shot"</td><td>That the selling <em>ahead</em> of it set an all-time record in Goldman's prime dataset — and that the fund's own prime brokers sat on both sides</td></tr>
+    <tr><td>S&amp;P 500 record close 7,757.64; strongest week since April</td><td>Record official-sector gold buying into a 16% quarterly price collapse</td></tr>
+    <tr><td>AI capex as a growth story; chip stocks bouncing 5.2% on the week</td><td>Record CDS spreads on the identical set of AI issuers; capex now exceeding hyperscaler free cash flow</td></tr>
+    <tr><td>Prediction markets as a political-forecasting curiosity</td><td>A federal indictment, ~100 law-enforcement wallet referrals, and an open congressional probe into them as an insider-trading venue</td></tr>
+    <tr><td>Hedge fund returns and fund launches</td><td>Hedge funds owning a record 8% of US Treasuries on $6T+ of repo and prime borrowing</td></tr>
+    <tr><td>Berkshire's earnings beat</td><td>That Berkshire's reversal directly contradicts the prevailing "smart money is de-risking" narrative</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Filtered out as noise</h2>
+<p>Excluded deliberately, to keep the signal list defensible:</p>
+<ul>
+  <li><strong>The $4B Bezos sale</strong> — carried as a "Strong" signal in the prior issue. It should not have been. The Aug 3 filing executes a Rule 10b5-1 plan <em>adopted 14 November 2025</em>, the specific instrument executives use so that sales cannot be timed to information. This dashboard's own standing filter excludes scheduled sales from discretionary treatment; the prior issue applied that filter in its methods section and then violated it in its signal list. Correcting on the record.</li>
+  <li><strong>Perennial crash callers</strong> — the "2026 Market Crash Summit" and similar are commercial products, not signals. Michael Burry's warnings are noted but he has called several crashes that did not arrive; his position is directionally consistent with the CDS tape, which is why the CDS tape is cited instead of him.</li>
+  <li><strong>Bunker and doomsday-prepper content</strong> — searches on New Zealand billionaire bunkers return almost entirely recycled 2016–2020 material (Thiel's citizenship, the Vivos shelter, Rising S's ~10 units) repackaged as current. No 2026 inflection was found. The genuinely current physical-hardening data is executive protection spending, which is cited above instead.</li>
+  <li><strong>"Something big is coming" chatter</strong> — direct searches for grapevine-style phrasing surfaced only routine market commentary, Jackson Hole previews and stock-promotion content. Nothing met the bar. Reported as a negative result rather than omitted, because an empty search is itself information.</li>
+  <li><strong>Single-actor price manipulation</strong> — political posts moving individual names were screened out per standing instruction.</li>
+</ul>
+
+<h2>Panic meter</h2>
+<p class="dek">A subjective composite — indicators of an empire under strain. Scored 0–100 by editorial judgment against the sourced data below, not a measured index. Treat the components as the argument and the composite as shorthand.</p>
+
+<div class="composite">
+  <div class="hero">74<span>/100</span></div>
+  <div class="desc">
+    <div class="stage">Late-republic band — strained, not breaking</div>
+    <p>The composite barely moved from the prior run's 73. The <em>composition</em> moved a great deal: exit behavior and geopolitical overhang both fell, while leverage, credit and information integrity rose to replace them.</p>
+  </div>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Fiscal strain</span><span class="score">84 · critical</span></div>
+  <div class="track"><div class="fill" style="width:84%;background:var(--critical)"></div></div>
+  <p class="note">Net interest on the federal debt passed $1T for the first time in FY2025. FY2026 interest equals ~14% of projected spending and 19% of all federal revenue — 19 cents of every tax dollar. CBO projects net interest growing 538% over the FY2026–2056 window.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Leverage &amp; plumbing fragility</span><span class="score">84 · critical</span></div>
+  <div class="track"><div class="fill" style="width:84%;background:var(--critical)"></div></div>
+  <p class="note">Hedge funds own a record 8% of US Treasuries; repo plus prime borrowing exceeds $6T; long Treasury exposure at $2.4T. One 4×-levered fund already failed this month.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Information integrity</span><span class="score">79 · serious</span></div>
+  <div class="track"><div class="fill" style="width:79%;background:var(--serious)"></div></div>
+  <p class="note">New component this run. Record pre-liquidation selling through prime brokers who sat on both sides; 80+ flagged prediction-market accounts; a federal insider-trading indictment; an open congressional probe.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Credit stress in the growth engine</span><span class="score">77 · serious</span></div>
+  <div class="track"><div class="fill" style="width:77%;background:var(--serious)"></div></div>
+  <p class="note">Record CDS across the AI complex — Oracle ~197bp, Nvidia 57bp from 42bp in June — while $750B+ of 2026 capex exceeds hyperscaler free cash flow.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Civil cohesion &amp; political violence</span><span class="score">74 · serious</span></div>
+  <div class="track"><div class="fill" style="width:74%;background:var(--serious)"></div></div>
+  <p class="note">Over 520 incidents of terrorism and targeted violence in the US in a recent six-month period, roughly 40% above the prior year. Threats against AI executives up sevenfold in three months; an attempted firebombing at a CEO's home.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Reserve-currency confidence</span><span class="score">72 · serious</span></div>
+  <div class="track"><div class="fill" style="width:72%;background:var(--serious)"></div></div>
+  <p class="note">Dollar at roughly 57% of allocated reserves, down from ~72% in 1999. Record price-insensitive official gold accumulation. Offsetting: no rival currency offers comparable liquidity, and the drift is decades-long rather than acute.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">External overextension &amp; chokepoint fragility</span><span class="score">62 · warning <span class="delta">▼ from 66</span></span></div>
+  <div class="track"><div class="fill" style="width:62%;background:var(--warning)"></div></div>
+  <p class="note">Down. Iran de-escalation talks pulled oil and yields lower in early August. Offsetting and unresolved: analysts flag Taiwan supply-chain vulnerability to a quarantine initiated before 2027, an event Chatham House and Bloomberg model as a ~5% hit to global GDP.</p>
+</div>
+
+<div class="meter">
+  <div class="meter-top"><span class="name">Elite exit behavior</span><span class="score">61 · warning <span class="delta">▼ from 78</span></span></div>
+  <div class="track"><div class="fill" style="width:61%;background:var(--warning)"></div></div>
+  <p class="note">Sharply down. Berkshire reversed 14 quarters of net selling with ~$20B of purchases and a 19× buyback acceleration; the headline Bezos sale was a scheduled plan adopted in 2025. Family-office repositioning and investment-migration demand remain elevated, which is why this is not lower.</p>
+</div>
+
+<h2>Assessment</h2>
+
+<div class="caveat">
+  <p><strong>The honest read.</strong> This run cuts against the last one, and that is the most useful thing it produced. A scan that only ever finds more alarming evidence is measuring its own method rather than the world. Berkshire buying, a market at records, Iran de-escalating and a Bezos sale that turns out to be a scheduled plan are all evidence <em>against</em> the elite-exodus thesis, and they are reported here first.</p>
+  <p><strong>What survives is narrower and harder.</strong> One documented case of record-magnitude informed pre-positioning, with a named mechanism and identifiable institutions on both sides of it. One category of sovereign behavior that remains genuinely inexplicable on ordinary terms — buying a record quantity of an asset while its price collapses. And a leverage stack that just demonstrated, at $45B scale, exactly how fast a forced unwind now travels.</p>
+  <p><strong>On the central question.</strong> No evidence was found that anyone holds knowledge of a specific undisclosed future event. The Situational Awareness front-run is the opposite: knowledge of a specific, imminent, <em>already-determined</em> event, held for days by people positioned to trade it. That is a securities-and-market-integrity story, and a good one. It is not a prophecy. The recurring failure mode of this kind of scan is collapsing shared risk perception into shared knowledge, and the second-most common is treating a confirmed small leak as proof of an unconfirmed large one.</p>
+  <p><strong>What to check next run.</strong> Whether Goldman prime data shows the same pattern ahead of the next forced unwind — a repeat would move this from an anomaly to a mechanism. Whether the Comer probe produces documents. Whether Q3 central bank gold purchases stay elevated with prices still falling. Whether Berkshire's buying continues or was a one-quarter deployment of a specific opportunity.</p>
+</div>
+
+<h2>Sources</h2>
+<ul class="srcs">
+  <li><a href="https://seekingalpha.com/news/4623135-hedge-funds-sold-tech-at-historic-pace-ahead-of-situational-awareness-fire-sale">Hedge funds sold tech at historic pace ahead of Situational Awareness fire sale</a> — Seeking Alpha, on Goldman Sachs prime brokerage data</li>
+  <li><a href="https://thedarksideoftheboom.substack.com/p/the-leopold-low-when-ai-leverage">The Leopold Low: When AI Leverage Met the Margin Clerk</a> — detail on the three-day Goldman prime record</li>
+  <li><a href="https://www.cnbc.com/2026/07/30/leopold-aschenbrenners-hedge-fund-is-facing-steep-ai-losses.html">AI investor Leopold Aschenbrenner forced to unwind all public stock positions after steep losses</a> — CNBC</li>
+  <li><a href="https://www.cnbc.com/2026/07/31/leopold-aschenbrenner-situational-awareness-fund-fire-sale.html">Situational Awareness fund fire sale</a> — CNBC</li>
+  <li><a href="https://www.cnbc.com/2026/08/05/bofa-brian-moynihan-situational-awareness-meltdown-was-a-warning-shot.html">Situational Awareness meltdown was a warning shot for leveraged markets, BofA CEO says</a> — CNBC</li>
+  <li><a href="https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q2-2026">Gold Demand Trends: Q2 2026</a> — World Gold Council (primary)</li>
+  <li><a href="https://www.thenationalnews.com/business/markets/2026/07/30/central-banks-gold-buying-hits-record-in-q2-as-geopolitical-risks-persist/">Central banks' gold rush hits record in Q2 as geopolitical risks persist</a> — The National</li>
+  <li><a href="https://www.tftc.io/central-bank-gold-purchases-record-289-tonnes-q2-2026">Central Banks Buy Record 289t of Gold in Q2 2026, Buying Into a 16% Price Drop</a></li>
+  <li><a href="https://www.cnbc.com/2026/08/08/berkshire-hathaway-earnings-q2-2026.html">Berkshire Hathaway earnings Q2 2026</a> — CNBC</li>
+  <li><a href="https://finance.yahoo.com/markets/stocks/articles/berkshire-hathaway-just-did-something-162705397.html">Berkshire Hathaway Just Did Something It Hasn't Done in More Than 3 Years</a></li>
+  <li><a href="https://www.cnbc.com/2026/08/04/jeff-bezos-just-filed-to-sell-4-billion-in-amazon-the-shares-are-falling.html">Jeff Bezos just filed to sell $4 billion in Amazon</a> — CNBC (10b5-1 plan adopted Nov 14, 2025)</li>
+  <li><a href="https://finance.yahoo.com/markets/stocks/articles/us-corporate-insiders-selling-stocks-085155093.html">US Corporate Insiders Are Selling Stocks at a Near Record Pace</a> — Yahoo Finance / EPFR</li>
+  <li><a href="https://www.apollo.com/wealth/the-daily-spark/hedge-fund-leverage-in-treasuries-record-high">Hedge Fund Leverage in Treasuries at Record Highs</a> — Apollo</li>
+  <li><a href="https://www.dallasfed.org/research/economics/2026/0528">Rising hedge fund leverage affects monetary policy implementation</a> — Federal Reserve Bank of Dallas</li>
+  <li><a href="https://www.hedgeweek.com/hedge-fund-leverage-build-up-intensifies-as-ai-driven-equity-rally-fuels-risk-taking/">Hedge fund leverage build-up intensifies as AI-driven equity rally fuels risk-taking</a> — Hedgeweek</li>
+  <li><a href="https://www.bis.org/publ/qtrpdf/r_qt2603u.htm">Financing the AI infrastructure boom: on- and off-balance sheet borrowing</a> — Bank for International Settlements</li>
+  <li><a href="https://www.cnbc.com/2026/07/24/bond-market-anxiety-ai-capex-spending.html">Bond market anxiety is growing over AI capex budgets</a> — CNBC</li>
+  <li><a href="https://finance.yahoo.com/technology/ai/articles/big-tech-credit-risk-flashes-192645668.html">Big Tech Credit Risk Flashes Urgent Warning Over AI Spending</a></li>
+  <li><a href="https://oversight.house.gov/release/comer-launches-investigation-into-insider-trading-on-prediction-market-platforms/">Comer Launches Investigation Into Insider Trading on Prediction Market Platforms</a> — House Oversight Committee (primary)</li>
+  <li><a href="https://www.bloomberg.com/graphics/2026-polymarket-traders-who-knew-the-future/">Polymarket and Kalshi Grapple With a New Era of Insider Traders</a> — Bloomberg</li>
+  <li><a href="https://www.forbes.com/sites/walterpavlo/2026/04/27/prediction-markets-first-insider-trading-case/">Prediction Market's First Insider Trading Case</a> — Forbes</li>
+  <li><a href="https://ioandc.com/family-offices-repositioning-for-the-new-financial-year/">Family offices repositioning for the new financial year</a> — Investor Strategy News</li>
+  <li><a href="https://privatebank.jpmorgan.com/nam/en/insights/reports/2026-family-office-report">2026 Global Family Office Report</a> — J.P. Morgan Private Bank</li>
+  <li><a href="https://www.entrepreneur.com/business-news/threats-against-ai-executives-have-jumped">As Threats Against AI Executives Surge, Tech Giants Are Beefing Up Security</a> — Entrepreneur</li>
+  <li><a href="https://www.securitymagazine.com/articles/102199-the-rising-tide-of-executive-protection-corporations-ramp-up-security-in-an-era-of-heightened-threats">The Rising Tide of Executive Protection</a> — Security Magazine</li>
+  <li><a href="https://www.pgpf.org/programs-and-projects/fiscal-policy/monthly-interest-tracker-national-debt/">Interest Costs on the National Debt</a> — Peter G. Peterson Foundation</li>
+  <li><a href="https://www.gao.gov/products/gao-26-107529">Federal Debt Management: Treasury Is Meeting Borrowing Needs but the Deteriorating Fiscal Outlook Poses Risks</a> — US GAO (primary)</li>
+  <li><a href="https://www.chathamhouse.org/2026/04/taiwan-crisis-would-cause-far-more-global-economic-damage-strait-hormuz-disruption">A Taiwan crisis would cause far more global economic damage than Strait of Hormuz disruption</a> — Chatham House</li>
+  <li><a href="https://commercial.allianz.com/news-and-insights/reports/political-violence-and-civil-unrest-trends.html">Political violence and civil unrest trends 2026</a> — Allianz Commercial</li>
+  <li><a href="https://www.cnbc.com/2026/08/06/stock-market-today-live-updates.html">S&amp;P 500 rises to record close Friday and posts strongest week since April</a> — CNBC</li>
+</ul>
+
+<h2>Method &amp; limits</h2>
+<ul>
+  <li>Sources are public web search results as of 2026-08-10. Nothing here comes from private forums, paid data feeds, or non-public filings. Where the brief asked for private-forum monitoring, that access does not exist in this environment — those channels were <strong>not</strong> covered, and no inference in this page depends on them.</li>
+  <li>The Goldman prime brokerage figure is reported via secondary sources citing Goldman's prime services note; the underlying note is client-restricted and was not read directly. It is the load-bearing fact of this issue and should be treated as single-sourced-through-multiple-outlets rather than independently confirmed.</li>
+  <li>Secondary reporting was preferred where it cited a named primary source (Goldman Prime, World Gold Council, UBS, J.P. Morgan, CBO/GAO, House Oversight). Figures were not independently re-derived from primary filings.</li>
+  <li>Panic meter scores are editorial judgments on a 0–100 scale anchored to the cited data. The indicator set changed from the prior issue — "information integrity" and "fiscal strain" were added, "institutional trust," "asset prices vs. real economy" and "household solvency" were not re-scored. <strong>The 73 → 74 move is therefore not a meaningful trend</strong> and should not be read as one. Components carry the argument; the composite is shorthand.</li>
+  <li>Absence of a signal category in this page means the sweep found nothing credible, not that nothing exists.</li>
+  <li>This page is observational research. It is not investment advice.</li>
+</ul>
+
+</div>
+

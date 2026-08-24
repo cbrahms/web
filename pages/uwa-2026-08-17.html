@@ -1,0 +1,867 @@
+
+<title>Unusual Wealth Activity</title>
+
+<style>
+  :root {
+    --ground: #E7E9E4;
+    --surface: #F7F8F5;
+    --surface-2: #EEF0EA;
+    --ink: #171B19;
+    --ink-2: #4E5754;
+    --ink-3: #79827D;
+    --rule: #D3D7CF;
+    --rule-strong: #B9BFB6;
+    --accent: #6E5B1F;
+    --accent-wash: #E6E0CB;
+    --sev-steady: #0F805B;
+    --sev-elevated: #B07A12;
+    --sev-acute: #A32C24;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #131614;
+      --surface: #1B1F1C;
+      --surface-2: #232823;
+      --ink: #E6E9E3;
+      --ink-2: #A2AAA4;
+      --ink-3: #79817B;
+      --rule: #2E342F;
+      --rule-strong: #3E453F;
+      --accent: #C6AC63;
+      --accent-wash: #2A2820;
+      --sev-steady: #2A9E71;
+      --sev-elevated: #C89A2C;
+      --sev-acute: #D9503F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #131614;
+    --surface: #1B1F1C;
+    --surface-2: #232823;
+    --ink: #E6E9E3;
+    --ink-2: #A2AAA4;
+    --ink-3: #79817B;
+    --rule: #2E342F;
+    --rule-strong: #3E453F;
+    --accent: #C6AC63;
+    --accent-wash: #2A2820;
+    --sev-steady: #2A9E71;
+    --sev-elevated: #C89A2C;
+    --sev-acute: #D9503F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.62;
+    margin: 0;
+    padding: 0 20px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    padding: 56px 0 28px;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .stamp {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+  }
+
+  .stamp b { color: var(--accent); font-weight: 600; }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(34px, 6.2vw, 54px);
+    line-height: 1.04;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-family: var(--serif);
+    font-size: clamp(17px, 2.4vw, 20px);
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin: 0;
+    max-width: 62ch;
+  }
+
+  /* ---------- verdict ---------- */
+
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+    border-top: 3px solid var(--accent);
+    padding: 24px 26px;
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .verdict h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .verdict p {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.58;
+  }
+
+  .verdict p + p { color: var(--ink-2); font-size: 15.5px; }
+
+  /* ---------- sections ---------- */
+
+  section { margin-top: 60px; }
+
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    border-bottom: 1px solid var(--ink);
+    padding-bottom: 8px;
+    margin-bottom: 26px;
+  }
+
+  .sec-head h2 {
+    font-family: var(--serif);
+    font-size: 25px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+    flex: 1;
+  }
+
+  .sec-head .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+
+  p { max-width: 68ch; }
+
+  .lede { color: var(--ink-2); margin: 0 0 26px; }
+
+  /* ---------- topline list ---------- */
+
+  ul.topline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  ul.topline li {
+    display: grid;
+    grid-template-columns: 68px 1fr;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+
+  ul.topline .tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 3px;
+  }
+
+  ul.topline strong { font-weight: 600; }
+  ul.topline span.txt { color: var(--ink-2); }
+  ul.topline span.txt strong { color: var(--ink); }
+
+  /* ---------- signal ledger ---------- */
+
+  .ledger {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--rule-strong);
+  }
+
+  .sig {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 4px 20px;
+    padding: 22px 0 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .grade {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding-top: 4px;
+  }
+
+  .grade .letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid currentColor;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .g-a { color: var(--sev-acute); }
+  .g-b { color: var(--sev-elevated); }
+  .g-c { color: var(--ink-3); }
+
+  .sig-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+  .sig h3 {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .sig p { margin: 0; font-size: 15.5px; }
+  .sig p.why { color: var(--ink-2); }
+  .sig p.why b { color: var(--ink); font-weight: 600; }
+
+  .caveat {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    background: var(--surface-2);
+    border-left: 2px solid var(--rule-strong);
+    padding: 9px 14px;
+    margin: 0;
+  }
+
+  .caveat b {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .srcs {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.8;
+    color: var(--ink-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { color: var(--ink); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- gap table ---------- */
+
+  .tablewrap { overflow-x: auto; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 560px;
+    font-size: 15px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 12px 14px 12px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  td.who { width: 34%; font-weight: 600; }
+  td.cov { width: 20%; font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+
+  /* ---------- panic meter ---------- */
+
+  .meter-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px 28px;
+    background: var(--surface);
+    border: 1px solid var(--rule-strong);
+    padding: 22px 24px;
+    margin-bottom: 8px;
+  }
+
+  .composite {
+    font-family: var(--mono);
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--sev-elevated);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .composite small { font-size: 20px; color: var(--ink-3); font-weight: 400; }
+
+  .composite-label { display: flex; flex-direction: column; gap: 3px; }
+
+  .composite-label .band {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 600;
+  }
+
+  .composite-label .sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .gauge { display: flex; flex-direction: column; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 42px;
+    gap: 4px 14px;
+    padding: 16px 0 15px;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+
+  .row .name {
+    font-weight: 600;
+    font-size: 15.5px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .row .state {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .s-steady { color: var(--sev-steady); }
+  .s-elevated { color: var(--sev-elevated); }
+  .s-acute { color: var(--sev-acute); }
+
+  .row .score {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--ink-2);
+    padding-top: 1px;
+  }
+
+  .track {
+    grid-column: 1 / -1;
+    height: 9px;
+    background: var(--surface-2);
+    margin: 9px 0 9px;
+    position: relative;
+  }
+
+  .fill {
+    height: 100%;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .row .detail {
+    grid-column: 1 / -1;
+    font-size: 14.5px;
+    color: var(--ink-2);
+    margin: 0;
+    max-width: 72ch;
+  }
+
+  /* ---------- falsifier / method ---------- */
+
+  ol.falsify {
+    margin: 0;
+    padding-left: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 68ch;
+  }
+
+  ol.falsify li { padding-left: 4px; }
+  ol.falsify::marker { font-family: var(--mono); }
+
+  .method {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 14.5px;
+    color: var(--ink-2);
+  }
+
+  .method h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .method p { margin: 0; max-width: 72ch; }
+  .method p b { color: var(--ink); }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+  }
+
+  @media (max-width: 620px) {
+    .sig { grid-template-columns: 1fr; gap: 12px; }
+    .grade { flex-direction: row; align-items: center; gap: 12px; padding-top: 0; }
+    ul.topline li { grid-template-columns: 1fr; gap: 3px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="stamp">
+      <span>Unusual Wealth Activity</span>
+      <span>Page 001</span>
+      <span>Scan window: 17 Aug 2026</span>
+      <span><b>Pattern found</b></span>
+    </div>
+    <h1>Everyone is heading for the exit at once, and nobody is being quiet about it</h1>
+    <p class="standfirst">A scan for evidence that wealthy individuals and institutions hold private knowledge of an undisclosed coming event. What it found instead was a very large, very public, very well-documented defensive crouch.</p>
+  </header>
+
+  <div class="verdict">
+    <h2>Assessment</h2>
+    <p>No signal in this scan supports the presence of secret foreknowledge. Every large repositioning found is disclosed, regulator-filed, or survey-reported — and the risks being hedged against are the ones already on the front page.</p>
+    <p>The finding that <em>is</em> real is the breadth: central banks, family offices, corporate insiders, Berkshire, and private-credit investors are all reducing risk simultaneously, and several of those channels are at record or near-record levels in their own histories. That is a coordination worth watching. It is not a conspiracy — it is the same public information being read the same way by many people at once.</p>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>Main topics</h2>
+      <span class="count">Summary</span>
+    </div>
+    <ul class="topline">
+      <li><span class="tag">Selling</span><span class="txt"><strong>Corporate insiders sold $77.6B in H1 2026</strong> — second-fastest pace in 20+ years, up 20% year over year</span></li>
+      <li><span class="tag">Cash</span><span class="txt"><strong>Berkshire at a record $397B</strong> in cash and T-bills, a net seller of equities for three straight years</span></li>
+      <li><span class="tag">Gold</span><span class="txt"><strong>Central banks bought a record 289 tonnes in Q2</strong> while gold posted its steepest quarterly fall in a decade — price-insensitive buying</span></li>
+      <li><span class="tag">Rotation</span><span class="txt"><strong>60% of family offices are changing strategic allocation</strong> — the largest share in the survey's history, top concern: major geopolitical conflict</span></li>
+      <li><span class="tag">Exits</span><span class="txt"><strong>The four largest private-credit managers are gating redemptions</strong> — $4.6B of withdrawal requests blocked in Q1 alone</span></li>
+      <li><span class="tag">Doors</span><span class="txt"><strong>New Zealand golden-visa applications up roughly 6× </strong>— about 40% of the total from wealthy Americans</span></li>
+      <li><span class="tag">Gap</span><span class="txt"><strong>An internal Treasury draft calls AI a dot-com analogue</strong> while the department's public line stays bullish</span></li>
+      <li><span class="tag">Noise</span><span class="txt"><strong>The billionaire-bunker story is recycled</strong> — 2011–2024 reporting re-dated, no new 2026 construction data</span></li>
+      <li><span class="tag">Meter</span><span class="txt"><strong>Panic meter: 7.3 / 10</strong> — acute strain across fiscal, monetary, and cohesion indicators; not collapse</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Signals</h2>
+      <span class="count">12 · graded A–C</span>
+    </div>
+    <p class="lede">Grade reflects how well the claim survives checking, not how alarming it sounds. <strong>A</strong> — documented in filings, official surveys, or major-wire reporting, and genuinely unusual against its own history. <strong>B</strong> — real but ambiguous, or sourced to outlets with a stake in the conclusion. <strong>C</strong> — recycled, explained by something mundane, or actively misleading.</p>
+
+    <div class="ledger">
+
+      <article class="sig">
+        <div class="grade g-a"><span class="letter">A</span><span>Insider flow</span></div>
+        <div class="sig-body">
+          <h3>Executives are selling at the second-fastest pace in more than twenty years</h3>
+          <p>Corporate insiders sold $77.6 billion of stock in the first half of 2026, up 20% year over year, per EPFR Global Market Intelligence. Only 2021 — peak stimulus — was more intense. August has continued the run: CoreWeave's CEO sold ~$27.4M on 11 August; DST Global sold ~$33.4M of Chime across 11–12 August.</p>
+          <p class="why"><b>Why it is unusual:</b> the people with the most complete internal picture of their own companies are converting equity to cash at a rate seen once in two decades, and doing it into a market that has not broken.</p>
+          <p class="caveat"><b>Discount for</b>Much of this is pre-scheduled 10b5-1 selling and is concentrated in AI-linked names whose share prices are simply very high. Aggregate insider selling has a poor record as a market-timing signal on its own.</p>
+          <div class="srcs">
+            <a href="https://www.bloomberg.com/news/articles/2026-07-17/us-corporate-insiders-are-selling-stocks-at-a-near-record-pace">Bloomberg</a>
+            <a href="https://us.trendlyne.com/us/equity/group-insider-trading/">Trendlyne filings tracker</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-a"><span class="letter">A</span><span>Dry powder</span></div>
+        <div class="sig-body">
+          <h3>Berkshire is sitting on a record $397 billion and will not deploy it</h3>
+          <p>As of 31 March 2026, Berkshire held a record $397B in cash and short-term Treasuries, past the previous $373B high. It sold $24.09B of equities in Q1 and bought only $15.94B — extending a net-selling streak past three years. The pile earns roughly $12B a year in interest at ~3.7% bill yields.</p>
+          <p class="why"><b>Why it is unusual:</b> this is the largest corporate cash position ever assembled, held by the investor most publicly committed to being fully invested, sustained across three years rather than a quarter.</p>
+          <p class="caveat"><b>Discount for</b>Berkshire's size limits its opportunity set — few acquisitions are big enough to matter. Bill yields near 3.7% make waiting cheap. Buffett has declined to attribute the cash to any market forecast.</p>
+          <div class="srcs">
+            <a href="https://finance.yahoo.com/markets/stocks/articles/buffetts-berkshire-hathaway-holds-record-114500562.html">Yahoo Finance</a>
+            <a href="https://www.thestreet.com/investing/buffetts-400-billion-war-chest-stays-on-the-sidelines">TheStreet</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-a"><span class="letter">A</span><span>Reserves</span></div>
+        <div class="sig-body">
+          <h3>Central banks bought a record 289 tonnes of gold into the steepest price drop in a decade</h3>
+          <p>Q2 2026 set a record for official-sector gold buying at 289 tonnes, following 244 tonnes in Q1 — and it happened while gold posted its worst quarterly decline in ten years. The World Gold Council's 2026 survey has 45% of central banks planning to add more in the next twelve months, up from 43% in 2025 and 29% two years ago. 74% expect the dollar's reserve share to fall over five years.</p>
+          <p class="why"><b>Why it is unusual:</b> buying <em>into</em> a falling market is the tell. Price-insensitive accumulation means the buyer is not trading gold, it is reallocating away from something else — and the something else is dollar-denominated reserves that can be frozen by political decision, as Russia's ~$300B was in 2022.</p>
+          <p class="caveat"><b>Discount for</b>This trend is four years old and averages ~1,000 tonnes a year. It is a slow structural shift, not a new alarm. Note also that much of the loudest commentary on it is published by bullion dealers.</p>
+          <div class="srcs">
+            <a href="https://goldsilver.com/industry-news/goldsilver-news/central-bank-gold-buying-record-q2-2026/">Q2 data</a>
+            <a href="https://cryptobriefing.com/central-banks-gold-purchases-dollar-decline-2026/">WGC survey coverage</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-a"><span class="letter">A</span><span>Allocation</span></div>
+        <div class="sig-body">
+          <h3>Family offices are rewriting allocations at the highest rate ever recorded</h3>
+          <p>UBS surveyed 307 family offices averaging $2.7B net worth. Sixty percent plan to change strategic asset allocation in the next twelve months — the largest share in the survey's history. Among those making active changes, real estate falls from ~11% to 8% and private equity from ~21% to 18%, rotating into private credit, hedge funds, secondaries, infrastructure, and more gold. Major geopolitical conflict is the top-ranked concern over both one- and five-year horizons.</p>
+          <p class="why"><b>Why it is unusual:</b> the direction of travel is toward shorter duration and faster exits — from illiquid ten-year commitments into things that can be sold. A record share of the world's largest private pools shortening duration at the same moment is a coordination signal even without any coordination.</p>
+          <p class="caveat"><b>Discount for</b>"Plan to change allocation" is intent, not action, and survey wording shifts year to year. Some of the rotation is a straightforward response to real estate marks and PE distribution droughts, not to geopolitics.</p>
+          <div class="srcs">
+            <a href="https://www.ubs.com/global/en/media/display-page-ndp/en-20260528-global-family-office-report-2026.html">UBS 2026 report</a>
+            <a href="https://ioandc.com/family-offices-repositioning-for-the-new-financial-year/">Investor Strategy News</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-a"><span class="letter">A</span><span>Liquidity</span></div>
+        <div class="sig-body">
+          <h3>The four biggest private-credit managers are all limiting withdrawals</h3>
+          <p>Blackstone gated redemptions on BCRED, its $79B flagship, in June 2026. Apollo, Ares, and Blue Owl are all capping withdrawals too. Investors requested more than $20.8B from the largest semi-liquid private-credit funds in Q1; managers met barely half. Across the BDC universe, $13.9B was requested and $4.6B gated. S&P Global projects AI-linked debt coming due jumps from $56.6B in 2026 to $215B in 2028.</p>
+          <p class="why"><b>Why it is unusual:</b> this is the one signal where sophisticated money is visibly trying to <em>leave</em> and being told it cannot. Gates are contractual and orderly — but they convert a liquidity preference into a queue, and queues are where confidence gaps become price gaps.</p>
+          <p class="caveat"><b>Discount for</b>Gates are a designed feature of these vehicles, not a default event, and they are working as intended. Golub's July window saw requests fall to 4.8% and honored 100% of them — the pressure is uneven, not universal.</p>
+          <div class="srcs">
+            <a href="https://www.pimco.com/us/en/insights/the-credit-market-lens-what-bdc-redemptions-and-nav-pressures-mean-for-investors">PIMCO</a>
+            <a href="https://icapital.com/insights/investment-market-strategy/bdc-redemptions-looking-beyond-the-gates/">iCapital</a>
+            <a href="https://www.sec.gov/Archives/edgar/data/0001930087/000193008726000088/gcredshareholderletter.htm">Golub 8-K</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-a"><span class="letter">A</span><span>Mobility</span></div>
+        <div class="sig-body">
+          <h3>Wealthy Americans are buying New Zealand residency at roughly six times the prior rate</h3>
+          <p>More than 700 wealthy foreign nationals applied for New Zealand's golden visa in fourteen months, against 115 in the preceding three years. Of 1,833 total applicants, about 617 — nearly 40% — are wealthy Americans, with Californians heavily represented. Separately, Henley projects roughly 165,000 millionaire relocations globally in 2026 after a record ~142,000 in 2025, with the UK losing a projected 16,500.</p>
+          <p class="why"><b>Why it is unusual:</b> residency is a slow, expensive, deliberate purchase. A six-fold jump concentrated in one nationality is a durable statement about where people expect to want to be.</p>
+          <p class="caveat"><b>Discount for</b>New Zealand cut the investment floor from $15M to $5M in April 2025, dropped the English-language requirement, and reduced required days in-country. A large share of the surge is simply a cheaper product finding its market. Henley has also stopped publishing precise counts and changed methodology after criticism.</p>
+          <div class="srcs">
+            <a href="https://www.foxbusiness.com/economy/wealthy-americans-look-new-zealand-demand-golden-visas-booms">Fox Business</a>
+            <a href="https://www.henleyglobal.com/newsroom/press-releases/henley-private-wealth-migration-report-2026">Henley 2026</a>
+            <a href="https://foalmanac.com/blog/henley-wealth-migration-2026-methodology">Methodology critique</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-b"><span class="letter">B</span><span>Fragility</span></div>
+        <div class="sig-body">
+          <h3>A $45 billion fund became a $10 billion fund in about a month</h3>
+          <p>Leopold Aschenbrenner's Situational Awareness returned 439% through June on concentrated, ~4× levered long positions in AI hardware — SK Hynix, Nebius, Micron. When semis fell in late July, prime brokers at Goldman, JPMorgan, and Bank of America issued margin calls. On 30 July the fund sold its entire public book, longs and shorts, to Citadel in a single pre-open block at roughly a 10% discount — about $16B, one of the largest rushed equity transactions in Wall Street history. The fund lost ~67% in July.</p>
+          <p class="why"><b>Why it matters, and why it is not what it looks like:</b> this is a <em>forced</em> liquidation — the precise opposite of acting on foreknowledge. Its signal value is structural: it shows how fast a concentrated, levered AI book unwinds, and that a single buyer was able to absorb $16B at a 10% discount in one trade.</p>
+          <p class="caveat"><b>Discount for</b>Nothing here implies Citadel knew anything. Buying a distressed block at a discount is the normal business of a large market maker, and the trade was reported openly within a day.</p>
+          <div class="srcs">
+            <a href="https://www.cnbc.com/2026/07/31/why-leopold-aschenbrenner-situational-awareness-hedge-fund-imploded.html">CNBC</a>
+            <a href="https://www.bloomberg.com/opinion/articles/2026-08-03/situational-awareness-439-return-should-have-been-a-warning">Bloomberg Opinion</a>
+            <a href="https://spotgamma.com/situational-awareness-unwind-margin-call-ai/">SpotGamma anatomy</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-b"><span class="letter">B</span><span>Disclosure gap</span></div>
+        <div class="sig-body">
+          <h3>Treasury's own analysts wrote an AI-bubble warning the department will not publish</h3>
+          <p>NOTUS obtained a completed internal Treasury draft, prepared for Secretary Bessent, Fed Chair Warsh, and financial regulators, finding AI firms "more deeply entrenched in the U.S. economy than their dotcom predecessors" and warning that a downturn would hit stock markets, private credit, data-center financiers, cloud providers, chipmakers, and utilities. It has sat completed for weeks awaiting approval. Treasury called the findings "unvetted" and restated that AI "will be a key driver of America's new Golden Age" — while Bessent publicly praised "$750 billion in AI buildout this year."</p>
+          <p class="why"><b>Why it is unusual:</b> this is the closest thing the scan found to an information asymmetry — a documented divergence between what a government's analysts assess privately and what it says publicly. Anyone reading NOTUS on 6 July knew something the market's official messaging was not saying.</p>
+          <p class="caveat"><b>Discount for</b>A draft staff paper is not policy, and dissenting internal analysis is routine and healthy. It has now been public for six weeks. It is a candid assessment, not a secret.</p>
+          <div class="srcs">
+            <a href="https://www.notus.org/economy/treasury-internal-report-warning-dangers-ai-bubble">NOTUS original</a>
+            <a href="https://www.pymnts.com/news/artificial-intelligence/2026/us-treasury-report-warns-ai-bubble-could-trigger-economic-shockwaves/">PYMNTS</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-b"><span class="letter">B</span><span>Plumbing</span></div>
+        <div class="sig-body">
+          <h3>The bad AI loans may end up in life insurers, backstopped by state guaranty funds</h3>
+          <p>Private-credit firms are key owners of AI-related assets, and many of their private-equity parents also own life insurers — which can serve as destinations for loans that would be hard to place elsewhere, and which are ultimately backed by state guaranty funds. Roughly 34% of global fund managers now name AI hyperscaler spending as the most likely source of the next systemic credit event. Circular financing is visible in the open: Nvidia has guaranteed it will buy capacity CoreWeave cannot sell through 2032.</p>
+          <p class="why"><b>Why it is unusual:</b> this is the specific transmission path from an AI correction to ordinary households, and it is discussed in trade and policy press while mainstream coverage stays on valuations and chip demand.</p>
+          <p class="caveat"><b>Discount for</b>The strongest version of this argument comes from an outlet with an explicit editorial position on private equity. The mechanism is plausible and partly documented; the scale of insurer exposure is contested and not established here.</p>
+          <div class="srcs">
+            <a href="https://prospect.org/2026/08/03/ai-bailout-could-be-baked-into-bubble-private-equity-life-insurers-loans/">American Prospect</a>
+            <a href="https://www.cnbc.com/2026/04/06/ai-data-centers-financing-insurance-deals-gpu-debt.html">CNBC</a>
+            <a href="https://www.fxempire.com/forecasts/article/ai-market-faces-2026-test-as-credit-stress-and-valuations-peak-1569164">FXEmpire</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-c"><span class="letter">C</span><span>Recycled</span></div>
+        <div class="sig-body">
+          <h3>The billionaire-bunker story contains no 2026 information</h3>
+          <p>Current bunker coverage is built almost entirely from old material: Thiel's New Zealand citizenship (2011), Hoffman's "apocalypse insurance" quote to The New Yorker (2017), Vivos's 300-person South Island shelter (2020), Rising S's roughly ten NZ deliveries "over the past few years," Zuckerberg's Kauai land (2014–2025). Nothing in the current wave reports new construction, new permits, or new purchases dated 2026.</p>
+          <p class="why"><b>Why it is being flagged as noise:</b> this material recirculates on an annual cycle with fresh headlines and unchanged facts. Treating it as a current signal is how a monitoring routine manufactures a pattern that is not there.</p>
+          <div class="srcs">
+            <a href="https://www.globalmigrationsolutions.com/bunkers-under-the-paddocks-uncovering-the-truth-about-queenstowns-billionaire-doomsday-preppers/">Queenstown fact-check</a>
+            <a href="https://theconversation.com/billionaires-are-building-bunkers-and-buying-islands-but-are-they-prepping-for-the-apocalypse-or-pioneering-a-new-feudalism-223987">The Conversation</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-c"><span class="letter">C</span><span>Non-event</span></div>
+        <div class="sig-body">
+          <h3>Bitcoin whale wake-ups are running at half of last year's volume</h3>
+          <p>A dormant wallet moved 16,400 BTC (~$1.04B) on 3 August after seven months idle; a 12.5-year-dormant wallet moved 26.96 BTC on 10 August. Both went to new wallets, not exchanges. Galaxy Research reports the "great redistribution" of old bitcoin is largely complete and that 2026's woken-coin volume is less than half of last year's.</p>
+          <p class="why"><b>Why it is being flagged as noise:</b> the aggregate trend is <em>down</em>. Individual wake-ups get headlines because they are legible, not because they are informative — custody upgrades, estate planning, and rebalancing are indistinguishable from exit on-chain.</p>
+          <div class="srcs">
+            <a href="https://en.cryptonomist.ch/2026/08/03/large-bitcoin-transaction-custody-shift/">Cryptonomist</a>
+            <a href="https://decrypt.co/375266/dormant-bitcoin-wallet-millions-wakes-up-12-years">Decrypt</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="sig">
+        <div class="grade g-c"><span class="letter">C</span><span>Filtered</span></div>
+        <div class="sig-body">
+          <h3>The "cryptic billionaire warnings" are all on the record, in public, by design</h3>
+          <p>Dimon: "It's getting close to as good as it gets" — said on a Q2 earnings call. Dalio: AI is in "the early stages of a bubble" — said in interviews. Buffett: markets show "far more casino-like behavior than they did when I was young" — written in a shareholder letter. Khosla's dystopia caveat came in a public exchange about Musk's post-money thesis.</p>
+          <p class="why"><b>Why it is being flagged as filtered:</b> the scan brief asks for cryptic, ominous, or grapevine-sourced statements. These are the opposite — deliberate, attributed, quarterly-scheduled public warnings from people whose job includes issuing them. Also filtered from this report: gold-dealer content marketing pushing $6,000 price targets, and prediction-market moves, which Bloomberg has separately documented as vulnerable to genuine insider trading.</p>
+          <div class="srcs">
+            <a href="https://www.fool.com/investing/2026/07/25/jpmorgan-ceo-jamie-dimon-just-sent-an-ominous-warn/">Dimon</a>
+            <a href="https://finance.yahoo.com/news/ray-dalio-says-ai-early-190751085.html">Dalio</a>
+            <a href="https://www.bloomberg.com/graphics/2026-polymarket-traders-who-knew-the-future/">Bloomberg on prediction-market insiders</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Coverage gaps</h2>
+      <span class="count">Institutional vs. mainstream</span>
+    </div>
+    <p class="lede">The brief asks what wealthy and institutional channels discuss that mainstream media does not. The honest answer is: less than expected. The largest risks are saturated in mainstream coverage. The genuine gaps are narrow, technical, and mostly about plumbing.</p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Topic</th><th>Mainstream</th><th>Where it lives instead</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="who">Hormuz closure, oil, Iran</td><td class="cov">Saturated</td><td>Front page everywhere — no gap</td></tr>
+          <tr><td class="who">AI valuations, chip demand</td><td class="cov">Saturated</td><td>No gap</td></tr>
+          <tr><td class="who">Fed independence, Warsh succession</td><td class="cov">Covered</td><td>No gap</td></tr>
+          <tr><td class="who">Private credit → life insurer → state guaranty fund path</td><td class="cov">Thin</td><td>Policy press, one outlet with a stated position</td></tr>
+          <tr><td class="who">BDC gating mechanics and NAV dispersion between managers</td><td class="cov">Thin</td><td>PIMCO, iCapital, SEC 8-K filings</td></tr>
+          <tr><td class="who">Treasury's internal AI-bubble draft</td><td class="cov">One outlet</td><td>NOTUS scoop, 6 July, lightly followed</td></tr>
+          <tr><td class="who">2028 refinancing wall: $56.6B → $215B</td><td class="cov">Thin</td><td>S&amp;P Global, credit-desk research</td></tr>
+          <tr><td class="who">34% of fund managers name AI capex as next systemic credit event</td><td class="cov">Thin</td><td>Survey data, rarely headlined</td></tr>
+          <tr><td class="who">COMEX physical drawdown, London→Beijing vault flows</td><td class="cov">Absent</td><td>Bullion-industry press — <strong>treat as unverified</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Panic meter</h2>
+      <span class="count">Empire-in-decline indicators</span>
+    </div>
+    <p class="lede">Nine conditions, scored 0–10, each anchored to a specific published measurement. This is an editorial index, not an instrument — the weights are a judgment call and the composite is a simple mean. Read the underlying numbers, not the score.</p>
+
+    <div class="meter-head">
+      <div class="composite">7.3<small> / 10</small></div>
+      <div class="composite-label">
+        <span class="band">Acute strain, not collapse</span>
+        <span class="sub">Composite · mean of 9 indicators · 17 Aug 2026</span>
+      </div>
+    </div>
+
+    <div class="gauge">
+
+      <div class="row">
+        <div class="name">Fiscal load <span class="state s-acute">Acute</span></div>
+        <div class="score">9.0</div>
+        <div class="track"><div class="fill" style="width:90%;background:var(--sev-acute)"></div></div>
+        <p class="detail">Interest consumed a record ~19% of federal revenue in FY2025 and reaches $1.16T in FY2026 — more than defense ($912B). CBO projects $2.1T annually by 2036, roughly 30% of revenue. A $42B 10-year auction cleared at 4.683%, the richest yield since the eve of the global financial crisis.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Monetary credibility <span class="state s-acute">Acute</span></div>
+        <div class="score">8.0</div>
+        <div class="track"><div class="fill" style="width:80%;background:var(--sev-acute)"></div></div>
+        <p class="detail">Kevin Warsh was confirmed Fed chair on 13 May and took office 22 May, succeeding Powell. Powell disclosed grand jury subpoenas from the Justice Department; a judge quashed them, finding they were meant to "harass" him into lowering rates or resigning. Precious metals hit records on independence fears. The institution held — but visibly, and at cost.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">External conflict <span class="state s-acute">Acute</span></div>
+        <div class="score">8.0</div>
+        <div class="track"><div class="fill" style="width:80%;background:var(--sev-acute)"></div></div>
+        <p class="detail">The 60-day US–Iran ceasefire expires today with no deal in sight. Five cargo ships transited Hormuz on Saturday and none on Sunday, against a normal ~130 per day — traffic down ~90% since the war began 28 February. Roughly a fifth of the world's oil moves through that strait. Trump said the US would "bomb" Oman if it "gets in the way."</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Domestic cohesion <span class="state s-acute">Acute</span></div>
+        <div class="score">8.0</div>
+        <div class="track"><div class="fill" style="width:80%;background:var(--sev-acute)"></div></div>
+        <p class="detail">Federal forces and National Guard have been deployed to Minneapolis, Chicago, Los Angeles, Portland, Charlotte, and Washington, frequently over the objection of local officials and at times local police. Federal immigration agents fatally shot two people in Minnesota in January. Analysts have raised concerns about Guard presence around the November midterms.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Reserve-currency standing <span class="state s-elevated">Elevated</span></div>
+        <div class="score">7.0</div>
+        <div class="track"><div class="fill" style="width:70%;background:var(--sev-elevated)"></div></div>
+        <p class="detail">Record official-sector gold buying continuing through a falling gold price. 74% of surveyed institutions expect the dollar's share of global reserves to decline over five years; 45% of central banks plan to add gold in the next twelve months. Japan and China, the two largest foreign holders of US debt, are publicly uneasy.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Financial fragility <span class="state s-elevated">Elevated</span></div>
+        <div class="score">7.0</div>
+        <div class="track"><div class="fill" style="width:70%;background:var(--sev-elevated)"></div></div>
+        <p class="detail">A $45B fund fell to ~$10B in about a month at 4× leverage. The four largest private-credit managers are gating redemptions. AI-linked debt maturities rise from $56.6B in 2026 to $215B in 2028. The system absorbed the July shock without contagion — which is the argument for 7 rather than 9.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Household stress <span class="state s-elevated">Elevated</span></div>
+        <div class="score">7.0</div>
+        <div class="track"><div class="fill" style="width:70%;background:var(--sev-elevated)"></div></div>
+        <p class="detail">More Americans are food-insecure now than during the pandemic, per a New York Fed survey. Mortgages 90+ days past due or in foreclosure rose for a fourth straight quarter; single-family delinquency is 4.37%, up 44bp year over year. Credit-card delinquencies are at highs not seen in over a decade. 83% of consumers rank inflation in their top three household worries.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Risk-transfer withdrawal <span class="state s-elevated">Elevated</span></div>
+        <div class="score">6.0</div>
+        <div class="track"><div class="fill" style="width:60%;background:var(--sev-elevated)"></div></div>
+        <p class="detail">Insurers are now redrawing risk maps ZIP code by ZIP code rather than by region. AIG, Allstate, Chubb, Farmers, Liberty Mutual, Nationwide, State Farm, Travelers, and USAA have limited or withdrawn home coverage in California, with parallel retreats in Florida, Texas, and North Carolina. One in thirteen homeowners is uninsured — roughly $1.6T of unprotected market value. Insurance is the market's own forward risk assessment, and it is stepping back.</p>
+      </div>
+
+      <div class="row">
+        <div class="name">Elite exit <span class="state s-elevated">Elevated</span></div>
+        <div class="score">6.0</div>
+        <div class="track"><div class="fill" style="width:60%;background:var(--sev-elevated)"></div></div>
+        <p class="detail">Roughly 142,000 millionaires relocated across borders in 2025, a record, with ~165,000 projected for 2026. The UK faces the largest single-country outflow ever projected at −16,500. New Zealand's golden-visa pipeline is ~40% wealthy Americans. Scored moderately because tax policy — Britain's non-dom reform above all — explains most of the movement without any recourse to catastrophe.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>What would change this assessment</h2>
+      <span class="count">Falsifiers</span>
+    </div>
+    <p class="lede">Stated in advance so the next scan can check them rather than reinterpret the same evidence. Any one of these would be materially harder to explain with public information alone.</p>
+    <ol class="falsify">
+      <li>Concentrated, unhedged put buying or tail-risk positioning in a sector with no news flow attached to it.</li>
+      <li>Simultaneous 13F exits by unrelated managers into the same non-obvious names, with no shared thesis published anywhere.</li>
+      <li>Insider selling rotating out of AI names and into defensives, staples, or utilities — a shift in <em>composition</em>, not just volume.</li>
+      <li>Physical-asset or land purchases clustering in one specific geography with no tax, residency, or policy change to explain it.</li>
+      <li>New shelter or hardened-facility <em>construction permits</em> filed in 2026, as opposed to features recycling pre-2025 reporting.</li>
+      <li>Officials, executives, or their family trusts liquidating ahead of a disclosure that later proves material — the pattern that actually constitutes foreknowledge.</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Method and limits</h2>
+      <span class="count">Read this</span>
+    </div>
+    <div class="method">
+      <h3>How this page was built</h3>
+      <p>Open-web search across wire services, financial trade press, SEC filings, official surveys, and niche outlets, conducted 17 August 2026. Everything here is public. No private forums, paid data, or non-public communications were accessed.</p>
+      <p><b>What was deliberately excluded:</b> promotional content from bullion dealers and precious-metals sellers, which supplies a large share of de-dollarization commentary and has a direct financial interest in the conclusion; prediction-market price moves, which Bloomberg has documented as vulnerable to genuine insider trading; and political statements aimed at moving specific securities.</p>
+      <p><b>The central limitation:</b> a scan of public sources cannot, even in principle, detect private foreknowledge. It can only detect the <em>footprints</em> of private foreknowledge — unexplained positioning, movement without a public reason. This scan found no such footprints. It found a great deal of well-explained positioning, which is a different thing and should not be reported as the same thing.</p>
+      <p><b>On the panic meter:</b> the indicator scores are editorial judgments anchored to published measurements. Two careful analysts would score these differently by a point or two. The composite is a mean with no weighting and should be treated as a summary of the nine rows, not as a measurement in its own right.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Unusual Wealth Activity · Page 001</span>
+    <span>Compiled 17 Aug 2026</span>
+    <span>All sources public</span>
+  </footer>
+
+</div>
+
