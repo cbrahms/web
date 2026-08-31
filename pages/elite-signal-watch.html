@@ -1,0 +1,593 @@
+<title>Elite Signal Watch</title>
+<style>
+  /* ── tokens ── */
+  :root {
+    --bg:           #F3F4F8;
+    --surface:      #FFFFFF;
+    --surface-2:    #ECEDF3;
+    --border:       #D6D8E4;
+    --text:         #131722;
+    --muted:        #656D84;
+    --subtle:       #9299AB;
+    --accent:       #C8A94A;
+    --accent-dim:   #F5EDD4;
+    --tier-known:   #3A9C7B;
+    --tier-known-bg:#E4F5EF;
+    --tier-caution: #D0763A;
+    --tier-caut-bg: #FAEEE5;
+    --tier-alert:   #B94040;
+    --tier-alert-bg:#F7E8E8;
+    --tier-debunk:  #6A738C;
+    --tier-debk-bg: #EAECF1;
+    --mono: 'SF Mono', 'Cascadia Code', 'Fira Mono', Consolas, 'Courier New', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:           #0C101A;
+      --surface:      #131825;
+      --surface-2:    #1A2030;
+      --border:       #252E44;
+      --text:         #DDE2EF;
+      --muted:        #8891A8;
+      --subtle:       #545E74;
+      --accent:       #C8A94A;
+      --accent-dim:   #2A2410;
+      --tier-known:   #4BB896;
+      --tier-known-bg:#0D2B22;
+      --tier-caution: #E08042;
+      --tier-caut-bg: #291508;
+      --tier-alert:   #D05050;
+      --tier-alert-bg:#280C0C;
+      --tier-debunk:  #7A84A0;
+      --tier-debk-bg: #1A1E2C;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg:           #0C101A;
+    --surface:      #131825;
+    --surface-2:    #1A2030;
+    --border:       #252E44;
+    --text:         #DDE2EF;
+    --muted:        #8891A8;
+    --subtle:       #545E74;
+    --accent:       #C8A94A;
+    --accent-dim:   #2A2410;
+    --tier-known:   #4BB896;
+    --tier-known-bg:#0D2B22;
+    --tier-caution: #E08042;
+    --tier-caut-bg: #291508;
+    --tier-alert:   #D05050;
+    --tier-alert-bg:#280C0C;
+    --tier-debunk:  #7A84A0;
+    --tier-debk-bg: #1A1E2C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── classification bar ── */
+  .cls-bar {
+    background: var(--text);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+  .cls-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,.03) 2px,
+      rgba(255,255,255,.03) 4px
+    );
+    pointer-events: none;
+  }
+  .cls-bar .cls-label {
+    font-weight: 700;
+    letter-spacing: .2em;
+  }
+  .cls-bar .cls-run {
+    color: var(--accent);
+  }
+
+  /* ── main layout ── */
+  .shell {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ── header ── */
+  .page-header {
+    padding: 36px 0 28px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+  .page-header .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .page-header h1 {
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+    text-wrap: balance;
+    margin-bottom: 8px;
+  }
+  .page-header .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 580px;
+  }
+  .page-header .verdict-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    background: var(--tier-caut-bg);
+    color: var(--tier-caution);
+    border: 1px solid var(--tier-caution);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+  .verdict-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; }
+    50% { opacity:.3; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dot { animation: none; }
+  }
+
+  /* ── metric ribbon ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+  .metric-card .m-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    margin-bottom: 6px;
+  }
+  .metric-card .m-value {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--text);
+  }
+  .metric-card .m-value.accent { color: var(--accent); }
+  .metric-card .m-value.alert  { color: var(--tier-alert); }
+  .metric-card .m-value.caution { color: var(--tier-caution); }
+  .metric-card .m-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── section headings ── */
+  .section-head {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--subtle);
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── signal cards ── */
+  .signals {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .signal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left-width: 3px;
+    border-radius: 8px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px 16px;
+    align-items: start;
+  }
+  .signal-card.known   { border-left-color: var(--tier-known); }
+  .signal-card.caution { border-left-color: var(--tier-caution); }
+  .signal-card.alert   { border-left-color: var(--tier-alert); }
+  .signal-card.debunk  { border-left-color: var(--tier-debunk); opacity: .8; }
+
+  .tier-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    align-self: start;
+    margin-top: 2px;
+  }
+  .tier-badge.known   { background: var(--tier-known-bg); color: var(--tier-known); }
+  .tier-badge.caution { background: var(--tier-caut-bg);  color: var(--tier-caution); }
+  .tier-badge.alert   { background: var(--tier-alert-bg); color: var(--tier-alert); }
+  .tier-badge.debunk  { background: var(--tier-debk-bg);  color: var(--tier-debunk); }
+
+  .signal-body {}
+  .signal-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin-bottom: 5px;
+  }
+  .signal-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+  .signal-analyst {
+    font-size: 12.5px;
+    color: var(--text);
+    background: var(--surface-2);
+    border-left: 2px solid var(--accent);
+    padding: 6px 10px;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+  }
+  .signal-analyst strong { color: var(--accent); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 2px; font-weight: 700; }
+
+  .signal-meta {
+    text-align: right;
+    min-width: 100px;
+  }
+  .signal-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--subtle);
+    letter-spacing: .04em;
+  }
+  .signal-source {
+    margin-top: 4px;
+  }
+  .signal-source a {
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--mono);
+  }
+  .signal-source a:hover { text-decoration: underline; }
+
+  /* responsive: stack on small screens */
+  @media (max-width: 620px) {
+    .signal-card {
+      grid-template-columns: auto 1fr;
+    }
+    .signal-meta {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+
+  /* ── gap analysis ── */
+  .gap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 600px) {
+    .gap-grid { grid-template-columns: 1fr; }
+  }
+  .gap-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .gap-col h3 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gap-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .gap-col ul li {
+    font-size: 13.5px;
+    display: flex;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .gap-col ul li::before {
+    content: '—';
+    color: var(--subtle);
+    flex-shrink: 0;
+  }
+  .gap-col.mainstream ul li::before { color: var(--tier-known); }
+  .gap-col.gaps ul li::before { color: var(--tier-caution); }
+
+  /* ── verdict block ── */
+  .verdict-block {
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 22px;
+    margin-bottom: 32px;
+  }
+  .verdict-block h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .verdict-block p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .verdict-block p + p { margin-top: 8px; }
+
+  /* ── footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--subtle);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    letter-spacing: .04em;
+  }
+</style>
+
+<div class="cls-bar">
+  <span class="cls-label">Elite Signal Watch</span>
+  <span class="cls-run">Run: 2026-08-13 · Automated · No human review</span>
+  <span class="cls-label">Unclassified</span>
+</div>
+
+<div class="shell">
+
+  <header class="page-header">
+    <div class="eyebrow">Weekly Intelligence Brief · Ultra-Wealthy Behavior Signals</div>
+    <h1>No Hidden Catastrophe Signal Found —<br>Known War Explains Most Anomalies</h1>
+    <p class="subtitle">Eight signals reviewed. The 2026 Iran War (Feb 28) is the dominant explanatory context for unusual elite financial activity. Two secondary signals — AI threshold crossing and gold expansion to new sovereign buyers — fall outside that explanation and warrant continued watch.</p>
+    <div class="verdict-pill"><span class="dot"></span> Patterns Present · No Unknown Event Signal</div>
+  </header>
+
+  <!-- metric ribbon -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="m-label">Insider Sell/Buy Ratio H1 2026</div>
+      <div class="m-value alert">11:1</div>
+      <div class="m-sub">2nd-highest in 20+ years · $77.6B sold</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-label">Gold Price YoY Change</div>
+      <div class="m-value accent">+47%</div>
+      <div class="m-sub">Silver +130% · Record sovereign buying</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-label">New Central Bank Gold Buyers</div>
+      <div class="m-value caution">6</div>
+      <div class="m-sub">Guatemala, Indonesia, Malaysia, Cambodia, Uganda, Kenya</div>
+    </div>
+    <div class="metric-card">
+      <div class="m-label">AI Threshold Essay Views</div>
+      <div class="m-value accent">80M+</div>
+      <div class="m-sub">Matt Shumer · Feb 11 2026 · Fortune</div>
+    </div>
+  </div>
+
+  <!-- signals -->
+  <div class="section-head">Signal Log</div>
+  <div class="signals">
+
+    <div class="signal-card known">
+      <span class="tier-badge known">Context</span>
+      <div class="signal-body">
+        <div class="signal-title">2026 Iran War — The Dominant Explanatory Context</div>
+        <div class="signal-desc">On February 28, 2026, the US and Israel launched military strikes against Iran, targeting nuclear and ballistic missile sites and triggering the Strait of Hormuz crisis — described by the World Bank as the largest oil market shock in history. A ceasefire was declared April 8, but Iran continues attacking ships in the Strait as of August. Brent crude has traded above $100, now in the $80s–$90s.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>The majority of unusual financial behavior this cycle — insider selling, gold buying, bunker activity — is consistent with anticipated and ongoing Iran War disruption. This is now fully mainstream. It does not explain all signals.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">Feb 28 2026</div>
+        <div class="signal-source"><a href="https://www.britannica.com/event/2026-Iran-war" target="_blank">Britannica</a></div>
+      </div>
+    </div>
+
+    <div class="signal-card alert">
+      <span class="tier-badge alert">Alert</span>
+      <div class="signal-body">
+        <div class="signal-title">Corporate Insider Selling at Second-Highest Pace in 20+ Years</div>
+        <div class="signal-desc">US corporate insiders sold $77.6 billion of stock in H1 2026 — a 20% year-over-year increase and the highest pace since the 2021 pandemic frenzy. Insider purchases were just $6.9 billion, yielding an 11:1 sell-to-buy ratio. Reported by Bloomberg as executives wary of current valuations amid geopolitical risk and AI spending sustainability concerns.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>This is well above the historical norm and warrants flagging. While partially explained by Iran War uncertainty and stretched S&P 500 valuations (up 13% in 2026, 4th consecutive year of double-digit gains), an 11:1 ratio is an extreme reading. Buffett's record cash position at Berkshire reinforces the signal.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">H1 2026</div>
+        <div class="signal-source"><a href="https://finbold.com/corporate-insiders-dump-over-77-billion-of-stock-in-the-first-half-of-2026/" target="_blank">Finbold</a></div>
+      </div>
+    </div>
+
+    <div class="signal-card caution">
+      <span class="tier-badge caution">Unusual</span>
+      <div class="signal-body">
+        <div class="signal-title">Gold Buying Expands to First-Time Sovereign Buyers</div>
+        <div class="signal-desc">Central banks bought 244 tonnes of gold in Q1 2026 (+17% QoQ), marking the 10th time in 11 quarters they've exceeded 200 tonnes. What is genuinely unusual: the buyer list now includes Guatemala, Indonesia, Malaysia, Cambodia, Uganda, and Kenya — countries that have never bought gold before, or not in decades. The Bank of Uganda began active buying in March 2026; Kenya's governor publicly signaled similar intentions.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>The expansion to new nations is harder to explain solely by Iran War hedging. It suggests a broader, coordinated pivot away from dollar-denominated reserves — possibly tied to sanctions risk following the Iran asset freezes. This is the most structurally unusual signal in this cycle and is only partially covered in mainstream financial media.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">Q1 2026</div>
+        <div class="signal-source"><a href="https://goldsilver.com/industry-news/goldsilver-news/the-buyer-list-for-gold-just-got-longer-these-countries-have-never-bought-before/" target="_blank">GoldSilver</a></div>
+      </div>
+    </div>
+
+    <div class="signal-card caution">
+      <span class="tier-badge caution">Unusual</span>
+      <div class="signal-body">
+        <div class="signal-title">AI "Threshold Crossing" — Viral Essay, Insider Positioning Implied</div>
+        <div class="signal-desc">On February 5, 2026, OpenAI's GPT-5.3-Codex and Anthropic's Claude Opus 4.6 were released simultaneously. Matt Shumer's essay "Something big is happening in AI" went viral with 80M+ views on Feb 11. Anthropic co-founder Dario Amodei has publicly predicted AI will be "substantially smarter than almost all humans at almost all tasks" by 2026–2027. The essay described AI crossing into self-improving territory.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>While the essay itself is mainstream (Fortune, CNBC), the financial implications for labor markets and equity valuations are not. AI insiders at large labs may be anticipating capability jumps that would disrupt employment at scale faster than markets currently price. The extreme tech insider selling (see above) may partially reflect this positioning, not just Iran War risk.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">Feb 5–11 2026</div>
+        <div class="signal-source"><a href="https://fortune.com/2026/02/11/something-big-is-happening-ai-february-2020-moment-matt-shumer/" target="_blank">Fortune</a></div>
+      </div>
+    </div>
+
+    <div class="signal-card known">
+      <span class="tier-badge known">Ongoing</span>
+      <div class="signal-body">
+        <div class="signal-title">Elite Bunker and Relocation Activity — Accelerating Trend</div>
+        <div class="signal-desc">Zuckerberg moved to Florida's "Billionaire Bunker" (Indian Creek Island, $150–200M mansion) and is building a $100M compound in Hawaii with underground bunkers. Thiel maintains New Zealand property. Kushners reportedly considering remote island off Albania or Abu Dhabi. 44% of UBS billionaire clients under 55 have moved at least once in the past 12 months. Luxury bunker market now priced at $5M–$50M+ with 3–5 year lead times.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>This trend predates 2026 and is partly driven by Iran War anxiety, climate concerns, and tax optimization (Zuckerberg's Florida move is also tax-motivated). The Hawaii underground construction at scale is the most operationally specific signal and the hardest to dismiss as symbolic.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">Ongoing</div>
+        <div class="signal-source"><a href="https://impactwealth.org/best-countries-for-billionaire-survival-bunkers-2026/" target="_blank">ImpactWealth</a></div>
+      </div>
+    </div>
+
+    <div class="signal-card known">
+      <span class="tier-badge known">Low Signal</span>
+      <div class="signal-body">
+        <div class="signal-title">"Power Elites Preparing to Exit the Stage" — Fringe Coverage</div>
+        <div class="signal-desc">Articles from The Burning Platform (June 6, 2026) and Leo Hohmann's Substack suggest wealthy figures are relocating to precious metals and remote locations. Sources reference Kushner family plans and general "exit stage" narratives. Notably no named insider sources.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>Both sources are partisan/conspiratorial and consistently traffic in doom narratives. The specific claims are unverifiable and no mainstream outlet has corroborated them. Low credibility — noted for completeness but not actioned.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">Jun 6 2026</div>
+        <div class="signal-source"><a href="https://leohohmann.substack.com/p/are-power-elites-preparing-to-exit" target="_blank">Substack</a></div>
+      </div>
+    </div>
+
+    <div class="signal-card debunk">
+      <span class="tier-badge debunk">Debunked</span>
+      <div class="signal-body">
+        <div class="signal-title">"Project Anchor" — Aug 12 Gravity Loss Hoax</div>
+        <div class="signal-desc">A viral TikTok conspiracy claimed a leaked NASA dossier described an $89B program to survive a "seven-second loss of gravity" on August 12, 2026 caused by intersecting gravitational waves from black holes. Multiple fact-checkers and NASA itself have confirmed this is fabricated. No such program exists; the physics are nonsensical.</div>
+        <div class="signal-analyst"><strong>Analyst Note</strong>No action. August 12 has passed without incident. Useful as a baseline for how engineered viral fear content circulates — worth monitoring for similar hoaxes timed to real geopolitical anxiety cycles.</div>
+      </div>
+      <div class="signal-meta">
+        <div class="signal-date">Aug 12 2026</div>
+        <div class="signal-source"><a href="https://factually.co/fact-checks/politics/should-i-prepare-for-august-12-2026-project-anchor-claims-cada21" target="_blank">Factually</a></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- gap analysis -->
+  <div class="section-head">Mainstream vs. Gaps</div>
+  <div class="gap-grid">
+    <div class="gap-col mainstream">
+      <h3>Covered by Mainstream Media</h3>
+      <ul>
+        <li>2026 Iran War and Strait of Hormuz crisis</li>
+        <li>Record insider selling ($77.6B, Bloomberg)</li>
+        <li>Gold price surge (+47%) and central bank buying</li>
+        <li>AI capability leap (Matt Shumer essay, Fortune/CNBC)</li>
+        <li>Elite Florida relocation (tax framing)</li>
+        <li>"Once-in-a-generation" valuation warning (Motley Fool, Globe and Mail)</li>
+      </ul>
+    </div>
+    <div class="gap-col gaps">
+      <h3>Under-Covered / Interpretive Gaps</h3>
+      <ul>
+        <li>Six nations buying sovereign gold for the first time — structural significance understated</li>
+        <li>AI insider selling as labor-disruption positioning, not just valuation caution</li>
+        <li>Iran asset-freeze as catalyst for de-dollarization beyond BRICS nations</li>
+        <li>Scale and operational readiness of elite underground construction (Hawaii specifics)</li>
+        <li>Combination of these signals as a coherent posture rather than separate trends</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- verdict -->
+  <div class="verdict-block">
+    <h3>Weekly Assessment</h3>
+    <p>No credible signal was found of ultra-wealthy individuals acting on knowledge of a specific, hidden, unreported upcoming catastrophe. The unusual financial behavior in H1–Q3 2026 is largely explained by the known context of the Iran War, the Strait of Hormuz disruption, and stretched equity valuations.</p>
+    <p>The two signals that warrant continued monitoring are: (1) the expansion of sovereign gold buying to entirely new nations, which suggests broader systemic distrust of dollar-denominated assets beyond what the Iran War alone explains; and (2) the intersection of extreme insider selling with AI capability milestones, suggesting that tech insiders may be hedging against labor-market disruption they believe is closer than markets price.</p>
+    <p>Recommend re-running this scan in 2 weeks. No action required today beyond continued observation.</p>
+  </div>
+
+  <footer>
+    <span>Sources: Bloomberg, Finbold, Fortune, World Gold Council, Factually, Britannica, Yahoo Finance, Impact Wealth</span>
+    <span>Generated 2026-08-13 · Automated run · cbrahms/spaceship</span>
+  </footer>
+
+</div>
+
