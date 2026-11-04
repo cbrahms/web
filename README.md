@@ -41,6 +41,7 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 ## Open tasks
 
 - [ ] Google Drive: connector fails auth (no dynamic client registration). Reconnect, then copy `pages/uwa-2026-11-04.html` and add the link under Links.
+- Artifact (issue 006): https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
 - [ ] Social sources: no X, LinkedIn, or Reddit access in the run environment. Add a connector or accept web-search-only scope.
 - [ ] Verify Berkshire Q3 cash against the 10-Q on EDGAR.
 - [ ] 12 Nov: record 30-year auction result against reversal condition 1.
