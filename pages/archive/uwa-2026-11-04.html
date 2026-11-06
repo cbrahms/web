@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Unusual Wealth Activity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  /* Layout: single reading column, status strip up top, signal cards as a stepped log, gauges as bars on one 0-100 scale */
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+    --hard: #0e7568; --corr: #8a6a0a; --thin: #6b7a77;
+    --warn-bg: #fbf1dc; --warn-ink: #7a5300; --crit: #a8362a;
+    --track: #e5ecea;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+      --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+      --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+      --track: #1c2826; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1413; --surface: #121b19; --line: #22302d;
+    --ink: #e7efec; --muted: #8ba39d;
+    --accent: #3ecfbc; --accent-ink: #5adcca;
+    --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+    --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+    --track: #1c2826; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .wrap {
+    max-width: 800px; margin: 0 auto; padding-block: 2.5rem 5rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .crumb { display: inline-block; margin-bottom: 2rem; text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+  .crumb:hover { color: var(--accent-ink); }
+  .crumb .mark { color: var(--accent); font-weight: 650; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 720; margin: 0 0 0.5rem; text-wrap: balance; }
+  h2 { font-size: 1.25rem; letter-spacing: -0.01em; font-weight: 650; margin: 2.5rem 0 0.9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); text-wrap: balance; }
+  h3 { font-size: 1.02rem; font-weight: 650; margin: 0; text-wrap: balance; }
+  p, li { max-width: 68ch; }
+  ul { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.35rem; }
+  .deck { color: var(--muted); margin: 0 0 1.25rem; }
+  .status { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .pill.confirmed { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; font-weight: 650; }
+  .meter-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin: 0 0 1rem; }
+  .meter-head .big { font-size: 2.6rem; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meter-head .big small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  .gauges { display: grid; gap: 0.7rem; }
+  .gauge { display: grid; grid-template-columns: 12.5rem 1fr 2.6rem; gap: 0.75rem; align-items: center; }
+  .gauge .lbl { font-size: 0.9rem; }
+  .gauge .bar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .gauge .bar span { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+  .gauge.up .bar span { background: var(--corr); }
+  .gauge .val { font-family: var(--mono); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .gauge .note { grid-column: 1 / -1; color: var(--muted); font-size: 0.85rem; margin-top: -0.35rem; }
+  .legend { color: var(--muted); font-size: 0.85rem; margin-top: 0.8rem; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .signals { display: grid; gap: 0.9rem; }
+  .sig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; display: grid; gap: 0.5rem; min-width: 0; }
+  .sig .top { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .tier { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 4px; border: 1px solid currentColor; }
+  .tier.hard { color: var(--hard); } .tier.corr { color: var(--corr); } .tier.thin { color: var(--thin); }
+  .tier.new { color: var(--crit); }
+  .sig dl { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.35rem 0.9rem; }
+  .sig dt { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+  .sig dd { margin: 0; min-width: 0; }
+  .table-scroll { overflow-x: auto; margin: 0.5rem 0; }
+  table { border-collapse: collapse; min-width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-weight: 650; padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .callout { background: var(--warn-bg); color: var(--warn-ink); border-radius: var(--radius); padding: 0.85rem 1.1rem; margin: 1rem 0; }
+  .callout p { margin: 0.25rem 0; }
+  footer.page { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  @media (max-width: 640px) {
+    .gauge { grid-template-columns: 1fr 2.6rem; }
+    .gauge .lbl { grid-column: 1 / -1; }
+    .sig dl { grid-template-columns: 1fr; }
+    .sig dt { margin-top: 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../../index.html"><span class="mark">&larr;</span> The Magpie's Hoard</a>
+  <article>
+    <h1>Unusual Wealth Activity &middot; 2026-11-04</h1>
+    <p class="deck">Run 2026-11-04 &middot; issue 006 &middot; automated &middot; open sources only</p>
+    <div class="status">
+      <span class="pill confirmed">Pattern confirmed</span>
+      <span class="pill">Panic meter 68 / 100 &middot; Elevated</span>
+      <span class="pill">Change +1 vs 26 Oct</span>
+      <span class="pill">7 signals &middot; 3 gaps</span>
+    </div>
+
+    <h2>Summary</h2>
+    <ul>
+      <li><strong>Verdict upgraded to confirmed.</strong> Five independent actor classes moved defensive in the same 30-day window. No evidence of coordination or of knowledge of a specific event.</li>
+      <li><strong>Hedge funds:</strong> largest equity de-grossing in Morgan Stanley prime data (since 2016); AI exposure cut to underweight for the first time since early 2023.</li>
+      <li><strong>Equities:</strong> Nasdaq fell about 5.3% in October, worst month since March 2025; about $1T of tech value erased on 30 Oct.</li>
+      <li><strong>Long end:</strong> 8 Oct 30-year auction cleared at 5.618%, up from 5.308%. 10-year traded above 5% on 28 Oct.</li>
+      <li><strong>Fed:</strong> held at 3.75&ndash;4.00% on 28 Oct with two dissents for a hike. December hike priced near 86%.</li>
+      <li><strong>Official sector:</strong> central banks bought 321t of gold in Q3 (+42% y/y); gold ETF holdings at a record 4,256t.</li>
+      <li><strong>Long-horizon cash:</strong> Berkshire cash reported at about $381.6B, net seller of equities again in Q3 (secondary sources; 10-Q not verified).</li>
+      <li><strong>Political shock:</strong> Democrats projected to win both chambers on 3 Nov; futures fell sharply, then recovered; AI shares fell across Asia (<a href="https://www.tradingview.com/news/reuters.com,2026:newsml_L2N46L04I:0-market-analysts-react-to-us-midterm-election-results/">Reuters</a>).</li>
+      <li><strong>Catalysts on calendar:</strong> 12 Nov 30-year auction (tentative), 17 Nov Nvidia earnings, 9 Dec FOMC.</li>
+    </ul>
+
+    <h2>Assessment</h2>
+    <p><strong>Fact.</strong> Corporate insiders, hedge funds, a long-horizon conglomerate, central banks and two Fed voters all acted in a risk-reducing direction between 5 Oct and 3 Nov. Prior runs found three of these signals; this run adds hedge-fund de-grossing and hawkish Fed dissent, both hard data.</p>
+    <p><strong>Inference.</strong> Convergence across actors with different incentives meets the pattern threshold set in issue 001. The common driver in evidence is a rate-and-valuation squeeze on AI-linked equities, not a hidden event.</p>
+    <p><strong>Not claimed.</strong> Coordination among actors. Foreknowledge of any specific event. A forecast of a crash date.</p>
+    <div class="callout">
+      <p><strong>Reversal conditions.</strong> Any two of the following lowers the verdict to emerging:</p>
+      <p>1. 12 Nov 30-year auction clears below 5.3% with indirect bid above 68%. 2. Nvidia beats and raises on 17 Nov and Morgan Stanley gross exposure recovers. 3. December hike odds fall below 50%.</p>
+    </div>
+
+    <h2>Flagged signals</h2>
+    <div class="signals">
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-01</span><span class="tier hard">Hard data</span><span class="tier new">New</span></div>
+        <h3>Record hedge-fund de-grossing out of AI names</h3>
+        <dl>
+          <dt>What</dt><dd>Long/short gross exposure about 7.8&ndash;8% below peak, largest de-grossing in Morgan Stanley data since 2016. Morgan Stanley rates hedge-fund AI exposure underweight for the first time since early 2023. Goldman prime book showed five straight sessions of AI selling in October.</dd>
+          <dt>Why unusual</dt><dd>Professional, leveraged capital is exiting the same crowded trade insiders have been selling (SIG-03). Goldman says the unwind looks nearer its start than its end.</dd>
+          <dt>Conventional read</dt><dd>Risk-model deleveraging after a volatility spike; positioning, not information.</dd>
+          <dt>Sources</dt><dd><a href="https://www.tradingview.com/news/seekingalpha:5b2c89ad9094b:0-hedge-funds-turn-underweight-on-ai-for-first-time-since-2023-morgan-stanley/">TradingView / Seeking Alpha: Morgan Stanley AI underweight</a> &middot; <a href="https://www.christophe-barraud.com/morning-brief-hedge-funds-slash-equity-exposure-in-biggest-de-grossing-in-nine-years-trump-to-give-iran-diplomacy-more-time-china-stocks-rise-on-reported-regulator-support/">Christophe Barraud: biggest de-grossing in nine years</a> &middot; <a href="https://edition.cnn.com/2026/10/30/investing/us-stocks-ai-investment">CNN: Nasdaq worst month in over a year</a> &middot; <a href="https://www.nbcnews.com/business/markets/tech-stocks-nasdaq-ai-boom-fears-deepen-rcna606512">NBC: $1T tech wipe</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-02</span><span class="tier hard">Hard data</span><span class="tier new">New</span></div>
+        <h3>Long-end yields and Fed both lean tighter</h3>
+        <dl>
+          <dt>What</dt><dd>8 Oct 30-year auction cleared at 5.618% (prior 5.308%), indirect bidders 72.3%. 28 Oct FOMC held 10&ndash;2; Cook and Hammack dissented for a hike. 10-year near 5.03% intraday. CME FedWatch about 85.7% for a 25 bp hike on 9 Dec. Real yields cited at 2.67%.</dd>
+          <dt>Why unusual</dt><dd>A 31 bp jump between consecutive 30-year auctions and hawkish dissent while equities fall. Higher discount rates hit long-duration AI equities and leveraged credit at the same time.</dd>
+          <dt>Conventional read</dt><dd>Inflation persistence and supply; demand at auction remained solid (indirect share above average).</dd>
+          <dt>Sources</dt><dd><a href="https://www.cnn.com/2026/10/28/business/live-news/federal-reserve-interest-rate-october">CNN: Fed holds, two dissents for hike</a> &middot; <a href="https://www.universalassetowners.com/newsroom/fed-holds-10-2-vote-real-yields-long-horizon-owners/">Universal Asset Owners: 10&ndash;2 vote, real yields</a> &middot; <a href="https://www.cnbc.com/2026/10/08/us-treasury-yields-30-year-bond-auction.html">CNBC: 30-year auction (blocks automated checks)</a> &middot; <a href="https://www.tftc.io/treasury-auctions/calendar">TFTC: auction calendar</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-03</span><span class="tier hard">Hard data</span></div>
+        <h3>Insider distribution continues through October</h3>
+        <dl>
+          <dt>What</dt><dd>5 Oct: $516.2M sold vs $22.9M bought across 222 companies. Week of 10&ndash;16 Oct: 99 sales of $1M+ totalling $1.47B. Named sellers include Micron's president ($25.7M) and UiPath's CEO ($33.1M). H1 2026 total $77.6B (+20% y/y) carried.</dd>
+          <dt>Why unusual</dt><dd>Selling persisted into the October drawdown rather than pausing; concentrated in AI and semiconductor names.</dd>
+          <dt>Conventional read</dt><dd>Pre-set 10b5-1 plans execute regardless of price.</dd>
+          <dt>Sources</dt><dd><a href="https://insiderfilingsdata.com/blog/2026/10/17/insider-trading-week-in-review/">InsiderFilingsData: week in review</a> &middot; <a href="https://insidervault.app/day/2026-10-05">Insidervault: 5 Oct</a> &middot; <a href="https://news.bgov.com/esg/us-corporate-insiders-are-selling-stocks-at-a-near-record-pace">Bloomberg Government: H1 pace</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-04</span><span class="tier hard">Hard data</span></div>
+        <h3>Central-bank gold buying at a 2024 high; ETF holdings at record</h3>
+        <dl>
+          <dt>What</dt><dd>WGC Q3 2026: central banks net 321.2t (+42% y/y; five-year quarterly average 227t); nine-month total 675t. Poland and China lead. Gold ETFs +211t to a record 4,256t. Jewellery demand &minus;17%.</dd>
+          <dt>Why unusual</dt><dd>Official and private safe-haven demand rose together while price-sensitive consumer demand fell. Pairs with SIG-02 as a reserve-diversification signal.</dd>
+          <dt>Conventional read</dt><dd>Multi-year sanctions hedging by a small set of central banks.</dd>
+          <dt>Sources</dt><dd><a href="https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2026/central-banks">World Gold Council: Q3 2026 central banks</a> &middot; <a href="https://investinglive.com/commodities/central-bank-gold-buying-jumps-42-in-q3-as-high-prices-hit-jewellery-demand-wgc-says/">investingLive: +42% in Q3</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-05</span><span class="tier corr">Corroborated</span></div>
+        <h3>Berkshire cash near $381.6B, net equity seller again</h3>
+        <dl>
+          <dt>What</dt><dd>Reported Q3 cash about $381.6B; about $12.5B of stock sold vs $6.4B bought; no buybacks. Early-October Lennar purchase noted.</dd>
+          <dt>Why unusual</dt><dd>Fifteenth straight quarter of net selling by the largest long-horizon allocator, now under Greg Abel.</dd>
+          <dt>Conventional read</dt><dd>Valuation discipline; Berkshire has held large cash before.</dd>
+          <dt>Sources</dt><dd><a href="https://finance.yahoo.com/news/buffett-berkshire-cash-pile-swells-101332609.html">Yahoo Finance: cash pile swells</a>. Figures conflict across outlets; verify against the Q3 10-Q on EDGAR.</dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-06</span><span class="tier corr">Corroborated</span></div>
+        <h3>Private-credit exits capped across major managers</h3>
+        <dl>
+          <dt>What</dt><dd>Blackstone BCRED, Apollo ADS and Morgan Stanley North Haven hold redemptions to 5% of NAV after requests of 10&ndash;17%. Blue Owl ended quarterly redemptions on OBDC II.</dd>
+          <dt>Why unusual</dt><dd>Wealthy retail and family-office capital is trying to leave the marginal credit channel faster than structures allow. No Q4 tender data yet.</dd>
+          <dt>Conventional read</dt><dd>Caps are by design; payouts are fixed, only requests surged.</dd>
+          <dt>Sources</dt><dd><a href="https://www.cnbc.com/2026/06/23/apollo-private-credit-fund-withdrawals-redemptions.html">CNBC: Apollo caps withdrawals</a> &middot; <a href="https://que.com/private-credit-hits-a-crossroads-as-blackstone-rallies-and-retail-funds-face-redemptions/">QUE.com: retail funds face redemptions</a> &middot; <a href="https://caia.org/blog/2026/04/20/private-credit-redemptions-defaults-and-wrappers-oh-my/">CAIA: requests vs payouts</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-07</span><span class="tier thin">Thin or watch</span></div>
+        <h3>Second-residency demand rising; industry-sourced</h3>
+        <dl>
+          <dt>What</dt><dd>La Vida survey (8&ndash;18 Oct): 94.3% of US investors considering a second residency cite politics. Henley: US nationals about one third of its Q1 applications. Argentina launched a $350K contribution / $800K bond program.</dd>
+          <dt>Why unusual</dt><dd>Consistent with elite exit behavior; no government application data.</dd>
+          <dt>Conventional read</dt><dd>Firms selling these programs publish the surveys.</dd>
+          <dt>Sources</dt><dd><a href="https://www.globenewswire.com/news-release/2026/10/27/3388725/0/en/political-uncertainty-fuels-demand-for-additional-residence-and-citizenship-rights.html">GlobeNewswire: La Vida survey (commercial)</a> &middot; <a href="https://fortune.com/2026/07/16/the-global-rich-peter-thiel-safe-haven-argentina/">Fortune: Argentina safe haven</a></dd>
+        </dl>
+      </section>
+    </div>
+
+    <h2>Panic meter</h2>
+    <div class="meter-head">
+      <span class="big">68<small> / 100</small></span>
+      <span class="pill">Elevated &middot; 26 Oct: 67</span>
+    </div>
+    <div class="gauges">
+      <div class="gauge"><span class="lbl">Fiscal load</span><span class="bar"><span style="width:86%"></span></span><span class="val">86 &uarr;</span><span class="note">30-year 5.618% at auction; 10-year above 5%; hike odds ~86%. Was 82.</span></div>
+      <div class="gauge"><span class="lbl">Elite exit behavior</span><span class="bar"><span style="width:79%"></span></span><span class="val">79 &uarr;</span><span class="note">Insider selling into drawdown; Berkshire record cash; CBI surveys (thin). Was 78.</span></div>
+      <div class="gauge up"><span class="lbl">Financial-system fragility</span><span class="bar"><span style="width:76%"></span></span><span class="val">76 &uarr;</span><span class="note">Record de-grossing; private-credit caps universal. Was 72.</span></div>
+      <div class="gauge"><span class="lbl">Military overextension</span><span class="bar"><span style="width:74%"></span></span><span class="val">74</span><span class="note">Carried; no new evidence.</span></div>
+      <div class="gauge up"><span class="lbl">Reserve-currency confidence</span><span class="bar"><span style="width:70%"></span></span><span class="val">70 &uarr;</span><span class="note">Q3 official gold 321t; ETF record 4,256t. Was 66.</span></div>
+      <div class="gauge"><span class="lbl">Domestic legitimacy stress</span><span class="bar"><span style="width:60%"></span></span><span class="val">60 &darr;</span><span class="note">Midterm outcome accepted publicly by the president; futures recovered. Was 62.</span></div>
+      <div class="gauge"><span class="lbl">Institutional integrity</span><span class="bar"><span style="width:56%"></span></span><span class="val">56</span><span class="note">Carried.</span></div>
+      <div class="gauge"><span class="lbl">Biological &amp; environmental base</span><span class="bar"><span style="width:45%"></span></span><span class="val">45</span><span class="note">Carried.</span></div>
+    </div>
+    <p class="legend"><i style="background:var(--corr)"></i>Rose 4 or more points this run. Composite = mean of 8 dimensions (546 / 8 = 68.25). 5 dimensions use new evidence.</p>
+
+    <h2>Coverage gaps</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Topic</th><th>Mainstream framing</th><th>Missing from mainstream</th></tr></thead>
+      <tbody>
+        <tr><td>Hedge-fund de-grossing</td><td>"AI jitters," earnings misses (CNN, NBC)</td><td>Record magnitude in prime-broker data; Goldman view that unwind is early</td></tr>
+        <tr><td>Central-bank gold</td><td>Covered by trade and non-US wires; little US general press</td><td>Q3 official buying +42% alongside record ETF holdings</td></tr>
+        <tr><td>30-year auction jump</td><td>Fed decision dominates; auction treated as routine</td><td>31 bp rise between consecutive auctions; next test 12 Nov</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Calendar entries added</h2>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Date</th><th>Event</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td class="num">12 Nov</td><td>30-year Treasury auction (tentative date)</td><td>Tail or weak indirect bid extends long-end selloff</td></tr>
+        <tr><td class="num">17 Nov</td><td>Nvidia Q3 FY2027 earnings, 5 p.m. ET; guide $108.0B &plusmn;2%</td><td>Miss tests AI-capex trade during record de-grossing</td></tr>
+        <tr><td class="num">9 Dec</td><td>FOMC decision; hike priced ~86%</td><td>Hike with 10-year above 5% pressures equities and credit</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>Exclusions and method</h2>
+    <ul>
+      <li>Excluded as manipulation or market-moving political speech: presidential remarks on election night credited with the futures rebound.</li>
+      <li>Excluded as single-person or secondhand: Burry posts relayed by aggregators; Dalio "classic bubble" remarks (context only, not evidence).</li>
+      <li>Excluded as low quality: SEO market blogs (Intellectia, InvestmentWatch); prediction-market wager totals.</li>
+      <li>Link check: 19 of 25 candidate URLs returned HTTP 200. CNBC, Benzinga, Investing.com and GlobeNewswire block automated checks (HTTP 403). The three 403 links kept on this page (CNBC x2, GlobeNewswire) each sit beside a source that returned 200.</li>
+      <li>Not accessed: X, LinkedIn, Reddit, private forums. Web search only. Google Drive connector failed to authenticate; Drive copy not made.</li>
+    </ul>
+  </article>
+  <footer class="page">
+    <span class="mono">Unusual Wealth Activity &middot; issue 006 &middot; 04 Nov 2026 &middot; risk assessment, not prophecy</span>
+  </footer>
+</div>
+</body>
+</html>
