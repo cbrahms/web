@@ -32,13 +32,14 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 6. Update `index.html`: current card, Archive row, Links, tally line.
 7. Add all-day primary-calendar events for dated catalysts that could drop a security or the market. Search first to avoid duplicates.
 8. Copy artifacts to Google Drive; add Drive links under Links.
-9. Notify only when the verdict is confirmed or changes.
+9. Notify only when the verdict is confirmed, changes, or a market event tests it (e.g. index drop above 3%).
 
 ## Issue register
 
 | Issue | Date | Verdict | Panic | Page |
 |-------|------|---------|-------|------|
-| 008 | 2026-11-06 | Confirmed (held) | 68 | `pages/uwa-2026-11-06.html` |
+| 009 | 2026-11-07 | Confirmed (strengthened) | 69 | `pages/uwa-2026-11-07.html` |
+| 008 | 2026-11-06 | Confirmed (held) | 68 | `pages/archive/uwa-2026-11-06.html` |
 | 007 | 2026-11-05 | Confirmed (held) | 68 | `pages/archive/uwa-2026-11-05.html` |
 | 006 | 2026-11-04 | Confirmed | 68 | `pages/archive/uwa-2026-11-04.html` |
 | 005 | 2026-10-26 | Emerging | 67 | `pages/archive/uwa-2026-10-26.html` |
@@ -46,14 +47,16 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 ## Open tasks
 
-- [ ] Google Drive: connector fails auth (no dynamic client registration) on 04, 05 and 06 Nov runs. Reconnect in claude.ai connector settings, then copy issues 006–008 and add the links under Links.
-- Artifacts: issue 008 https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
-- [ ] Merge PRs in order: this branch (`cspace/quirky-galileo-g3rzby`) consolidates PR #1 (issue 006, README, archive) and PR #2 (issue 007). Merge it and close #1 and #2.
+- [ ] Google Drive: connector failed auth on 04–06 Nov; on 07 Nov the upload call was blocked by the session permission classifier. Owner action: reconnect Drive in claude.ai connector settings and allow Drive writes for this routine, then copy issues 006–009 and add links under Links.
+- Artifacts: live (issue 009, prior 008 version archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
+- [ ] Merge PRs: branch `cspace/quirky-galileo-2cwdvz` (issue 009) contains all of `cspace/quirky-galileo-g3rzby` (issue 008), which contains issues 006–007. Merge the newest and close the older PRs.
 - [ ] Social sources: no X, LinkedIn, or Reddit access in the run environment. Add a connector or accept web-search-only scope.
-- [ ] Verify Berkshire Q3 2026 cash against the 10-Q on EDGAR (not yet filed on 6 Nov).
+- [ ] Verify Berkshire Q3 2026 cash against the 10-Q on EDGAR (not found on 7 Nov).
 - [ ] 12 Nov: record 30-year auction result against reversal condition 1.
 - [ ] 17 Nov: record Nvidia result and Morgan Stanley / Goldman gross exposure against reversal condition 2.
-- [ ] Re-read December hike odds (CME FedWatch) for reversal condition 3; last reading ~85% on 28 Oct.
-- [ ] Watch high-yield OAS (FRED BAMLH0A0HYM2). A move above 4% would upgrade the pattern from leading-holder positioning to market-wide stress.
+- [ ] Re-read December hike odds (CME FedWatch) for reversal condition 3; last reading ~77% on 6 Nov after jobs report.
+- [ ] 10 Nov: record October CPI and 10-year auction result (both on calendar).
+- [ ] Next run: check for named fund closures or multi-strategy pod cuts after the 5 Nov liquidation; check Q4 BDC tender requests.
+- [ ] Watch high-yield OAS (FRED BAMLH0A0HYM2; 3.48% on 5 Nov). A move above 4% would upgrade the pattern from leading-holder positioning to market-wide stress.
 - [ ] Mid-Nov: Q3 13F filings (hedge funds, Berkshire).
 - [ ] Decide: should Intelligence briefs and Scrabble older editions also move to `pages/archive/`?
