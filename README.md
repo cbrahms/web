@@ -39,7 +39,8 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 | Issue | Date | Verdict | Panic | Page |
 |-------|------|---------|-------|------|
-| 010 | 2026-11-08 | Confirmed (held) | 69 | `pages/uwa-2026-11-08.html` |
+| 011 | 2026-11-09 | Confirmed (held) | 70 | `pages/uwa-2026-11-09.html` |
+| 010 | 2026-11-08 | Confirmed (held) | 69 | `pages/archive/uwa-2026-11-08.html` |
 | 009 | 2026-11-07 | Confirmed (strengthened) | 69 | `pages/archive/uwa-2026-11-07.html` |
 | 008 | 2026-11-06 | Confirmed (held) | 68 | `pages/archive/uwa-2026-11-06.html` |
 | 007 | 2026-11-05 | Confirmed (held) | 68 | `pages/archive/uwa-2026-11-05.html` |
@@ -49,11 +50,13 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 ## Open tasks
 
-- [ ] Google Drive: connector failed auth on 04–06 Nov and again on 08 Nov ("incompatible auth server: does not support dynamic client registration"); on 07 Nov the upload was blocked by the permission classifier. Owner action: reconnect Drive in claude.ai connector settings and allow Drive writes for this routine, then copy issues 006–010 and add links under Links.
+- [x] Google Drive: connector worked 09 Nov. Folder "Unusual Wealth Activity" (https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK) holds the current issue as a Google Doc; prior issues go in its `Archive` subfolder. Each run: upload new issue, move the prior Doc to Archive.
+- [ ] Drive backfill: copy issues 006–010 into the Drive Archive subfolder.
 - Artifacts: live (issue 010, prior 009 version archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
-- [ ] Merge PRs: branch `cspace/quirky-galileo-rccrxe` (issue 010) contains all of `cspace/quirky-galileo-2cwdvz` (issue 009) and the older run branches. Merge the newest and close the older PRs.
+- [ ] Merge PRs: branch `cspace/quirky-galileo-9a78i1` (issue 011) contains all of `cspace/quirky-galileo-rccrxe` (issue 010) and the older run branches. Merge the newest and close the older PRs.
 - [ ] Social sources: no X, LinkedIn, or Reddit access in the run environment. Add a connector or accept web-search-only scope.
-- [ ] Verify Berkshire Q3 2026 cash against the 10-Q on EDGAR (not found on 7 Nov).
+- [x] Berkshire Q3 2026 (7 Nov): cash $377.4B headline, $352.3B ex-rail/utility; buybacks $9.6B. Recorded as CTR-01 in issue 011.
+- [ ] Berkshire 10-Q: net equity purchases/sales for Q3 not in press coverage; check EDGAR.
 - [ ] 12 Nov: record 30-year auction result against reversal condition 1.
 - [ ] 17 Nov: record Nvidia result and Morgan Stanley / Goldman gross exposure against reversal condition 2.
 - [ ] Re-read December hike odds (CME FedWatch) for reversal condition 3; last reading ~77% on 6 Nov after jobs report.
@@ -63,4 +66,7 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 - [ ] Weekend runs have no market data and usually meet the 3-new-dimension rule only partly. Decide: skip Saturday/Sunday runs, or keep them as news-only editions.
 - [ ] Watch high-yield OAS (FRED BAMLH0A0HYM2; 3.48% on 5 Nov). A move above 4% would upgrade the pattern from leading-holder positioning to market-wide stress.
 - [ ] Mid-Nov: Q3 13F filings (hedge funds, Berkshire).
+- [ ] 10 Nov: record CoreWeave earnings (calendar entry added 09 Nov).
+- [ ] Nvidia CEO probe (09 Nov): track board findings and the congressional closed briefing before 17 Nov earnings.
+- [ ] Prop. 40 (California billionaire tax): record final certified result; early returns 43–57% against.
 - [ ] Decide: should Intelligence briefs and Scrabble older editions also move to `pages/archive/`?
