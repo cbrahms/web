@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Unusual Wealth Activity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  /* Layout: single reading column, status strip up top, signal cards as a stepped log, gauges as bars on one 0-100 scale */
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+    --hard: #0e7568; --corr: #8a6a0a; --thin: #6b7a77;
+    --warn-bg: #fbf1dc; --warn-ink: #7a5300; --crit: #a8362a;
+    --track: #e5ecea;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+      --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+      --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+      --track: #1c2826; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1413; --surface: #121b19; --line: #22302d;
+    --ink: #e7efec; --muted: #8ba39d;
+    --accent: #3ecfbc; --accent-ink: #5adcca;
+    --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+    --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+    --track: #1c2826; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .wrap {
+    max-width: 800px; margin: 0 auto; padding-block: 2.5rem 5rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .crumb { display: inline-block; margin-bottom: 2rem; text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+  .crumb:hover { color: var(--accent-ink); }
+  .crumb .mark { color: var(--accent); font-weight: 650; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 720; margin: 0 0 0.5rem; text-wrap: balance; }
+  h2 { font-size: 1.25rem; letter-spacing: -0.01em; font-weight: 650; margin: 2.5rem 0 0.9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); text-wrap: balance; }
+  h3 { font-size: 1.02rem; font-weight: 650; margin: 0; text-wrap: balance; }
+  p, li { max-width: 68ch; }
+  ul { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.35rem; }
+  .deck { color: var(--muted); margin: 0 0 1.25rem; }
+  .status { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .pill.confirmed { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; font-weight: 650; }
+  .meter-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin: 0 0 1rem; }
+  .meter-head .big { font-size: 2.6rem; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meter-head .big small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  .gauges { display: grid; gap: 0.7rem; }
+  .gauge { display: grid; grid-template-columns: 12.5rem 1fr 2.6rem; gap: 0.75rem; align-items: center; }
+  .gauge .lbl { font-size: 0.9rem; }
+  .gauge .bar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .gauge .bar span { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+  .gauge.up .bar span { background: var(--corr); }
+  .gauge .val { font-family: var(--mono); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .gauge .note { grid-column: 1 / -1; color: var(--muted); font-size: 0.85rem; margin-top: -0.35rem; }
+  .legend { color: var(--muted); font-size: 0.85rem; margin-top: 0.8rem; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .signals { display: grid; gap: 0.9rem; }
+  .sig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; display: grid; gap: 0.5rem; min-width: 0; }
+  .sig .top { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .tier { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 4px; border: 1px solid currentColor; }
+  .tier.hard { color: var(--hard); } .tier.corr { color: var(--corr); } .tier.thin { color: var(--thin); }
+  .tier.new { color: var(--crit); }
+  .sig dl { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.35rem 0.9rem; }
+  .sig dt { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+  .sig dd { margin: 0; min-width: 0; }
+  .table-scroll { overflow-x: auto; margin: 0.5rem 0; }
+  table { border-collapse: collapse; min-width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-weight: 650; padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .callout { background: var(--warn-bg); color: var(--warn-ink); border-radius: var(--radius); padding: 0.85rem 1.1rem; margin: 1rem 0; }
+  .callout p { margin: 0.25rem 0; }
+  footer.page { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  @media (max-width: 640px) {
+    .gauge { grid-template-columns: 1fr 2.6rem; }
+    .gauge .lbl { grid-column: 1 / -1; }
+    .sig dl { grid-template-columns: 1fr; }
+    .sig dt { margin-top: 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../index.html"><span class="mark">&larr;</span> The Magpie's Hoard</a>
+  <article>
+    <h1>Unusual Wealth Activity &middot; 2026-11-10</h1>
+    <p class="deck">Run 2026-11-10 (Tuesday, 12:47 UTC, before CPI) &middot; issue 012 &middot; automated &middot; open sources only &middot; prior issue: <a href="archive/uwa-2026-11-09.html">011 (archive)</a></p>
+    <div class="status">
+      <span class="pill confirmed">Pattern confirmed (held)</span>
+      <span class="pill">Panic meter 70 / 100 &middot; Elevated</span>
+      <span class="pill">Change 0 vs 9 Nov</span>
+      <span class="pill">5 signals &middot; 2 counter-signals &middot; 4 gaps</span>
+    </div>
+
+    <h2>Summary</h2>
+    <ul>
+      <li><strong>Verdict held.</strong> A one-day relief rally on 9 Nov did not include the stock that decides reversal condition 2. The Fed moved further from the reversal path.</li>
+      <li><strong>9 Nov close:</strong> S&amp;P 500 7,550.41 (+2.4%, best day since 8 Apr). Nasdaq 25,253.14 (+2.74%). Semiconductor index up about 7% after a &minus;12% week.</li>
+      <li><strong>Nvidia excluded:</strong> &minus;4.27% to $178.67, lowest close since 7 Apr, on the board probe of CEO Jensen Huang. Earnings 17 Nov.</li>
+      <li><strong>Largest planned IPO:</strong> Anthropic sent bankers terms of 866.7M shares at $70&ndash;80 (up to $69.3B), then retracted them as inaccurate. Earlier reports put the raise at $80&ndash;100B. Public S-1/A still blank.</li>
+      <li><strong>Fed:</strong> Governor Waller backs a December hike even if inflation data is cooler, and a 50 bp hike if it runs hot. Markets "all but" price 25 bp.</li>
+      <li><strong>Berkshire 10-Q:</strong> Q3 net seller of other stocks (bought $2.4B, sold $2.8B) while buying back $9.6B of its own shares. Counter-signal narrowed.</li>
+      <li><strong>Counter-signal:</strong> high-yield spread tightened to 3.42% (6 Nov). VIX 25.64. No credit confirmation.</li>
+      <li><strong>Calendar:</strong> added 13 Nov PPI. Today: October CPI 8:30 a.m. ET (after this run), $42B 10-year auction, CoreWeave earnings.</li>
+      <li><strong>Panic meter 70</strong> (0). Fiscal and integrity up 1; fragility down 2; elite exit down 1.</li>
+    </ul>
+
+    <h2>Assessment</h2>
+    <p><strong>Fact.</strong> Indices recovered about half of the 5 Nov drop in one session. The largest index weight fell to a seven-month closing low on the same day. The largest planned IPO circulated, then withdrew, terms that would raise less than earlier reports. A voting Fed governor endorsed a hike and named a 50 bp option. Berkshire stopped net buying other companies' stock in Q3.</p>
+    <p><strong>Inference.</strong> The rebound was a rotation into the most-sold chip names, not a return of capital to AI leadership. The three actors with the most capital at stake (fund platforms, IPO buyers, the most-watched patient holder) are still not adding broad AI or index exposure. The Fed is tightening into that, so no policy backstop is on offer.</p>
+    <p><strong>Not claimed.</strong> That the retracted IPO terms are final. That Nvidia's probe will find wrongdoing. That one rally day or one hawkish speech sets the trend.</p>
+
+    <div class="callout">
+      <p><strong>Reversal conditions.</strong> Any two lowers the verdict to emerging. Status at this run:</p>
+      <p>1. 12 Nov 30-year auction clears below 5.3% with indirect bid above 68%. <strong>Pending.</strong> Secondary 5.26% on 6 Nov.</p>
+      <p>2. Nvidia beats and raises on 17 Nov and hedge-fund gross exposure recovers. <strong>Pending, harder.</strong> NVDA closed at its lowest since 7 Apr while the index rallied.</p>
+      <p>3. December hike odds fall below 50%. <strong>Not met, moving away.</strong> Waller backs a hike even on cooler data.</p>
+      <p><strong>Upgrade trigger.</strong> High-yield spread above 4% upgrades the pattern to market-wide stress. Not met: 3.42% on 6 Nov.</p>
+    </div>
+
+    <h2>Flagged signals</h2>
+    <div class="signals">
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-01</span><span class="tier hard">Hard data</span><span class="tier new">New</span></div>
+        <h3>Relief rally excludes the largest index weight</h3>
+        <dl>
+          <dt>What</dt><dd>9 Nov: S&amp;P 500 7,550.41 (+2.4%), Nasdaq 25,253.14 (+2.74%), Dow 52,389.93 (+2.2%). Semiconductor index up nearly 7%. AMD +13.3% on an upgrade; Micron +6.3%; Seagate and Western Digital about +11%. Nvidia &minus;4.27% to $178.67 after opening about &minus;7%. Brent &minus;5.6% to $92.80. Nasdaq futures &minus;0.4% before CPI on 10 Nov.</dd>
+          <dt>Why unusual</dt><dd>On its best day since April, the index rose without its largest constituent, which closed at a seven-month low. Buyers took the most-sold chip names and avoided the name carrying key-person risk into earnings.</dd>
+          <dt>Conventional read</dt><dd>Oversold bounce after a &minus;12% chip week, helped by lower oil and Iran de-escalation remarks. Nvidia's drop is a single-stock governance event.</dd>
+          <dt>Sources</dt><dd><a href="https://www.investing.com/news/stock-market-news/wall-st-futures-mixed-amid-ai-spending-concerns-inflation-data-awaited-5010386">Investing.com: 9 Nov close</a> &middot; <a href="https://www.aljazeera.com/economy/2026/11/9/nvidia-shares-slump-amid-investigation-into-ceo-jensen-huang">Al Jazeera: Nvidia probe</a> &middot; <a href="https://www.fool.com/investing/2026/11/09/why-micron-technology-stock-gained-on-monday/">Motley Fool: Micron, 9 Nov</a> &middot; <a href="https://fred.stlouisfed.org/series/NASDAQCOM">FRED: NASDAQCOM</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-02</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>Largest planned IPO: terms sent, then retracted</h3>
+        <dl>
+          <dt>What</dt><dd>Reuters (9 Nov): Anthropic sent bankers a filing for 866.7M Class A shares, including a secondary portion, at $70&ndash;80. Top of range: $69.3B. A follow-up email called the details inaccurate and promised an updated filing. The 2 Nov S-1/A still leaves price, share count and October revenue blank. Formal marketing may start 10 Nov. Valuations discussed (Bloomberg, 6 Nov): $1.2&ndash;1.3T, some as low as $1.1T; earlier target about $2T.</dd>
+          <dt>Why unusual</dt><dd>The circulated top-of-range raise ($69.3B) is below the $80&ndash;100B earlier reported. Buyers have pushed the valuation down three times in two weeks. A smaller deal is the IPO market's measure of fresh capital available for AI.</dd>
+          <dt>Conventional read</dt><dd>A clerical error before launch. Price talk always moves in a volatile week; demand for a $69B deal is still the largest on record.</dd>
+          <dt>Sources</dt><dd><a href="https://www.investing.com/news/stock-market-news/anthropic-retracts-ipo-details-after-sending-filing-to-bankers--reuters-5013961">Reuters via Investing.com: terms retracted</a> &middot; <a href="https://www.tribuneindia.com/news/ai-boom/anthropics-nearly-70-bn-ipo-pricing-details-briefly-shared-with-banks-later-withdrawn">The Tribune: $69.3B detail</a> &middot; <a href="https://financefeeds.com/anthropic-ipo-date-roadshow-week-arrives-with-no-price-range-on-file/">FinanceFeeds: filing status, 9 Nov</a> &middot; <a href="https://www.bnnbloomberg.ca/business/artificial-intelligence/2026/11/06/ai-backlash-could-threaten-anthropic-ipo-timing-potential-investors-say-reuters-exclusive/">BNN Bloomberg: Reuters on timing doubts</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-03</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>Fed governor backs a hike into the deleveraging</h3>
+        <dl>
+          <dt>What</dt><dd>Governor Christopher Waller (London): supports a December hike even if inflation data is cooler than expected; a 50 bp hike could be warranted if data runs hot. CME FedWatch "all but" prices 25 bp (via Investing.com). September CPI 3.7% y/y. TD Securities expects October headline +0.30% m/m, core +0.21%. PPI follows on 13 Nov.</dd>
+          <dt>Why unusual</dt><dd>A voting governor pre-commits to tightening while fund platforms are cutting gross exposure. That removes the policy backstop the market leaned on in March 2020.</dd>
+          <dt>Conventional read</dt><dd>Inflation near 3.7% justifies a hike. Rates markets already priced it; the 10-year fell to 4.86%.</dd>
+          <dt>Sources</dt><dd><a href="https://www.investing.com/news/stock-market-news/us-stock-futures-steady-after-techled-rebound-cpi-in-focus-5013763">Investing.com: Waller, futures, 10 Nov</a> &middot; <a href="https://www.tmgm.com/en/analysis/market-news/article/united-states-october-inflation-seen-cooling-td-securities-202610191339">TD Securities via TMGM: October CPI forecast</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-04</span><span class="tier thin">Thin</span><span class="tier thin">Carried</span></div>
+        <h3>Private-credit exit queues: BCRED filled half of Q3 requests</h3>
+        <dl>
+          <dt>What</dt><dd>BCRED accepted 90.4M of 181.3M shares tendered in Q3 (49.88%), its second prorated quarter. Q4 offer: up to about 5% of shares, deadline 1 Dec, priced at 31 Dec NAV. Prorated requests do not carry forward.</dd>
+          <dt>Tier note</dt><dd>Held at Thin: the AltStreet page returns 403 and was read only through the search index. Q3 request ratios (2&ndash;8&times; caps) remain sourced in issue 011.</dd>
+          <dt>Sources</dt><dd><a href="https://altstreet.investments/news/bcred-q3-2026-tender-offer-prorated-49-88-percent-2026-11-02">AltStreet: BCRED Q3 proration (2 Nov)</a> &middot; <a href="https://www.wealthmanagement.com/alternative-investments/private-credit-confronts-the-limitations-of-the-semi-liquid-label">WealthManagement.com: semi-liquid limits</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-05</span><span class="tier hard">Hard data</span><span class="tier thin">Carried</span></div>
+        <h3>Central-bank gold 321t in Q3 (201t unreported); spot below October</h3>
+        <dl>
+          <dt>What</dt><dd>Official buying carried from issue 011. Spot gold $4,065.97 on 6 Nov (+0.64% that day). Gold fell during the equity drawdown, consistent with selling to meet margin; no dated source confirms the size of the October&ndash;November decline.</dd>
+          <dt>Sources</dt><dd><a href="https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q3-2026/central-banks">World Gold Council: Q3 2026 central banks</a> &middot; <a href="https://pricegold.net/2026/november/6/">PriceGold: 6 Nov close</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-01</span><span class="tier thin">Counter-signal</span><span class="tier thin">Narrowed</span></div>
+        <h3>Berkshire buys itself, not the market</h3>
+        <dl>
+          <dt>What</dt><dd>10-Q cash-flow statement: equity purchases $41.77B and sales $30.57B in nine months; $39.41B and $27.78B in six months. Q3 alone: bought $2.37B, sold $2.79B (net seller $0.43B). Q3 buybacks about $9.6B (4,536 A and 12.4M B shares). Cash $36.0B plus T-bills $336.7B (insurance and other) at 30 Sep.</dd>
+          <dt>Why it matters</dt><dd>Issue 011 read the buybacks as a patient holder adding risk. The 10-Q shows the Q2 buying of other stocks stopped in Q3. Berkshire rates its own shares cheap, not the market.</dd>
+          <dt>Sources</dt><dd><a href="https://www.berkshirehathaway.com/qtrly/3rdqtr26.pdf">Berkshire Q3 2026 10-Q</a> &middot; <a href="https://www.berkshirehathaway.com/news/nov0726.pdf">Berkshire release, 7 Nov</a> &middot; <a href="https://www.berkshirehathaway.com/qtrly/2ndqtr26.pdf">Berkshire Q2 2026 10-Q (six-month base)</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-02</span><span class="tier thin">Counter-signal</span><span class="tier thin">Held</span></div>
+        <h3>Credit has not confirmed</h3>
+        <dl>
+          <dt>What</dt><dd>ICE BofA high-yield OAS 3.42% on 6 Nov (3.48% on 5 Nov). Trigger: 4%. VIX 25.64 on 6 Nov (28.18 on 5 Nov). 10-year 4.86%, 30-year 5.26%, 10-year breakeven 2.22% (9 Nov).</dd>
+          <dt>Why it matters</dt><dd>Spreads tightened during the equity stress. Lenders are not yet pricing the deleveraging as a credit event.</dd>
+          <dt>Sources</dt><dd><a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2">FRED: BAMLH0A0HYM2</a> &middot; <a href="https://fred.stlouisfed.org/series/VIXCLS">FRED: VIXCLS</a> &middot; <a href="https://fred.stlouisfed.org/series/DGS10">FRED: DGS10</a></dd>
+        </dl>
+      </section>
+    </div>
+
+    <h2>Panic meter</h2>
+    <div class="meter-head"><span class="big">70<small> / 100</small></span><span class="pill">Elevated &middot; 9 Nov: 70</span></div>
+    <div class="gauges">
+      <div class="gauge up"><span class="lbl">Fiscal load</span><span class="bar"><span style="width:85%"></span></span><span class="val">85</span><span class="note">&uarr; from 84. Hike backed with a 50 bp option; interest cost rises on a 4.86% 10-year.</span></div>
+      <div class="gauge up"><span class="lbl">Financial-system fragility</span><span class="bar"><span style="width:82%"></span></span><span class="val">82</span><span class="note">&darr; from 84. Index +2.4%; spread 3.42% and VIX 25.64 both eased. Concentration risk at Nvidia caps the fall.</span></div>
+      <div class="gauge up"><span class="lbl">Elite exit behavior</span><span class="bar"><span style="width:81%"></span></span><span class="val">81</span><span class="note">&darr; from 82. Broad chip buying on 9 Nov (down). IPO buyers still cutting price; Berkshire net seller of other stocks in Q3 (hold).</span></div>
+      <div class="gauge"><span class="lbl">Military overextension</span><span class="bar"><span style="width:72%"></span></span><span class="val">72</span><span class="note">Held. Brent &minus;5.6% on Iran de-escalation already scored on 9 Nov.</span></div>
+      <div class="gauge"><span class="lbl">Reserve-currency confidence</span><span class="bar"><span style="width:72%"></span></span><span class="val">72</span><span class="note">Carried. Spot gold $4,066 (6 Nov); no new reserve data.</span></div>
+      <div class="gauge up"><span class="lbl">Institutional integrity</span><span class="bar"><span style="width:62%"></span></span><span class="val">62</span><span class="note">&uarr; from 61. NYT: U.S. probe of a chip-diversion suspect moved to the Justice Department after company intervention (via Investing.com, 9 Nov).</span></div>
+      <div class="gauge"><span class="lbl">Domestic legitimacy stress</span><span class="bar"><span style="width:58%"></span></span><span class="val">58</span><span class="note">Carried.</span></div>
+      <div class="gauge"><span class="lbl">Biological &amp; environmental base</span><span class="bar"><span style="width:45%"></span></span><span class="val">45</span><span class="note">Carried.</span></div>
+    </div>
+    <p class="legend">Composite = mean of 8 dimensions (557 / 8 = 69.6, shown as 70). Indicators used: index and single-stock closes, Fed guidance, IPO terms, Berkshire 10-Q flows, high-yield spread, VIX, Treasury yields. <strong>4 dimensions use new evidence this run</strong> (fiscal, fragility, elite exit, institutional integrity); rule of 3 met. <i style="background:var(--corr)"></i>changed this run.</p>
+
+    <h2>Coverage gaps</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Topic</th><th>Mainstream framing</th><th>Missing from mainstream</th></tr></thead>
+        <tbody>
+          <tr><td>9 Nov rally</td><td>"Wall Street roars back"; AI trade returns</td><td>The largest weight closed at a seven-month low; buying went to the most-sold names</td></tr>
+          <tr><td>AI IPO</td><td>Clerical retraction</td><td>Circulated raise ($69.3B) below the $80&ndash;100B reported earlier; October revenue still blank</td></tr>
+          <tr><td>Fed</td><td>CPI-day rates story</td><td>Hike plus 50 bp option during active fund de-grossing; PPI on 13 Nov is a second test</td></tr>
+          <tr><td>Berkshire</td><td>Record cash; buybacks doubled</td><td>Net seller of other stocks in Q3; Q2 buying stopped</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Calendar entries</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="num">10 Nov</td><td>October CPI, 8:30 a.m. ET</td><td>On calendar (issue 009)</td></tr>
+          <tr><td class="num">10 Nov</td><td>10-year Treasury auction, $42B, 1 p.m. ET</td><td>On calendar (issue 007)</td></tr>
+          <tr><td class="num">10 Nov</td><td>CoreWeave Q3 earnings, after close</td><td>On calendar (issue 011)</td></tr>
+          <tr><td class="num">12 Nov</td><td>30-year Treasury auction, $25B, 1 p.m. ET</td><td>On calendar (issue 006)</td></tr>
+          <tr><td class="num">13 Nov</td><td>October PPI, 8:30 a.m. ET</td><td>Added this run</td></tr>
+          <tr><td class="num">16 Nov</td><td>Anthropic IPO listing target week (unconfirmed)</td><td>On calendar (issue 010)</td></tr>
+          <tr><td class="num">17 Nov</td><td>Nvidia Q3 FY2027 earnings, after close</td><td>On calendar (issue 006)</td></tr>
+          <tr><td class="num">9 Dec</td><td>FOMC decision</td><td>On calendar (issue 006)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Primary calendar searched 10 Nov&ndash;11 Dec before adding. All entries are all-day and marked free.</p>
+
+    <h2>Links</h2>
+    <ul>
+      <li>Dashboard: <a href="../index.html">The Magpie's Hoard</a></li>
+      <li>Archive (prior versions): <a href="archive/">pages/archive/</a></li>
+      <li>Run guide and tasks: <a href="../README.md">README.md</a></li>
+      <li>Google Drive: <a href="https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK">Unusual Wealth Activity folder</a> &middot; <a href="https://docs.google.com/document/d/1HDXrSt5hbitHlSiTi_-4y4qLAD8yxCLnMmfsjXKDHfY/edit">issue 012 (Google Doc)</a>; issue 011 moved to the Drive Archive subfolder</li>
+      <li>Artifact (live, updated in place each run): <a href="https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7">Unusual Wealth Activity</a></li>
+    </ul>
+
+    <h2>Exclusions and method</h2>
+    <ul>
+      <li>Excluded as unverified: "Trump says FBI investigating Nvidia CEO" headline. The article body does not contain it; other reports name only the Commerce and Justice departments.</li>
+      <li>Excluded as political market-moving statement: Trump calling Huang "an honorable guy". Not used as a signal.</li>
+      <li>Excluded as undated: gold "record above $4,850&ndash;$4,908" claims and an undated "10% fall from 20 Oct high" claim.</li>
+      <li>Not found: October CPI result (released after this run); October FINRA margin debt; Q4 BDC tender results; post-Waller FedWatch percentage.</li>
+      <li>Disclosure: this report is generated by Claude, a model made by Anthropic. SIG-02 uses third-party reporting only and reflects no internal information.</li>
+      <li>Link check (curl, 10 Nov): 200 for Al Jazeera, Motley Fool, The Tribune, FinanceFeeds, BNN Bloomberg, TMGM, Berkshire (3), PriceGold. 403 to automated clients but read via fetch: Investing.com (3). 403 and not read: AltStreet (SIG-04 held at Thin). FRED values from the CSV endpoint.</li>
+      <li>Not accessed: X, LinkedIn, Reddit, private forums. Web search only.</li>
+    </ul>
+
+    <footer class="page">Unusual Wealth Activity &middot; issue 012 &middot; 10 Nov 2026 &middot; risk assessment, not prophecy</footer>
+  </article>
+</div>
+</body>
+</html>
