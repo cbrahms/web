@@ -39,7 +39,8 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 | Issue | Date | Verdict | Panic | Page |
 |-------|------|---------|-------|------|
-| 013 | 2026-11-11 | Confirmed (held) | 70 | `pages/uwa-2026-11-11.html` |
+| 014 | 2026-11-12 | Confirmed (weakened) | 69 | `pages/uwa-2026-11-12.html` |
+| 013 | 2026-11-11 | Confirmed (held) | 70 | `pages/archive/uwa-2026-11-11.html` |
 | 012 | 2026-11-10 | Confirmed (held) | 70 | `pages/archive/uwa-2026-11-10.html` |
 | 011 | 2026-11-09 | Confirmed (held) | 70 | `pages/archive/uwa-2026-11-09.html` |
 | 010 | 2026-11-08 | Confirmed (held) | 69 | `pages/archive/uwa-2026-11-08.html` |
@@ -56,14 +57,20 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 - [x] Google Drive: connector worked 09 Nov. Folder "Unusual Wealth Activity" (https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK) holds the current issue as a Google Doc; prior issues go in its `Archive` subfolder. Each run: upload new issue, move the prior Doc to Archive.
 - [ ] Drive backfill: copy issues 006–010 into the Drive Archive subfolder.
-- Artifacts: live, updated in place each run (issue 013 on 11 Nov; prior editions archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
+- Artifacts: live, updated in place each run (issue 014 on 12 Nov; prior editions archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
 - [ ] Merge PRs: branch `cspace/quirky-galileo-9a78i1` (issue 011) contains all of `cspace/quirky-galileo-rccrxe` (issue 010) and the older run branches. Merge the newest and close the older PRs.
 - [ ] Social sources: no X, LinkedIn, or Reddit access in the run environment. Add a connector or accept web-search-only scope.
 - [x] Berkshire Q3 2026 (7 Nov): cash $377.4B headline, $352.3B ex-rail/utility; buybacks $9.6B. Recorded as CTR-01 in issue 011.
 - [x] Berkshire 10-Q (10 Nov): Q3 equity purchases $2.37B, sales $2.79B (net seller $0.43B) from 9M minus 6M cash-flow lines. Recorded as CTR-01 (narrowed) in issue 012.
-- [ ] 12 Nov: record 30-year auction result against reversal condition 1. Compare indirect share with the 10-year (61.2% on 10 Nov, from 80.3%). A second weak foreign-channel auction would raise reserve-currency further.
+- [ ] 13 Nov (next run, first task): record 12 Nov 30-year auction result against reversal condition 1 (issue 014 ran before 1 p.m. ET). If indirect < 68% or yield ≥ 5.3%, restore verdict to Confirmed (held); if both pass, condition 1 is met and the verdict drops to Emerging only with a second condition. Compare indirect share with the 10-year (61.2% on 10 Nov, from 80.3%). A second weak foreign-channel auction would raise reserve-currency further.
 - [ ] 17 Nov: record Nvidia result and Morgan Stanley / Goldman gross exposure against reversal condition 2.
 - [ ] Re-read December hike odds (CME FedWatch) for reversal condition 3. 11 Nov: hot CPI; Logan wants two more hikes; coverage says near-certain. No verified percentage yet.
+- [ ] Decide: adopt proposed reversal condition 4 (S&P 500 record close with VIX < 18). Issue 014: 2.6% below record, VIX 19.46. Without it, the conditions cannot register an equity-led all-clear.
+- [ ] Run timing: the routine fires about 12:45 UTC, before US data and auctions. Consider moving to ~22:00 UTC so each issue includes the day's close and auction results.
+- [ ] Google Calendar: no Calendar tools were exposed on 12 Nov; no entries changed. Re-check connector before the next dated catalyst.
+- [x] 12 Nov: AI IPO book several times covered (reclassified CTR-02, reverses issue 013 SIG-03). CoreWeave Q3: debt $35B → $47B, net loss $709M, interest $846M (SIG-01).
+- [ ] 16 Nov: Prop. 40 count closes; certification 11 Dec. Watch for reported return moves by relocated billionaires.
+- [ ] CoreWeave: confirm the ~15% unsecured-yield figure from a primary bond quote (single AI-translated source).
 - [x] 11 Nov: October CPI +0.4% m/m, core +0.3% (both above forecast). 10-year auction 5.02%, bid-to-cover 2.46, indirect 61.2%. Recorded as SIG-01/02 in issue 013.
 - [ ] Treasury auction primary source: Fiscal Data `auctions_query` returned no rows for 10 Nov on 11 Nov. Retry, or use the TreasuryDirect results PDF, to move SIG-01 to Hard data.
 - [ ] 13 Nov: record October PPI (calendar entry added 10 Nov). A hot print raises 50 bp odds.
@@ -74,7 +81,7 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 - [ ] Weekend runs have no market data and usually meet the 3-new-dimension rule only partly. Decide: skip Saturday/Sunday runs, or keep them as news-only editions.
 - [ ] Watch high-yield OAS (FRED BAMLH0A0HYM2; 3.34% on 9 Nov, 3.48% on 5 Nov). A move above 4% would upgrade the pattern from leading-holder positioning to market-wide stress.
 - [ ] Mid-Nov: Q3 13F filings (hedge funds, Berkshire).
-- [ ] CoreWeave Q3 2026 (reported 10 Nov): not found on 11 Nov (search returns 2025 coverage). Retry.
+- [x] CoreWeave Q3 2026 (reported 10 Nov): found 12 Nov; recorded as SIG-01 in issue 014.
 - [ ] Nvidia CEO probe (09 Nov): track board findings. Closed-door congressional briefing requested for 18 Nov (all-day calendar entry added 11 Nov). 9 Nov close $178.67, lowest since 7 Apr. Unverified "FBI investigating" headline excluded 10 Nov; confirm or drop.
 - [ ] Prop. 40 (California billionaire tax): record final certified result; early returns 43–57% against.
 - [ ] Decide: should Intelligence briefs and Scrabble older editions also move to `pages/archive/`?

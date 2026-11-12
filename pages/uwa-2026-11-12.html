@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Unusual Wealth Activity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  /* Layout: single reading column, status strip up top, signal cards as a stepped log, gauges as bars on one 0-100 scale */
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+    --hard: #0e7568; --corr: #8a6a0a; --thin: #6b7a77;
+    --warn-bg: #fbf1dc; --warn-ink: #7a5300; --crit: #a8362a;
+    --track: #e5ecea;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+      --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+      --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+      --track: #1c2826; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1413; --surface: #121b19; --line: #22302d;
+    --ink: #e7efec; --muted: #8ba39d;
+    --accent: #3ecfbc; --accent-ink: #5adcca;
+    --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+    --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+    --track: #1c2826; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .wrap {
+    max-width: 800px; margin: 0 auto; padding-block: 2.5rem 5rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .crumb { display: inline-block; margin-bottom: 2rem; text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+  .crumb:hover { color: var(--accent-ink); }
+  .crumb .mark { color: var(--accent); font-weight: 650; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 720; margin: 0 0 0.5rem; text-wrap: balance; }
+  h2 { font-size: 1.25rem; letter-spacing: -0.01em; font-weight: 650; margin: 2.5rem 0 0.9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); text-wrap: balance; }
+  h3 { font-size: 1.02rem; font-weight: 650; margin: 0; text-wrap: balance; }
+  p, li { max-width: 68ch; }
+  ul { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.35rem; }
+  .deck { color: var(--muted); margin: 0 0 1.25rem; }
+  .status { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .pill.confirmed { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; font-weight: 650; }
+  .meter-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin: 0 0 1rem; }
+  .meter-head .big { font-size: 2.6rem; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meter-head .big small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  .gauges { display: grid; gap: 0.7rem; }
+  .gauge { display: grid; grid-template-columns: 12.5rem 1fr 2.6rem; gap: 0.75rem; align-items: center; }
+  .gauge .lbl { font-size: 0.9rem; }
+  .gauge .bar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .gauge .bar span { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+  .gauge.up .bar span { background: var(--corr); }
+  .gauge .val { font-family: var(--mono); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .gauge .note { grid-column: 1 / -1; color: var(--muted); font-size: 0.85rem; margin-top: -0.35rem; }
+  .legend { color: var(--muted); font-size: 0.85rem; margin-top: 0.8rem; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .signals { display: grid; gap: 0.9rem; }
+  .sig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; display: grid; gap: 0.5rem; min-width: 0; }
+  .sig .top { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .tier { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 4px; border: 1px solid currentColor; }
+  .tier.hard { color: var(--hard); } .tier.corr { color: var(--corr); } .tier.thin { color: var(--thin); }
+  .tier.new { color: var(--crit); }
+  .sig dl { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.35rem 0.9rem; }
+  .sig dt { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+  .sig dd { margin: 0; min-width: 0; }
+  .table-scroll { overflow-x: auto; margin: 0.5rem 0; }
+  table { border-collapse: collapse; min-width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-weight: 650; padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .callout { background: var(--warn-bg); color: var(--warn-ink); border-radius: var(--radius); padding: 0.85rem 1.1rem; margin: 1rem 0; }
+  .callout p { margin: 0.25rem 0; }
+  footer.page { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  @media (max-width: 640px) {
+    .gauge { grid-template-columns: 1fr 2.6rem; }
+    .gauge .lbl { grid-column: 1 / -1; }
+    .sig dl { grid-template-columns: 1fr; }
+    .sig dt { margin-top: 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../index.html"><span class="mark">&larr;</span> The Magpie's Hoard</a>
+  <article>
+    <h1>Unusual Wealth Activity &middot; 2026-11-12</h1>
+    <p class="deck">Run 2026-11-12 (Thursday, 12:48 UTC, before the 30-year auction) &middot; issue 014 &middot; automated &middot; open sources only &middot; prior issue: <a href="archive/uwa-2026-11-11.html">013 (archive)</a></p>
+    <div class="status">
+      <span class="pill confirmed">Pattern confirmed (weakened)</span>
+      <span class="pill">Panic meter 69 / 100 &middot; Elevated</span>
+      <span class="pill">Change &minus;1 vs 11 Nov</span>
+      <span class="pill">4 signals &middot; 2 counter-signals &middot; 4 gaps</span>
+    </div>
+
+    <h2>Summary</h2>
+    <ul>
+      <li><strong>Verdict weakened, not reversed.</strong> Two of three legs lost support on 11 Nov: equity de-grossing and capital withheld from the AI IPO. The Treasury-buyer leg is untested until today's 30-year auction.</li>
+      <li><strong>AI IPO book covered several times</strong> (Bloomberg, FT via secondary reports). Bankers weigh pricing above $78. This contradicts the issue 010&ndash;013 reading that anchor investors were withholding capital. Reclassified as counter-signal CTR-02.</li>
+      <li><strong>Equity rebound:</strong> S&amp;P 500 7,619.38 (+1.3%), within 2.6% of its record. Nasdaq +1.6%. Micron +11.9%. Most of the 5 Nov drop recovered.</li>
+      <li><strong>CoreWeave (new):</strong> shares +24.7%. Same report: debt $47B, from $35B one quarter earlier. Net loss $709M (from $110M). Net interest expense $846M. Q3 capex $14.5B.</li>
+      <li><strong>Bond market closed 11 Nov.</strong> No new yield data. 10-year foreign-channel drop (indirect 80.3% &rarr; 61.2%) and hot CPI carried.</li>
+      <li><strong>Private credit (carried, Fitch):</strong> Q3 requests averaged 9.8% of shares at 13 of 15 non-traded BDCs against a 5% cap. Blue Owl Technology Income about 39%.</li>
+      <li><strong>Wealth-tax pressure easing:</strong> California Prop. 40 trailing 45.4%&ndash;54.6% (5 Nov tally). Count ends 16 Nov.</li>
+      <li><strong>Panic meter 69</strong> (&minus;1). Elite exit &minus;5, fragility &minus;2.</li>
+      <li><strong>Today 1 p.m. ET:</strong> 30-year auction, reversal condition 1. A second weak indirect bid restores the verdict; a strong one meets condition 1.</li>
+    </ul>
+
+    <h2>Assessment</h2>
+    <p><strong>Fact.</strong> Institutional orders for the largest planned IPO exceed the shares on offer several times over. AI and chip shares led an index rally that recovered most of the 5 Nov loss. The rally's catalyst, CoreWeave, added about $12B of debt in one quarter and reported a loss six times larger than a year earlier.</p>
+    <p><strong>Inference.</strong> The holders with the most capital are not withholding it from AI equity. The equity de-grossing in issues 008&ndash;011 now reads as a position reset, not an exit. The remaining stress sits with lenders and bond buyers: AI build-out debt rose about a third in one quarter at one major borrower, and foreign demand for long Treasuries fell at the last auction.</p>
+    <p><strong>Not claimed.</strong> That the IPO will price above range; book demand is people-familiar reporting, not a filing. That CoreWeave cannot service its debt. Coordination among actors.</p>
+
+    <div class="callout">
+      <p><strong>Reversal conditions.</strong> Any two lowers the verdict to emerging. Status at this run:</p>
+      <p>1. 12 Nov 30-year auction clears below 5.3% with indirect bid above 68%. <strong>Pending: auction at 1 p.m. ET, after this run.</strong> Secondary 5.26% on 9 Nov.</p>
+      <p>2. Nvidia beats and raises on 17 Nov and hedge-fund gross exposure recovers. <strong>Pending, closer.</strong> Nvidia +2.9% on 11 Nov; AI book demand strong.</p>
+      <p>3. December hike odds fall below 50%. <strong>Not met.</strong> Reports place FedWatch at 70&ndash;86% in early November; no verified post-CPI value.</p>
+      <p><strong>Upgrade trigger.</strong> High-yield spread above 4%. Not met: 3.34% on 9 Nov.</p>
+      <p><strong>Proposed condition 4 (for review).</strong> S&amp;P 500 closes at a record with VIX below 18. Status: 2.6% below record; VIX 19.46 (10 Nov).</p>
+    </div>
+
+    <h2>Flagged signals</h2>
+    <div class="signals">
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-01</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>AI-infrastructure debt rises $12B in one quarter</h3>
+        <dl>
+          <dt>What</dt><dd>CoreWeave Q3 2026 (10 Nov): revenue $3.661B (+168% y/y). GAAP net loss $709M ($110M a year earlier). Net interest expense $846M ($310M). Q3 capex $14.511B; 9-month capex $30.65B. Debt $47B at quarter end, $35B at Q2 end. Backlog $132.5B. FY revenue guidance raised to $13.0&ndash;13.3B. One report puts unsecured bond yields near 15%. Shares +24.7% on 11 Nov.</dd>
+          <dt>Why unusual</dt><dd>Debt rose about $12B (+34%) in one quarter. Interest expense grew as fast as revenue (both about 2.7&times; y/y). One quarter's interest ($846M) is about 2.5&times; a quarter of guided adjusted operating income ($1.275&ndash;1.375B for the year). Equity buyers rewarded the print; lenders price the credit near distressed levels.</dd>
+          <dt>Conventional read</dt><dd>Contracted backlog covers the build-out. About $9B of customer prepayments expected within three months. Losses are front-loaded depreciation.</dd>
+          <dt>Sources</dt><dd><a href="https://www.tradingkey.com/analysis/stocks/us-stocks/262299527-coreweave-earnings-report-q3-revenue-growth-backlog-capital-expenditures-net-loss-tradingkey">TradingKey: Q3 detail (10 Nov)</a> &middot; <a href="https://en.sedaily.com/world/2026/11/11/coreweave-lifts-revenue-outlook-as-backlog-climbs-30-percent">Seoul Economic Daily: debt $47B, guidance (11 Nov)</a> &middot; <a href="https://www.bnnbloomberg.ca/markets/2026/11/11/rebounding-ai-stocks-lift-wall-street/">BNN Bloomberg (AP): +24.7%, prepayments</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-02</span><span class="tier corr">Corroborated</span><span class="tier">Carried</span></div>
+        <h3>Treasury buyer stress: untested since 10 Nov</h3>
+        <dl>
+          <dt>What</dt><dd>10-year auction (10 Nov): 5.02%, bid-to-cover 2.46, indirect 61.2% (80.3% in October). October CPI +0.4% m/m, core +0.3%. Bond market closed 11 Nov. 30-year $25B auction today, 1 p.m. ET.</dd>
+          <dt>Why kept</dt><dd>This is the one leg the equity rebound does not answer. The 30-year result decides whether the verdict recovers or reverses.</dd>
+          <dt>Sources</dt><dd><a href="https://www.hereflorence.com/2026/11/11/treasury-42-billion-10-year-auction-5-percent/">Here Florence: 10-year auction detail</a> &middot; issue 013 SIG-01/02 (archive)</dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-03</span><span class="tier hard">Hard data</span><span class="tier">Carried</span></div>
+        <h3>Semi-liquid credit exit queues</h3>
+        <dl>
+          <dt>What</dt><dd>Fitch: Q3 requests at 13 of 15 perpetual non-traded BDCs averaged 9.8% of shares; caps at 5%. Most excess is resubmitted unfilled requests. Blue Owl Technology Income about 39%; Apollo Debt Solutions about 14.7%. Hedge-fund leverage cut at the fastest pace since March (Goldman prime, 4 Nov). Q4 BCRED deadline 1 Dec.</dd>
+          <dt>Conventional read</dt><dd>Fitch says repurchase activity began to ease in Q3. Gates work as designed.</dd>
+          <dt>Sources</dt><dd><a href="https://www.investmentnews.com/alternatives/pace-of-investors-selling-nontraded-bdcs-slows-but-remains-significant-according-to-fitch/268574">InvestmentNews: Fitch on non-traded BDCs</a> &middot; <a href="https://hedgeweek.com/news/hedge-funds-slash-leverage-at-fastest-pace-since-march-amid-october-losses">Hedgeweek: leverage cuts</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-04</span><span class="tier thin">Thin or watch</span><span class="tier new">New</span></div>
+        <h3>California billionaire tax trailing; exits already made</h3>
+        <dl>
+          <dt>What</dt><dd>Prop. 40 (one-time 5% tax on $1B+ net worth): 45.4% yes, 54.6% no (Secretary of State, 5 Nov). Countermeasure Prop. 42 leads 53.4%; if it out-polls Prop. 40, it nullifies the tax. Counting ends 16 Nov; certification 11 Dec.</dd>
+          <dt>Why kept</dt><dd>The stated driver of 2025&ndash;26 billionaire relocations is likely failing. Any reversal of those moves would lower elite-exit pressure; none reported yet.</dd>
+          <dt>Sources</dt><dd><a href="https://www.kqed.org/elections/results/california/proposition-40">KQED: Prop. 40 results</a> &middot; <a href="https://edsource.org/2026/billionaire-wealth-tax-vote-status/769708">EdSource: 5 Nov tally, Prop. 42</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-01</span><span class="tier thin">Counter-signal</span><span class="tier">Strengthened</span></div>
+        <h3>Equity rebound recovers most of the 5 Nov drop</h3>
+        <dl>
+          <dt>What</dt><dd>11 Nov: S&amp;P 500 7,619.38 (+1.3%), 2.6% below its October record. Nasdaq 25,466.19 (+1.6%). Dow 52,486.49 (+0.5%). Micron +11.9%, Broadcom +4%, Nvidia +2.9%. FRED: S&amp;P 500 7,353.73 (5 Nov) &rarr; 7,520.93 (10 Nov). VIX 19.46 (10 Nov). High-yield OAS 3.34% (9 Nov).</dd>
+          <dt>Why it matters</dt><dd>Buyers returned to the exact names sold on 5 Nov. Option sellers and lenders show no market-wide stress.</dd>
+          <dt>Sources</dt><dd><a href="https://www.bnnbloomberg.ca/markets/2026/11/11/rebounding-ai-stocks-lift-wall-street/">BNN Bloomberg (AP): 11 Nov closes</a> &middot; <a href="https://finance.yahoo.com/markets/stocks/articles/stock-market-today-nov-11-224502652.html">Yahoo Finance: 11 Nov</a> &middot; <a href="https://fred.stlouisfed.org/series/VIXCLS">FRED: VIXCLS</a> &middot; <a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2">FRED: BAMLH0A0HYM2</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-02</span><span class="tier corr">Counter-signal</span><span class="tier new">New</span></div>
+        <h3>AI IPO book covered several times over</h3>
+        <dl>
+          <dt>What</dt><dd>Book covered on launch day across $70&ndash;78 (Bloomberg, CNBC). By 11 Nov, orders several times the 825M shares, driven by anchor-size institutional bids (Bloomberg). FT: underwriters weigh a price above $78. Australian retail offer opened 12 Nov. Pricing 18 Nov; first trade 19 Nov.</dd>
+          <dt>Why it matters</dt><dd>Reverses issue 013 SIG-03 ("fourth downward step"). Large holders are committing fresh capital to AI equity at about $1T.</dd>
+          <dt>Limit</dt><dd>People-familiar reporting; the price range in the filing is unchanged. About $26B of the deal is pre-committed by strategic partners, many of them suppliers (issue 013).</dd>
+          <dt>Sources</dt><dd><a href="https://www.herecharleston.com/2026/11/12/anthropic-ipo-book-oversubscribed-australia-retail-offer/">Here Charleston: book several times covered (12 Nov)</a> &middot; <a href="https://ca.investing.com/news/stock-market-news/anthropic-ipo-said-to-draw-orders-to-cover-available-shares--bloomberg-432SI-4947169">Investing.com (Bloomberg): book covered</a></dd>
+        </dl>
+      </section>
+    </div>
+
+    <h2>Panic meter</h2>
+    <div class="meter-head"><span class="big">69<small> / 100</small></span><span class="pill">Elevated &middot; 11 Nov: 70</span></div>
+    <div class="gauges">
+      <div class="gauge"><span class="lbl">Fiscal load</span><span class="bar"><span style="width:86%"></span></span><span class="val">86</span><span class="note">Carried. Bond market closed 11 Nov.</span></div>
+      <div class="gauge up"><span class="lbl">Financial-system fragility</span><span class="bar"><span style="width:79%"></span></span><span class="val">79</span><span class="note">&darr; from 81. Equity rebound, VIX under 20. CoreWeave debt +$12B in a quarter caps the fall.</span></div>
+      <div class="gauge up"><span class="lbl">Elite exit behavior</span><span class="bar"><span style="width:76%"></span></span><span class="val">76</span><span class="note">&darr; from 81. AI IPO book several times covered; Prop. 40 trailing.</span></div>
+      <div class="gauge"><span class="lbl">Reserve-currency confidence</span><span class="bar"><span style="width:75%"></span></span><span class="val">75</span><span class="note">Carried. 30-year auction pending.</span></div>
+      <div class="gauge"><span class="lbl">Military overextension</span><span class="bar"><span style="width:72%"></span></span><span class="val">72</span><span class="note">Carried. Brent $92.76 (+1.4%).</span></div>
+      <div class="gauge"><span class="lbl">Institutional integrity</span><span class="bar"><span style="width:62%"></span></span><span class="val">62</span><span class="note">Carried. Nvidia board probe; no update since 9 Nov.</span></div>
+      <div class="gauge"><span class="lbl">Domestic legitimacy stress</span><span class="bar"><span style="width:58%"></span></span><span class="val">58</span><span class="note">Carried.</span></div>
+      <div class="gauge"><span class="lbl">Biological &amp; environmental base</span><span class="bar"><span style="width:45%"></span></span><span class="val">45</span><span class="note">Carried.</span></div>
+    </div>
+    <p class="legend">Composite = mean of 8 dimensions (553 / 8 = 69.1). Indicators used: IPO order book, index closes, VIX, high-yield spread, CoreWeave debt and interest, BDC redemption requests, ballot count. <strong>2 dimensions use new evidence this run</strong> (fragility, elite exit); the rule asks for 3. Cause: bond market closed 11 Nov; 30-year auction falls after run time. <i style="background:var(--corr)"></i>changed this run.</p>
+
+    <h2>Coverage gaps</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Topic</th><th>Mainstream framing</th><th>Missing from mainstream</th></tr></thead>
+        <tbody>
+          <tr><td>CoreWeave</td><td>"Reignites the AI trade"; record revenue</td><td>Debt +$12B in one quarter to $47B; interest $846M; loss 6&times; a year earlier</td></tr>
+          <tr><td>AI IPO</td><td>Oversubscribed; may price higher</td><td>About $26B of demand pre-committed by suppliers to the issuer</td></tr>
+          <tr><td>Rebound</td><td>"Wall Street nearly returns to pre-sell-off level"</td><td>Bond market closed; the 10-year foreign-bid drop and hot CPI are untested by bonds</td></tr>
+          <tr><td>Prop. 40</td><td>Billionaire tax heading for defeat</td><td>Relocations already made are not reported as reversing</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Calendar entries</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="num">12 Nov</td><td>30-year Treasury auction, $25B, 1 p.m. ET</td><td>On calendar (issue 006)</td></tr>
+          <tr><td class="num">13 Nov</td><td>October PPI, 8:30 a.m. ET</td><td>On calendar (issue 012)</td></tr>
+          <tr><td class="num">17 Nov</td><td>Nvidia Q3 FY2027 earnings, after close</td><td>On calendar (issue 006)</td></tr>
+          <tr><td class="num">18 Nov</td><td>Nvidia CEO closed-door congressional briefing (reported)</td><td>On calendar (issue 013)</td></tr>
+          <tr><td class="num">19 Nov</td><td>Anthropic IPO first trade (pricing 18 Nov, reported)</td><td>On calendar (issue 013)</td></tr>
+          <tr><td class="num">9 Dec</td><td>FOMC decision</td><td>On calendar (issue 006)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>No new drop-risk event found this run. Google Calendar tools were not available in this session; no entries changed.</p>
+
+    <h2>Links</h2>
+    <ul>
+      <li>Dashboard: <a href="../index.html">The Magpie's Hoard</a></li>
+      <li>Archive (prior versions): <a href="archive/">pages/archive/</a></li>
+      <li>Run guide and tasks: <a href="../README.md">README.md</a></li>
+      <li>Google Drive: <a href="https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK">Unusual Wealth Activity folder</a> &middot; <a href="https://docs.google.com/document/d/1YLRMkUKGIWEtuNgSFyipzDOSp-8JPDA3O17l18AjeqI/edit">issue 014 (Google Doc)</a>; issue 013 moved to the Drive Archive subfolder</li>
+      <li>Artifact (live, updated in place each run): <a href="https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7">Unusual Wealth Activity</a></li>
+    </ul>
+
+    <h2>Exclusions and method</h2>
+    <ul>
+      <li>Excluded as single-person remark: Michael Burry Substack comment on Nvidia (10&ndash;11 Nov).</li>
+      <li>Excluded as unverified date: a "Dalio X post on midterms and debt, 11 Nov" (search summary only; no dated post found).</li>
+      <li>Excluded as stale: Grantham "50% crash by 2026" forecast (undated, prior year).</li>
+      <li>Not found: official Fiscal Data auction rows for 10 Nov (API returned 0 rows again; SIG-02 held at Corroborated); post-CPI FedWatch value; 11 Nov gold close; November insider-sale aggregates; Q4 BDC tender results.</li>
+      <li>Disclosure: this report is generated by Claude, a model made by Anthropic. CTR-02 uses third-party reporting only and reflects no internal information.</li>
+      <li>Link check (curl, 12 Nov): 200 for BNN Bloomberg, Yahoo Finance, Seoul Economic Daily, TradingKey, Here Charleston, InvestmentNews, KQED, Here Florence, Hedgeweek. 403 to automated clients but read via search: Investing.com, EdSource. FRED values from the CSV endpoint.</li>
+      <li>Not accessed: X, LinkedIn, Reddit, private forums. Web search only.</li>
+    </ul>
+
+    <footer class="page">Unusual Wealth Activity &middot; issue 014 &middot; 12 Nov 2026 &middot; risk assessment, not prophecy</footer>
+  </article>
+</div>
+</body>
+</html>
