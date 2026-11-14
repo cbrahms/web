@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Unusual Wealth Activity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  /* Layout: single reading column, status strip up top, signal cards as a stepped log, gauges as bars on one 0-100 scale */
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+    --hard: #0e7568; --corr: #8a6a0a; --thin: #6b7a77;
+    --warn-bg: #fbf1dc; --warn-ink: #7a5300; --crit: #a8362a;
+    --track: #e5ecea;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+      --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+      --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+      --track: #1c2826; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1413; --surface: #121b19; --line: #22302d;
+    --ink: #e7efec; --muted: #8ba39d;
+    --accent: #3ecfbc; --accent-ink: #5adcca;
+    --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+    --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+    --track: #1c2826; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .wrap {
+    max-width: 800px; margin: 0 auto; padding-block: 2.5rem 5rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .crumb { display: inline-block; margin-bottom: 2rem; text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+  .crumb:hover { color: var(--accent-ink); }
+  .crumb .mark { color: var(--accent); font-weight: 650; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 720; margin: 0 0 0.5rem; text-wrap: balance; }
+  h2 { font-size: 1.25rem; letter-spacing: -0.01em; font-weight: 650; margin: 2.5rem 0 0.9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); text-wrap: balance; }
+  h3 { font-size: 1.02rem; font-weight: 650; margin: 0; text-wrap: balance; }
+  p, li { max-width: 68ch; }
+  ul { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.35rem; }
+  .deck { color: var(--muted); margin: 0 0 1.25rem; }
+  .status { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .pill.confirmed { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; font-weight: 650; }
+  .meter-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin: 0 0 1rem; }
+  .meter-head .big { font-size: 2.6rem; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meter-head .big small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  .gauges { display: grid; gap: 0.7rem; }
+  .gauge { display: grid; grid-template-columns: 12.5rem 1fr 2.6rem; gap: 0.75rem; align-items: center; }
+  .gauge .lbl { font-size: 0.9rem; }
+  .gauge .bar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .gauge .bar span { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+  .gauge.up .bar span { background: var(--corr); }
+  .gauge .val { font-family: var(--mono); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .gauge .note { grid-column: 1 / -1; color: var(--muted); font-size: 0.85rem; margin-top: -0.35rem; }
+  .legend { color: var(--muted); font-size: 0.85rem; margin-top: 0.8rem; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .signals { display: grid; gap: 0.9rem; }
+  .sig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; display: grid; gap: 0.5rem; min-width: 0; }
+  .sig .top { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .tier { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 4px; border: 1px solid currentColor; }
+  .tier.hard { color: var(--hard); } .tier.corr { color: var(--corr); } .tier.thin { color: var(--thin); }
+  .tier.new { color: var(--crit); }
+  .sig dl { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.35rem 0.9rem; }
+  .sig dt { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+  .sig dd { margin: 0; min-width: 0; }
+  .table-scroll { overflow-x: auto; margin: 0.5rem 0; }
+  table { border-collapse: collapse; min-width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-weight: 650; padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .callout { background: var(--warn-bg); color: var(--warn-ink); border-radius: var(--radius); padding: 0.85rem 1.1rem; margin: 1rem 0; }
+  .callout p { margin: 0.25rem 0; }
+  footer.page { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  @media (max-width: 640px) {
+    .gauge { grid-template-columns: 1fr 2.6rem; }
+    .gauge .lbl { grid-column: 1 / -1; }
+    .sig dl { grid-template-columns: 1fr; }
+    .sig dt { margin-top: 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../index.html"><span class="mark">&larr;</span> The Magpie's Hoard</a>
+  <article>
+    <h1>Unusual Wealth Activity &middot; 2026-11-14</h1>
+    <p class="deck">Run 2026-11-14 (Saturday, about 13:00 UTC; covers Friday 13 Nov close) &middot; issue 016 &middot; automated &middot; open sources only &middot; prior issue: <a href="archive/uwa-2026-11-13.html">015 (archive)</a></p>
+    <div class="status">
+      <span class="pill confirmed">Pattern confirmed (held)</span>
+      <span class="pill">Panic meter 70 / 100 &middot; Elevated</span>
+      <span class="pill">Change 0 vs 13 Nov</span>
+      <span class="pill">4 signals &middot; 3 counter-signals &middot; 4 gaps</span>
+    </div>
+
+    <h2>Summary</h2>
+    <ul>
+      <li><strong>Verdict: Confirmed (held).</strong> No reversal condition met. Bond leg strengthened; equity-holder exit leg weakened (Prop. 40 failed).</li>
+      <li><strong>10-year yield 5.15% close, 5.17% intraday</strong> (13 Nov), highest since October. FRED 12 Nov: 10-year 5.10%, 30-year 5.43%.</li>
+      <li><strong>October PPI +0.3% m/m</strong> (consensus +0.4%). 12-month +6.5%, largest since November 2022. Goods +10.2% y/y.</li>
+      <li><strong>Nvidia &minus;2.01% to about $162.85</strong> (13 Nov); market value below $4T for the first time since July 2025. Week &minus;12.75%, sixth straight weekly loss, longest streak since 2012.</li>
+      <li><strong>Anthropic IPO: Nvidia's $10B placement pledge in question.</strong> Bloomberg Intelligence: a new board may reassess size or timing. No company statement. Pricing about 18 Nov.</li>
+      <li><strong>Bitcoin below $70,000</strong> for the first time since August ($67,108 close, &minus;2.9%). Dollar index at highest since April 2025 (CNBC).</li>
+      <li><strong>Gold flat</strong> about $3,884. No flight-to-gold.</li>
+      <li><strong>Counter-signals strengthened:</strong> high-yield spread 3.20% (12 Nov), lowest this month; VIX 18.70. S&amp;P 500 7,561.67 (&minus;0.40%); Dow +0.10%.</li>
+      <li><strong>Panic meter 70</strong> (0). Five dimensions use new evidence. Elite-exit dimension lowered (Prop. 40 failed; Page sale is a 2020 plan).</li>
+      <li><strong>Calendar not updated (second run):</strong> both Google Calendar connectors fail. Six entries pending.</li>
+    </ul>
+
+    <h2>Assessment</h2>
+    <p><strong>Fact.</strong> Long yields rose for a third session after two weak refunding auctions. Wholesale inflation is running 6.5% a year while the Fed is priced to hike in December. Nvidia lost 12.75% in the week of its CEO exit. Bitcoin and the dollar moved in opposite directions. Credit spreads tightened to the month's low.</p>
+    <p><strong>Inference.</strong> Holders are selling duration and speculative assets (long Treasuries, Nvidia, bitcoin) and buying dollars, not gold. This is a rate-and-liquidity repricing, not a flight from the US system. Lenders still accept low spreads, so the stress has not reached credit. The AI financing chain carries a new dated test: whether Nvidia's interim board confirms the $10B IPO commitment before pricing.</p>
+    <p><strong>Not claimed.</strong> A buyer strike in Treasuries; dollar strength argues against foreign flight. That the Nvidia pledge is withdrawn; no statement exists. Coordination among actors.</p>
+
+    <div class="callout">
+      <p><strong>Reversal conditions.</strong> Any two lowers the verdict to emerging. Status at this run:</p>
+      <p>1. <strong>Adopted from issue 015 proposal:</strong> 24 Nov 2-year and 25 Nov 5-year auctions both clear with indirect above 65% and no tail. <strong>Pending.</strong></p>
+      <p>2. Nvidia beats and raises on 17 Nov and hedge-fund gross exposure recovers. <strong>Pending, harder.</strong> Six firms cut to hold-equivalent; HSBC target $170 from $365.</p>
+      <p>3. December hike odds fall below 50%. <strong>Not met.</strong> Coverage on 13 Nov: hike "near certain"; Waller open to 50 bp.</p>
+      <p><strong>Upgrade trigger.</strong> High-yield spread above 4%. Not met: 3.20% on 12 Nov (moving away).</p>
+      <p><strong>Proposed condition 4 (for review).</strong> S&amp;P 500 record close with VIX below 18. Not met: VIX 18.70; index about 3.5% below record.</p>
+    </div>
+
+    <h2>Flagged signals</h2>
+    <div class="signals">
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-01</span><span class="tier hard">Hard data</span><span class="tier new">New</span></div>
+        <h3>Long yields at October highs; wholesale inflation 6.5%</h3>
+        <dl>
+          <dt>What</dt><dd>FRED: 10-year 4.88% (9 Nov) &rarr; 4.98% (10 Nov) &rarr; 5.10% (12 Nov); 30-year 5.26% &rarr; 5.43%. 13 Nov: 10-year closed 5.15%, intraday 5.17%. October PPI final demand +0.3% (consensus +0.4%); 12-month +6.5%; goods +0.5% m/m, services +0.2%. September revised to +1.4%.</dd>
+          <dt>Why unusual</dt><dd>A 27 bp rise in the 10-year in four sessions follows two auctions with falling indirect demand (issues 013, 015). A soft monthly PPI did not stop the rise. The long end is pricing supply and inflation, not the single print.</dd>
+          <dt>Conventional read</dt><dd>The monthly PPI miss is good news. Yields are back to October levels, not new highs. A hiking Fed should lift yields.</dd>
+          <dt>Sources</dt><dd><a href="https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10">FRED: DGS10</a> &middot; <a href="https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS30">FRED: DGS30</a> &middot; <a href="https://www.bls.gov/news.release/ppi.nr0.htm">BLS: PPI October 2026 (primary)</a> &middot; <a href="https://www.pymnts.com/economy/2026/12-month-wholesale-inflation-reaches-4-year-high-despite-october-slowdown/">PYMNTS: PPI detail</a> &middot; <a href="https://finance.yahoo.com/markets/live/stock-market-today-friday-november-13-dow-sp-500-nasdaq-nvidia-ppi-141451558.html">Yahoo Finance: 13 Nov closes</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-02</span><span class="tier hard">Hard data</span><span class="tier new">Updated</span></div>
+        <h3>Nvidia: sixth weekly loss; market value below $4T</h3>
+        <dl>
+          <dt>What</dt><dd>13 Nov: &minus;2.01% to about $162.85; week &minus;12.75%; sixth straight weekly decline, longest since 2012. At least six firms (including Bernstein, Evercore ISI) moved to hold-equivalent; HSBC target $170 from $365. Further personal-conduct allegations reported 13 Nov; some staff reportedly asked for Huang's return. 8-K reportedly dates the resignation 11 Nov; announcement 12 Nov. Earnings 17 Nov under interim CEO Colette Kress.</dd>
+          <dt>Why unusual</dt><dd>About 32% below the 6 Oct record ($239.24). Sell-side ratings turned in one week. The governance story is still adding facts four days before earnings.</dd>
+          <dt>Conventional read</dt><dd>Fundamentals are unchanged until 17 Nov. AMD and Broadcom rose in the same week, so AI demand is not in question; the discount is key-person risk.</dd>
+          <dt>Sources</dt><dd><a href="https://www.cnbc.com/2026/11/13/nvidia-nvda-stock-jensen-huang-transition.html">CNBC: below $4T, weekly streak</a> &middot; <a href="https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition">Nvidia: CEO transition (primary)</a> &middot; <a href="https://finance.yahoo.com/markets/live/stock-market-today-friday-november-13-dow-sp-500-nasdaq-nvidia-ppi-141451558.html">Yahoo Finance: HSBC downgrade</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-03</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>Nvidia's $10B Anthropic IPO pledge in question</h3>
+        <dl>
+          <dt>What</dt><dd>Nvidia committed about $10B of a $26B private placement priced at the IPO price (range $70&ndash;78). A Bloomberg Intelligence analyst says the leadership change could lead the board to reassess size, timing or rationale. Seaport and a Wharton lecturer expect it to proceed. Pricing about 18 Nov; first trade about 19 Nov (Nasdaq: ANT).</dd>
+          <dt>Why unusual</dt><dd>The largest strategic buyer in the largest AI IPO has an interim CEO who is also CFO. A reduced pledge would be the first visible withdrawal of capital from the AI financing chain by its anchor firm.</dd>
+          <dt>Conventional read</dt><dd>The IPO does not depend on Nvidia's money; the book was several times covered (issue 015 CTR-02).</dd>
+          <dt>Sources</dt><dd><a href="https://fortune.com/2026/11/12/anthropic-ipo-jensen-huang-resignation-nvidia/">Fortune: IPO after Huang exit</a> &middot; <a href="https://qz.com/nvidia-huang-resigns-anthropic-ipo-pledge-111226">Quartz: $10B pledge in question</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-04</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>Speculative assets sold; dollar bought, gold ignored</h3>
+        <dl>
+          <dt>What</dt><dd>Bitcoin below $70,000 for the first time since August; low $67,632; close about $67,108 (&minus;2.9%). Dollar index at highest since April 2025 after hot October CPI. Gold about $3,884, +0.1%. Context: Goldman prime book, week to 6 Nov: US fundamental long/short gross leverage &minus;8.7 pts to 207.5%, largest weekly drop since March 2020. Semi-liquid credit: Q3 requests 10&ndash;16% at large funds vs 5% caps.</dd>
+          <dt>Why unusual</dt><dd>Holders cut leverage and speculative exposure together and moved to cash dollars. This matches liquidity hoarding ahead of a hike, not flight from US assets.</dd>
+          <dt>Conventional read</dt><dd>Strong-dollar, hawkish-Fed weeks normally hit bitcoin. Funds were net buyers again by 6 Nov.</dd>
+          <dt>Sources</dt><dd><a href="https://www.cnbc.com/2026/11/12/stock-market-today-live-updates.html">CNBC: bitcoin, dollar</a> &middot; <a href="https://fortune.com/article/current-price-of-gold-11-13-2026/">Fortune: gold 13 Nov</a> &middot; <a href="https://qz.com/hedge-funds-tech-stocks-near-record-pace-midterms-110926">Quartz: Goldman prime data</a> &middot; <a href="https://gfmag.com/private-credit/private-credits-exit-problem/">Global Finance: private-credit queues</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-01</span><span class="tier hard">Counter-signal</span><span class="tier new">Strengthened</span></div>
+        <h3>Credit tightens; equity index steady</h3>
+        <dl>
+          <dt>What</dt><dd>FRED: high-yield OAS 3.20% (12 Nov), down from 3.30% (11 Nov) and 3.48% (5 Nov). VIX 18.70 (12 Nov), up from 17.49. S&amp;P 500 7,561.67 (13 Nov, &minus;0.40%); Dow 52,347.55 (+0.10%); Nasdaq 25,136.27 (&minus;0.91%).</dd>
+          <dt>Why it matters</dt><dd>Lenders cut the price of junk risk in the week the 10-year hit 5.15%. Market-wide stress requires spreads above 4%; they are moving away.</dd>
+          <dt>Sources</dt><dd><a href="https://fred.stlouisfed.org/graph/fredgraph.csv?id=BAMLH0A0HYM2">FRED: BAMLH0A0HYM2</a> &middot; <a href="https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS">FRED: VIXCLS</a> &middot; <a href="https://fred.stlouisfed.org/graph/fredgraph.csv?id=SP500">FRED: SP500</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-02</span><span class="tier hard">Counter-signal</span><span class="tier new">New</span></div>
+        <h3>Prop. 40 billionaire tax fails; exit trigger removed</h3>
+        <dl>
+          <dt>What</dt><dd>AP call (9 Nov): Prop. 40 rejected 52.8% to 47.2%. Prop. 42 (ban on future wealth taxes) led 51.6% to 48.4%. Opponents spent $378.4M. Certification 11 Dec.</dd>
+          <dt>Why it matters</dt><dd>The main California driver for billionaire relocation in issues 001&ndash;015 is gone. Exit behavior from here needs a different cause to count.</dd>
+          <dt>Sources</dt><dd><a href="https://www.ktvu.com/news/prop-40-californias-billionaire-tax-fails-ballot-box">KTVU: Prop. 40 fails</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-03</span><span class="tier thin">Counter-signal</span><span class="tier new">New</span></div>
+        <h3>Billionaire insider sales are routine plan sales</h3>
+        <dl>
+          <dt>What</dt><dd>12 Nov: Larry Page trusts filed Form 144 to sell about $148.3M of Alphabet (507,680 shares) under a 10b5-1 plan adopted 30 Nov 2020. Bechtolsheim (Arista, $43.9M, 6 Nov) and Blecharczyk (Airbnb, $21.9M, plan sale) are also scheduled.</dd>
+          <dt>Why it matters</dt><dd>The largest named sales this week follow plans set years ago. They do not show discretionary liquidation.</dd>
+          <dt>Sources</dt><dd><a href="https://ceoworld.biz/2026/11/14/billionaire-larry-page-to-sell-148-million-of-alphabet-stock-what-the-filing-shows/">CEOWORLD: Page Form 144</a></dd>
+        </dl>
+      </section>
+    </div>
+
+    <h2>Panic meter</h2>
+    <div class="meter-head"><span class="big">70 <small>/ 100</small></span><span class="mono">Elevated &middot; 13 Nov: 70</span></div>
+    <div class="gauges">
+      <div class="gauge up"><span class="lbl">Fiscal load</span><span class="bar"><span style="width:88%"></span></span><span class="val">88</span><span class="note">&uarr; from 87. 10-year 5.15% close; 30-year 5.43% (12 Nov); PPI 6.5% y/y.</span></div>
+      <div class="gauge"><span class="lbl">Financial-system fragility</span><span class="bar"><span style="width:79%"></span></span><span class="val">79</span><span class="note">Held, new evidence. Nvidia &minus;12.75% week, bitcoin &lt; $70K, offset by spread 3.20%.</span></div>
+      <div class="gauge"><span class="lbl">Reserve-currency confidence</span><span class="bar"><span style="width:76%"></span></span><span class="val">76</span><span class="note">&darr; from 77. Dollar index at 19-month high; gold flat. Counters the weak-auction reading.</span></div>
+      <div class="gauge"><span class="lbl">Elite exit behavior</span><span class="bar"><span style="width:74%"></span></span><span class="val">74</span><span class="note">&darr; from 76. Prop. 40 failed; largest insider sales are 10b5-1 plan sales.</span></div>
+      <div class="gauge"><span class="lbl">Military overextension</span><span class="bar"><span style="width:74%"></span></span><span class="val">74</span><span class="note">Carried. No new oil or conflict data after 12 Nov.</span></div>
+      <div class="gauge up"><span class="lbl">Institutional integrity</span><span class="bar"><span style="width:67%"></span></span><span class="val">67</span><span class="note">&uarr; from 66. New Nvidia conduct allegations; 8-K date differs from announcement.</span></div>
+      <div class="gauge"><span class="lbl">Domestic legitimacy stress</span><span class="bar"><span style="width:58%"></span></span><span class="val">58</span><span class="note">Carried.</span></div>
+      <div class="gauge"><span class="lbl">Biological &amp; environmental base</span><span class="bar"><span style="width:45%"></span></span><span class="val">45</span><span class="note">Carried.</span></div>
+    </div>
+    <p class="legend"><i style="background:var(--accent)"></i>Composite = mean of 8 dimensions (561 / 8 = 70.1). Indicators used: 10- and 30-year yields, PPI, Nvidia price and ratings, bitcoin, dollar index, gold, high-yield spread, VIX, Prop. 40 result, Form 144 filings. 5 dimensions use new evidence (fiscal, fragility, reserve, elite exit, integrity); rule of 3 met. <i style="background:var(--corr)"></i>raised this run.</p>
+
+    <h2>Coverage gaps</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Topic</th><th>Mainstream framing</th><th>Missing from mainstream</th></tr></thead>
+        <tbody>
+          <tr><td>Yields</td><td>Fed hike bets; 5.15% after CPI</td><td>Rise began with two weak refunding auctions and continued through a soft PPI</td></tr>
+          <tr><td>Nvidia</td><td>Scandal; downgrades; earnings Tuesday</td><td>No statement on the $10B IPO pledge two business days before pricing</td></tr>
+          <tr><td>Bitcoin and dollar</td><td>Crypto slump on hawkish Fed</td><td>Same week as record-pace hedge-fund de-grossing; cash-dollar preference, gold flat</td></tr>
+          <tr><td>Calm credit</td><td>Rarely mentioned</td><td>Junk spreads at the month's low while long Treasuries sell off</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Calendar entries</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="num">16 Nov</td><td>Q3 13F filing deadline (Berkshire, hedge funds)</td><td>Pending: connector</td></tr>
+          <tr><td class="num">17 Nov</td><td>Nvidia Q3 FY2027 earnings (first under interim CEO Kress)</td><td>On calendar (issue 006); retitle pending</td></tr>
+          <tr><td class="num">18 Nov</td><td>Anthropic IPO pricing; watch Nvidia $10B pledge</td><td>Pending: connector</td></tr>
+          <tr><td class="num">19 Nov</td><td>Anthropic IPO first trade (reported)</td><td>On calendar (issue 013)</td></tr>
+          <tr><td class="num">24&ndash;25 Nov</td><td>2-year / 5-year auctions (reversal condition 1)</td><td>Pending: connector</td></tr>
+          <tr><td class="num">1 Dec</td><td>BCRED Q4 tender deadline</td><td>Pending: connector</td></tr>
+          <tr><td class="num">1 Dec</td><td>Huang House interview (single report; unverified)</td><td>Not added: needs a second source</td></tr>
+          <tr><td class="num">9 Dec</td><td>FOMC decision</td><td>On calendar (issue 006)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout"><p>14 Nov: "Google-Calendar" returned "needs you to sign in again"; the small-business Google Calendar connector returned "incompatible auth server." No entries changed. Re-authenticate Google Calendar in claude.ai connector settings.</p></div>
+
+    <h2>Links</h2>
+    <ul>
+      <li>Dashboard: <a href="../index.html">The Magpie's Hoard</a></li>
+      <li>Archive (prior versions): <a href="archive/">pages/archive/</a> &middot; issue 015: <a href="archive/uwa-2026-11-13.html">uwa-2026-11-13</a></li>
+      <li>Run guide and tasks: <a href="../README.md">README.md</a></li>
+      <li>Google Drive: <a href="https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK">Unusual Wealth Activity folder</a> &middot; <a href="https://drive.google.com/drive/folders/1FUTqyKWqr_5XxFwdAqNriepFoETAUnIp">Drive archive</a> &middot; <a href="https://docs.google.com/document/d/1JLm43HubsYeghhtqIGEQ7RYG09xTwhxPeZ4Bb-4G15w/edit">issue 016 (Google Doc)</a>; issue 015 moved to the Drive archive</li>
+      <li>Artifact (live, updated in place each run): <a href="https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7">Unusual Wealth Activity</a></li>
+    </ul>
+
+    <h2>Exclusions and method</h2>
+    <ul>
+      <li><strong>Excluded as routine:</strong> Page, Bechtolsheim, Blecharczyk sales as signals (10b5-1 plans); recorded as CTR-03.</li>
+      <li><strong>Excluded as unverified:</strong> social-media prime-broker figures (X posts citing 310.3% gross); "$53B insider sales" claims; Yahoo report that Nvidia is "done investing" in Anthropic (conflicts with all other sources on status).</li>
+      <li><strong>Data conflict:</strong> Nvidia 13 Nov move: CNBC &minus;2.01% (used); Yahoo text "more than 4%". Core PPI: one source +0.5% (BLS core ex food, energy, trade), another +0.3%; not used.</li>
+      <li><strong>Not found:</strong> 13 Nov FRED values for yields, VIX, spread (not yet posted); post-PPI FedWatch percentage; Brent after 11 Nov; Q4 BDC tender results; Berkshire 13F (due 16 Nov).</li>
+      <li><strong>Disclosure:</strong> this report is generated by Claude, a model made by Anthropic. SIG-03 uses third-party reporting only and reflects no internal information.</li>
+      <li><strong>Link check (curl, 14 Nov):</strong> 200 for PYMNTS, Yahoo Finance (13 Nov live), Fortune (both), CEOWORLD, KTVU, Global Finance, Nvidia newsroom. 403 (blocks automated clients) for BLS, CNBC, Quartz; CNBC content read through the fetch tool; BLS facts confirmed by PYMNTS. FRED values from the CSV endpoint.</li>
+      <li><strong>Not accessed:</strong> X, LinkedIn, Reddit, private forums. Web search only.</li>
+    </ul>
+
+    <footer class="page">Unusual Wealth Activity &middot; issue 016 &middot; 14 Nov 2026 &middot; risk assessment, not prophecy</footer>
+  </article>
+</div>
+</body>
+</html>
