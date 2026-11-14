@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Unusual Wealth Activity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#129718;</text></svg>">
+<style>
+  /* Layout: single reading column, status strip up top, signal cards as a stepped log, gauges as bars on one 0-100 scale */
+  :root {
+    --bg: #f4f7f6; --surface: #fbfdfc; --line: #d8e2df;
+    --ink: #17211f; --muted: #5c6d69;
+    --accent: #0e7568; --accent-ink: #0a5a50; --radius: 10px;
+    --hard: #0e7568; --corr: #8a6a0a; --thin: #6b7a77;
+    --warn-bg: #fbf1dc; --warn-ink: #7a5300; --crit: #a8362a;
+    --track: #e5ecea;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1413; --surface: #121b19; --line: #22302d;
+      --ink: #e7efec; --muted: #8ba39d;
+      --accent: #3ecfbc; --accent-ink: #5adcca;
+      --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+      --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+      --track: #1c2826; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d1413; --surface: #121b19; --line: #22302d;
+    --ink: #e7efec; --muted: #8ba39d;
+    --accent: #3ecfbc; --accent-ink: #5adcca;
+    --hard: #3ecfbc; --corr: #e0b445; --thin: #8ba39d;
+    --warn-bg: #2a2310; --warn-ink: #f0c868; --crit: #ff8a7a;
+    --track: #1c2826; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55; font-size: 16px;
+  }
+  a { color: var(--accent-ink); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mono { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .wrap {
+    max-width: 800px; margin: 0 auto; padding-block: 2.5rem 5rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .crumb { display: inline-block; margin-bottom: 2rem; text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+  .crumb:hover { color: var(--accent-ink); }
+  .crumb .mark { color: var(--accent); font-weight: 650; }
+  h1 { font-size: clamp(1.7rem, 4.5vw, 2.4rem); line-height: 1.1; letter-spacing: -0.02em; font-weight: 720; margin: 0 0 0.5rem; text-wrap: balance; }
+  h2 { font-size: 1.25rem; letter-spacing: -0.01em; font-weight: 650; margin: 2.5rem 0 0.9rem; padding-top: 1.25rem; border-top: 1px solid var(--line); text-wrap: balance; }
+  h3 { font-size: 1.02rem; font-weight: 650; margin: 0; text-wrap: balance; }
+  p, li { max-width: 68ch; }
+  ul { padding-left: 1.3rem; margin: 0; display: grid; gap: 0.35rem; }
+  .deck { color: var(--muted); margin: 0 0 1.25rem; }
+  .status { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 0.5rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.65rem;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .pill.confirmed { background: var(--warn-bg); color: var(--warn-ink); border-color: transparent; font-weight: 650; }
+  .meter-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin: 0 0 1rem; }
+  .meter-head .big { font-size: 2.6rem; font-weight: 750; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .meter-head .big small { font-size: 1rem; color: var(--muted); font-weight: 500; }
+  .gauges { display: grid; gap: 0.7rem; }
+  .gauge { display: grid; grid-template-columns: 12.5rem 1fr 2.6rem; gap: 0.75rem; align-items: center; }
+  .gauge .lbl { font-size: 0.9rem; }
+  .gauge .bar { height: 10px; background: var(--track); border-radius: 5px; overflow: hidden; }
+  .gauge .bar span { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+  .gauge.up .bar span { background: var(--corr); }
+  .gauge .val { font-family: var(--mono); font-size: 0.85rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .gauge .note { grid-column: 1 / -1; color: var(--muted); font-size: 0.85rem; margin-top: -0.35rem; }
+  .legend { color: var(--muted); font-size: 0.85rem; margin-top: 0.8rem; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 0.3rem; }
+  .signals { display: grid; gap: 0.9rem; }
+  .sig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; display: grid; gap: 0.5rem; min-width: 0; }
+  .sig .top { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+  .tier { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 4px; border: 1px solid currentColor; }
+  .tier.hard { color: var(--hard); } .tier.corr { color: var(--corr); } .tier.thin { color: var(--thin); }
+  .tier.new { color: var(--crit); }
+  .sig dl { margin: 0; display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.35rem 0.9rem; }
+  .sig dt { color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+  .sig dd { margin: 0; min-width: 0; }
+  .table-scroll { overflow-x: auto; margin: 0.5rem 0; }
+  table { border-collapse: collapse; min-width: 100%; font-size: 0.9rem; }
+  th { text-align: left; font-weight: 650; padding: 0.5rem 0.7rem; border-bottom: 2px solid var(--line); white-space: nowrap; }
+  td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .callout { background: var(--warn-bg); color: var(--warn-ink); border-radius: var(--radius); padding: 0.85rem 1.1rem; margin: 1rem 0; }
+  .callout p { margin: 0.25rem 0; }
+  footer.page { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  @media (max-width: 640px) {
+    .gauge { grid-template-columns: 1fr 2.6rem; }
+    .gauge .lbl { grid-column: 1 / -1; }
+    .sig dl { grid-template-columns: 1fr; }
+    .sig dt { margin-top: 0.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="../index.html"><span class="mark">&larr;</span> The Magpie's Hoard</a>
+  <article>
+    <h1>Unusual Wealth Activity &middot; 2026-11-13</h1>
+    <p class="deck">Run 2026-11-13 (Friday, about 13:00 UTC, before October PPI) &middot; issue 015 &middot; automated &middot; open sources only &middot; prior issue: <a href="archive/uwa-2026-11-12.html">014 (archive)</a></p>
+    <div class="status">
+      <span class="pill confirmed">Pattern confirmed (held, restored)</span>
+      <span class="pill">Panic meter 70 / 100 &middot; Elevated</span>
+      <span class="pill">Change +1 vs 12 Nov</span>
+      <span class="pill">4 signals &middot; 2 counter-signals &middot; 4 gaps</span>
+    </div>
+
+    <h2>Summary</h2>
+    <ul>
+      <li><strong>Verdict restored to Confirmed (held).</strong> Reversal condition 1 failed: the 30-year auction cleared at 5.441%, above the 5.3% test.</li>
+      <li><strong>Second weak refunding auction in three days.</strong> 30-year: tail 0.4 bp, bid-to-cover 2.36 (2.54 prior), indirect 68.1% (72.3% prior), dealers 11.4% (6.8% prior). Softest demand in five months.</li>
+      <li><strong>Yields:</strong> 10-year about 5.10% intraday, three-week high. 30-year about 5.43&ndash;5.44%.</li>
+      <li><strong>Nvidia CEO resigned (12 Nov).</strong> Jensen Huang left as CEO and director, effective immediately. CFO Colette Kress is interim CEO. Context: board probe into a suspected foreign intelligence effort targeting him.</li>
+      <li><strong>Nvidia close $166.19 (&minus;4.34%)</strong>, after nearly &minus;12% intraday. About 31% below its 6 Oct record ($239.24). Earnings stay on 17 Nov.</li>
+      <li><strong>Oil:</strong> Brent $95.82 (+3.3%) after a presidential post: "We don't need a deal with Iran."</li>
+      <li><strong>December hike odds 84.7%</strong> (CME FedWatch after October CPI). Reversal condition 3 not met.</li>
+      <li><strong>Counter-signals hold:</strong> VIX 17.49, high-yield spread 3.30% (11 Nov, FRED). S&amp;P 500 7,592.40 (&minus;0.35%). Credit and options show no market-wide stress.</li>
+      <li><strong>Panic meter 70</strong> (+1). Five dimensions use new evidence.</li>
+      <li><strong>Calendar not updated:</strong> Google Calendar connector requires re-authentication.</li>
+    </ul>
+
+    <h2>Assessment</h2>
+    <p><strong>Fact.</strong> Two refunding-week auctions tailed with lower indirect shares than October. Dealers absorbed the gap at the 30-year. Yields rose while the Fed is pricing a December hike. The largest AI supplier lost its founder-CEO in one day on national-security grounds, four days before earnings.</p>
+    <p><strong>Inference.</strong> The stress has moved from equity desks to long-duration Treasury buyers. Equity holders bought the 5 Nov dip; foreign and asset-manager bids for 30-year paper fell. The Nvidia exit adds key-person and governance risk to the single stock that anchors the AI financing chain (IPO strategic commitment, CoreWeave, Nebius). Equity volatility and credit spreads do not yet reflect either.</p>
+    <p><strong>Not claimed.</strong> That foreign official holders are selling Treasuries; indirect share also includes domestic asset managers. That Nvidia secrets were compromised; the board says it has no reason to believe so. Coordination among actors.</p>
+
+    <div class="callout">
+      <p><strong>Reversal conditions.</strong> Any two lowers the verdict to emerging. Status at this run:</p>
+      <p>1. 12 Nov 30-year auction clears below 5.3% with indirect bid above 68%. <strong>Failed.</strong> 5.441%; indirect 68.1% (passes the share test by 0.1 point, down 4.2 points). Closed.</p>
+      <p>2. Nvidia beats and raises on 17 Nov and hedge-fund gross exposure recovers. <strong>Pending, harder.</strong> Report now comes from an interim CEO.</p>
+      <p>3. December hike odds fall below 50%. <strong>Not met.</strong> 84.7% after CPI (10 Nov). Hammack backs more, smaller hikes (12 Nov).</p>
+      <p><strong>Replacement for condition 1 (proposed).</strong> 24 Nov 2-year / 25 Nov 5-year auctions both clear with indirect above 65% and no tail.</p>
+      <p><strong>Upgrade trigger.</strong> High-yield spread above 4%. Not met: 3.30% on 11 Nov.</p>
+      <p><strong>Proposed condition 4 (for review).</strong> S&amp;P 500 record close with VIX below 18. VIX half met (17.49 on 11 Nov); index about 3% below record.</p>
+    </div>
+
+    <h2>Flagged signals</h2>
+    <div class="signals">
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-01</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>30-year auction tails; second weak refunding sale</h3>
+        <dl>
+          <dt>What</dt><dd>$25B 30-year (12 Nov): high yield 5.441% vs 5.437% when-issued (0.4 bp tail; six-auction average 0.1 bp stop-through). Bid-to-cover 2.36 (2.54 October; 2.44 average). Indirect 68.1% (72.3%; 70.5% average). Direct 20.5%. Dealers 11.4% (6.8%; 9.5% average). Follows the 10 Nov 10-year: 5.02%, indirect 61.2% (80.3% October).</dd>
+          <dt>Why unusual</dt><dd>Two consecutive long-end auctions with falling indirect demand in a hiking cycle. Dealers took 68% more of the 30-year than in October. The 10-year yield reached a three-week high above 5.10% the same day.</dd>
+          <dt>Conventional read</dt><dd>A 0.4 bp tail is small. Indirect 68.1% is close to the six-auction average. Rising oil and hawkish Fed speakers explain the yield move without a buyer strike.</dd>
+          <dt>Sources</dt><dd><a href="https://investinglive.com/news/us-30-year-bond-auction-tails-as-demand-disappoints-for-second-straight-day/">investingLive: 30-year results vs averages</a> &middot; <a href="https://www.hererockhill.com/2026/11/13/treasury-25-billion-30-year-auction-tails-5-441/">Here Rock Hill: refunding-week context</a> &middot; issue 013 SIG-01 (archive) for the 10-year</dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-02</span><span class="tier hard">Hard data</span><span class="tier new">New</span></div>
+        <h3>Nvidia CEO resigns over a foreign-intelligence probe</h3>
+        <dl>
+          <dt>What</dt><dd>12 Nov: Jensen Huang resigned as president, CEO and director, effective immediately. Colette Kress (CFO) is interim CEO and keeps the CFO role. Harvey C. Jones named the first board chair. Q3 FY2027 results stay on 17 Nov. Background: 8 Nov board investigation into whether Huang was "the target of a foreign intelligence effort"; 11 Nov reports of a second relationship with a subordinate and a board plan to oust him. Shares $166.19 (&minus;4.34%); intraday low nearly &minus;12%. Nvidia has pledged $10B of the $26B private placement beside the Anthropic IPO.</dd>
+          <dt>Why unusual</dt><dd>A founder-CEO exit at a company of this size, on national-security grounds, five days before earnings. Interim leadership is held by the CFO. The stock sits at the centre of the AI financing chain flagged in issues 006&ndash;014.</dd>
+          <dt>Conventional read</dt><dd>Board says operations, customer commitments and product roadmap continue unchanged. The close recovered two-thirds of the intraday loss. Rivals AMD and Broadcom rose.</dd>
+          <dt>Sources</dt><dd><a href="https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition">Nvidia: CEO transition (primary)</a> &middot; <a href="https://abcnews.com/Business/timeline-stunning-fall-powerful-nvidia-ceo-jensen-huang/story?id=138041659">ABC News: timeline</a> &middot; <a href="https://www.npr.org/2026/11/12/nx-s1-6037833/jensen-huang-nvidia-stepped-down">NPR: resignation</a> &middot; <a href="https://eurasiabusinessnews.com/2026/11/13/stock-market-today-november-12-2026-dow-sp-500-and-nasdaq-fall-after-jensen-huang-resigns/">Eurasia Business News: 12 Nov closes</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-03</span><span class="tier corr">Corroborated</span><span class="tier new">New</span></div>
+        <h3>Rate path and oil both turn against duration</h3>
+        <dl>
+          <dt>What</dt><dd>CME FedWatch: 84.7% odds of a December hike to 4.00&ndash;4.25% after October CPI (98.6% before the print). 50 bp odds about 12.7%. 12 Nov: Hammack wants "smaller increments, more frequent"; Goolsbee says services inflation is moving the wrong way. Brent $95.82 (+3.3%), WTI $88.74 (+2.6%) after a presidential post rejecting an Iran deal. Initial jobless claims 200,000; four-week average lowest since 1969.</dd>
+          <dt>Why unusual</dt><dd>No policy backstop is priced while long-end demand weakens. Oil adds an inflation push the Fed cannot offset without further hikes.</dd>
+          <dt>Conventional read</dt><dd>A tight labour market and strong growth justify higher yields. Oil spikes on Iran headlines have reversed within days several times since September.</dd>
+          <dt>Sources</dt><dd><a href="https://www.investmentnews.com/equities/october-cpi-comes-in-hot-raising-odds-of-a-bigger-than-expected-rate-hike/268961">InvestmentNews: FedWatch after CPI</a> &middot; <a href="https://pro.thestreet.com/stock-market-today/2026-11-12">TheStreet Pro: 12 Nov Fed speakers, claims</a> &middot; <a href="https://finance.yahoo.com/markets/live/stock-market-today-thursday-november-12-sp-500-nasdaq-dow-nvidia-invest-110027430.html">Yahoo Finance: oil and yields</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">SIG-04</span><span class="tier hard">Hard data</span><span class="tier">Carried</span></div>
+        <h3>AI-infrastructure debt and semi-liquid credit queues</h3>
+        <dl>
+          <dt>What</dt><dd>CoreWeave debt $47B (from $35B one quarter earlier); premarket &minus;9.7% on 12 Nov with Nebius &minus;9.2% after the Nvidia news. Fitch: Q3 requests at 13 of 15 non-traded BDCs averaged 9.8% of shares against a 5% cap. No Q4 tender results yet; BCRED deadline 1 Dec.</dd>
+          <dt>Sources</dt><dd><a href="https://www.tradingkey.com/analysis/stocks/us-stocks/262299527-coreweave-earnings-report-q3-revenue-growth-backlog-capital-expenditures-net-loss-tradingkey">TradingKey: CoreWeave Q3</a> &middot; <a href="https://www.investmentnews.com/alternatives/pace-of-investors-selling-nontraded-bdcs-slows-but-remains-significant-according-to-fitch/268574">InvestmentNews: Fitch on BDCs</a> &middot; <a href="https://pro.thestreet.com/stock-market-today/2026-11-12">TheStreet Pro: premarket moves</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-01</span><span class="tier thin">Counter-signal</span><span class="tier">Held</span></div>
+        <h3>Options and credit show no market-wide stress</h3>
+        <dl>
+          <dt>What</dt><dd>FRED, 11 Nov: VIX 17.49 (19.46 on 10 Nov); high-yield OAS 3.30%, lowest this month. 12 Nov: S&amp;P 500 7,592.40 (&minus;0.35%), Dow 52,297.09 (&minus;0.36%), Nasdaq 25,366.09 (&minus;0.39%). AAII bears 51.4%, bulls 30.8%.</dd>
+          <dt>Why it matters</dt><dd>A CEO exit at the largest AI supplier moved the index only 0.35%. Lenders keep tightening spreads. Heavy retail bearishness is a contrarian buy signal in conventional reading.</dd>
+          <dt>Sources</dt><dd><a href="https://fred.stlouisfed.org/series/VIXCLS">FRED: VIXCLS</a> &middot; <a href="https://fred.stlouisfed.org/series/BAMLH0A0HYM2">FRED: BAMLH0A0HYM2</a> &middot; <a href="https://eurasiabusinessnews.com/2026/11/13/stock-market-today-november-12-2026-dow-sp-500-and-nasdaq-fall-after-jensen-huang-resigns/">Eurasia Business News: closes</a></dd>
+        </dl>
+      </section>
+
+      <section class="sig">
+        <div class="top"><span class="mono">CTR-02</span><span class="tier corr">Counter-signal</span><span class="tier">Carried</span></div>
+        <h3>AI IPO book covered several times over</h3>
+        <dl>
+          <dt>What</dt><dd>Range $70&ndash;78 unchanged; book several times covered (Bloomberg, CNBC). Pricing 18 Nov; first trade 19 Nov. Open question after 12 Nov: whether Nvidia's $10B placement commitment is affected by the CEO change. No statement found.</dd>
+          <dt>Sources</dt><dd><a href="https://www.herecharleston.com/2026/11/12/anthropic-ipo-book-oversubscribed-australia-retail-offer/">Here Charleston: book covered</a> &middot; <a href="https://finance.yahoo.com/markets/live/stock-market-today-thursday-november-12-sp-500-nasdaq-dow-nvidia-invest-110027430.html">Yahoo Finance: Nvidia $10B commitment</a></dd>
+        </dl>
+      </section>
+    </div>
+
+    <h2>Panic meter</h2>
+    <div class="meter-head"><span class="big">70<small> / 100</small></span><span class="pill">Elevated &middot; 12 Nov: 69</span></div>
+    <div class="gauges">
+      <div class="gauge up"><span class="lbl">Fiscal load</span><span class="bar"><span style="width:87%"></span></span><span class="val">87</span><span class="note">&uarr; from 86. 10-year above 5.10%; 30-year 5.44%; hike priced at 84.7%.</span></div>
+      <div class="gauge up"><span class="lbl">Financial-system fragility</span><span class="bar"><span style="width:79%"></span></span><span class="val">79</span><span class="note">Held, new evidence. Nvidia and CoreWeave drop offset by VIX 17.49 and spread 3.30%.</span></div>
+      <div class="gauge up"><span class="lbl">Reserve-currency confidence</span><span class="bar"><span style="width:77%"></span></span><span class="val">77</span><span class="note">&uarr; from 75. Second refunding auction with lower indirect share; dealers 11.4%.</span></div>
+      <div class="gauge"><span class="lbl">Elite exit behavior</span><span class="bar"><span style="width:76%"></span></span><span class="val">76</span><span class="note">Carried. No new relocation, liquidation or insider-sale data.</span></div>
+      <div class="gauge up"><span class="lbl">Military overextension</span><span class="bar"><span style="width:74%"></span></span><span class="val">74</span><span class="note">&uarr; from 72. Brent +3.3% to $95.82 on Iran no-deal post.</span></div>
+      <div class="gauge up"><span class="lbl">Institutional integrity</span><span class="bar"><span style="width:66%"></span></span><span class="val">66</span><span class="note">&uarr; from 62. Nvidia CEO exit after a foreign-intelligence probe; congressional inquiry.</span></div>
+      <div class="gauge"><span class="lbl">Domestic legitimacy stress</span><span class="bar"><span style="width:58%"></span></span><span class="val">58</span><span class="note">Carried.</span></div>
+      <div class="gauge"><span class="lbl">Biological &amp; environmental base</span><span class="bar"><span style="width:45%"></span></span><span class="val">45</span><span class="note">Carried.</span></div>
+    </div>
+    <p class="legend">Composite = mean of 8 dimensions (562 / 8 = 70.3). Indicators used: Treasury auction results, 10- and 30-year yields, FedWatch odds, Brent, Nvidia governance event, VIX, high-yield spread. <strong>5 dimensions use new evidence this run</strong> (fiscal, fragility, reserve, military, integrity); rule of 3 met. <i style="background:var(--corr)"></i>changed this run.</p>
+
+    <h2>Coverage gaps</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Topic</th><th>Mainstream framing</th><th>Missing from mainstream</th></tr></thead>
+        <tbody>
+          <tr><td>Nvidia CEO exit</td><td>Personal scandal; stock recovers most of the drop</td><td>Interim CEO is also CFO through earnings; $10B IPO placement commitment status unstated</td></tr>
+          <tr><td>30-year auction</td><td>"Tails"; small miss</td><td>Second refunding sale with falling indirect share; dealers took 11.4% vs 6.8%</td></tr>
+          <tr><td>Oil</td><td>Iran headline trade</td><td>Adds to a hike cycle already priced at 84.7%; no policy backstop for duration</td></tr>
+          <tr><td>Calm markets</td><td>VIX under 18; spreads tight</td><td>Calm sits beside two weak long-end auctions; equity and credit have not priced the bond leg</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Calendar entries</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="num">13 Nov</td><td>October PPI, 8:30 a.m. ET</td><td>On calendar (issue 012)</td></tr>
+          <tr><td class="num">17 Nov</td><td>Nvidia Q3 FY2027 earnings, 1:20 p.m. PT (first report under interim CEO)</td><td>On calendar (issue 006); title update pending</td></tr>
+          <tr><td class="num">18 Nov</td><td>Huang closed-door congressional briefing (requested; status unclear after resignation)</td><td>On calendar (issue 013)</td></tr>
+          <tr><td class="num">19 Nov</td><td>Anthropic IPO first trade (pricing 18 Nov, reported)</td><td>On calendar (issue 013)</td></tr>
+          <tr><td class="num">1 Dec</td><td>Huang House closed-door interview (single report, CNN headline; unverified)</td><td><strong>Not added: Calendar connector needs sign-in</strong></td></tr>
+          <tr><td class="num">9 Dec</td><td>FOMC decision</td><td>On calendar (issue 006)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Google Calendar returned "needs you to sign in again" on 13 Nov. No entries changed. Re-authenticate the Calendar connector, then add 1 Dec if a second source confirms it.</p>
+
+    <h2>Links</h2>
+    <ul>
+      <li>Dashboard: <a href="../index.html">The Magpie's Hoard</a></li>
+      <li>Archive (prior versions): <a href="archive/">pages/archive/</a></li>
+      <li>Run guide and tasks: <a href="../README.md">README.md</a></li>
+      <li>Google Drive: <a href="https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK">Unusual Wealth Activity folder</a> &middot; <a href="https://docs.google.com/document/d/1kLs5lz7oxnag3dvAMYy29KzPFeIHOJGwU1Wyi2c3Sao/edit">issue 015 (Google Doc)</a>; issue 014 moved to the Drive Archive subfolder</li>
+      <li>Artifact (live, updated in place each run): <a href="https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7">Unusual Wealth Activity</a></li>
+    </ul>
+
+    <h2>Exclusions and method</h2>
+    <ul>
+      <li>Excluded as market-moving political post: the presidential Iran post is cited only as the stated cause of the oil move, not as a signal.</li>
+      <li>Excluded as unverified: "Dec 1 House interview" (one search-result headline; CNN page blocked, 451). Held as a calendar candidate only.</li>
+      <li>Excluded as stale: Huang 2025 10b5-1 share sales (prior year; no 2026 Form 4 found).</li>
+      <li>Not found: 12 Nov FRED values (not yet posted); post-12 Nov FedWatch value; gold close; November insider-sale aggregates; Q4 BDC tender results; October PPI (released after run time).</li>
+      <li>Disclosure: this report is generated by Claude, a model made by Anthropic. CTR-02 uses third-party reporting only and reflects no internal information.</li>
+      <li>Link check (curl, 13 Nov): 200 for investingLive, Here Rock Hill, Nvidia newsroom, ABC News, NPR, TheStreet Pro, InvestmentNews, Eurasia Business News, TradingKey, Here Charleston. 301 (redirect) Yahoo Finance live page. NPR and CNN block automated reading; facts confirmed through other sources. FRED values from the CSV endpoint.</li>
+      <li>Not accessed: X, LinkedIn, Reddit, private forums. Web search only.</li>
+    </ul>
+
+    <footer class="page">Unusual Wealth Activity &middot; issue 015 &middot; 13 Nov 2026 &middot; risk assessment, not prophecy</footer>
+  </article>
+</div>
+</body>
+</html>
