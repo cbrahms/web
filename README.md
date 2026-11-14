@@ -46,7 +46,8 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 | Issue | Date | Verdict | Panic | Page |
 |-------|------|---------|-------|------|
-| 015 | 2026-11-13 | Confirmed (held, restored) | 70 | `pages/uwa-2026-11-13.html` |
+| 016 | 2026-11-14 | Confirmed (held) | 70 | `pages/uwa-2026-11-14.html` |
+| 015 | 2026-11-13 | Confirmed (held, restored) | 70 | `pages/archive/uwa-2026-11-13.html` |
 | 014 | 2026-11-12 | Confirmed (weakened) | 69 | `pages/archive/uwa-2026-11-12.html` |
 | 013 | 2026-11-11 | Confirmed (held) | 70 | `pages/archive/uwa-2026-11-11.html` |
 | 012 | 2026-11-10 | Confirmed (held) | 70 | `pages/archive/uwa-2026-11-10.html` |
@@ -63,27 +64,31 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 
 - [ ] Calendar privacy: dashboard Links include Google Calendar `eid` URLs, which encode the account email. The hoard sync strips them before `main`. Decide: keep on run branches, or list calendar entries as plain text.
 
-- [x] Google Drive: connector working 13 Nov. Folder "Unusual Wealth Activity" (https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK) holds the current issue as a Google Doc; prior issues go in its `Archive` subfolder. Each run: upload new issue, move the prior Doc to Archive. Issue 015 uploaded; issue 014 moved to Archive.
+- [x] Google Drive: connector working 13 Nov. Folder "Unusual Wealth Activity" (https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK) holds the current issue as a Google Doc; prior issues go in its `Archive` subfolder. Each run: upload new issue, move the prior Doc to Archive. Issue 016 uploaded 14 Nov (Doc 1JLm43HubsYeghhtqIGEQ7RYG09xTwhxPeZ4Bb-4G15w); issue 015 moved to Archive. Note: the Drive archive folder (1FUTqyKWqr_…) is the Archive subfolder.
 - [ ] Drive backfill: copy issues 006–010 into the Drive Archive subfolder.
-- Artifacts: live, updated in place each run (issue 015 on 13 Nov; prior editions archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
+- Artifacts: live, updated in place each run (issue 016 on 14 Nov; the 13 Nov run had left it at issue 014; prior editions archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
 - [ ] Social sources: no X, LinkedIn, or Reddit access in the run environment. Add a connector or accept web-search-only scope.
 - [x] Berkshire Q3 2026 (7 Nov): cash $377.4B headline, $352.3B ex-rail/utility; buybacks $9.6B. Recorded as CTR-01 in issue 011.
 - [x] Berkshire 10-Q (10 Nov): Q3 equity purchases $2.37B, sales $2.79B (net seller $0.43B) from 9M minus 6M cash-flow lines. Recorded as CTR-01 (narrowed) in issue 012.
+- [x] 14 Nov (issue 016): October PPI +0.3% m/m (consensus +0.4%), +6.5% y/y. 10-year 5.15% close / 5.17% intraday (13 Nov). Nvidia −2.01% (~$162.85), week −12.75%, below $4T. Bitcoin < $70K; dollar index 19-month high; gold flat. HY OAS 3.20% (12 Nov), VIX 18.70. Prop. 40 failed 52.8–47.2 (AP, 9 Nov) — closes the Prop. 40 task. Reversal condition 1 replaced by the 24/25 Nov auction test (adopted).
+- [ ] 18 Nov: confirm whether Nvidia's interim board keeps the $10B Anthropic placement (issue 016 SIG-03). Reduced or withdrawn = upgrade AI-chain fragility.
+- [ ] Merge policy conflict: the run environment forbids an agent from merging its own PR, so the "merge same run" standing instruction cannot be carried out by the routine. Runs open a draft PR; owner merges.
 - [x] 13 Nov: 12 Nov 30-year auction recorded (issue 015 SIG-01). High yield 5.441% (≥ 5.3%), so reversal condition 1 FAILED and the verdict is restored to Confirmed (held). Indirect 68.1% (down from 72.3%; passes the >68% share test by 0.1 pt). Second weak refunding auction; reserve-currency dimension raised to 77. Condition 1 now closed; proposed replacement = 24/25 Nov 2y/5y auctions both indirect >65% with no tail.
 - [ ] 12 Nov (MAJOR): Nvidia CEO Jensen Huang resigned over a foreign-intelligence probe; CFO Colette Kress interim CEO; stock −4.3% to $166.19. Recorded as issue 015 SIG-02; institutional-integrity dimension raised to 66. Track: whether Nvidia's $10B Anthropic IPO placement commitment holds; 17 Nov earnings under interim CEO; any CEO search outcome.
 - [ ] Nvidia 18 Nov briefing / "1 Dec House interview": the 18 Nov closed-door briefing was requested of Huang before he resigned; one search headline (CNN, page blocked 451) referenced a 1 Dec interview of the "former CEO." Confirm the date with a second source, then add an all-day calendar entry once the Calendar connector is re-authenticated.
 - [ ] 17 Nov: record Nvidia result and Morgan Stanley / Goldman gross exposure against reversal condition 2.
 - [ ] Re-read December hike odds (CME FedWatch) for reversal condition 3. 11 Nov: hot CPI; Logan wants two more hikes; coverage says near-certain. No verified percentage yet.
+- [x] Reversal condition 1 replacement (24/25 Nov auctions) adopted in issue 016.
 - [ ] Decide: adopt proposed reversal condition 4 (S&P 500 record close with VIX < 18). Issue 014: 2.6% below record, VIX 19.46. Without it, the conditions cannot register an equity-led all-clear.
 - [ ] Run timing: the routine fires about 12:45 UTC, before US data and auctions. Consider moving to ~22:00 UTC so each issue includes the day's close and auction results.
-- [ ] Google Calendar: owner reconnected it 14 Nov. Inside the 14 Nov session both connectors still failed ("Google-Calendar": sign-in required; small-business google-calendar: incompatible auth). Next run: retry first. If it works, add 1 Dec Huang House interview (after a second source) and retitle 17 Nov to "Nvidia earnings (interim CEO)". If it still fails, notify once: it blocks step 7.
+- [ ] Google Calendar (BLOCKER, 2 runs): 14 Nov 12:45 UTC run retried first; "Google-Calendar" still returns "needs you to sign in again", small-business connector "incompatible auth server". Owner notified. Pending entries (all-day, primary): 16 Nov 13F deadline; 18 Nov Anthropic IPO pricing / Nvidia $10B pledge; 24–25 Nov 2y/5y auctions (reversal condition 1); 1 Dec BCRED Q4 tender deadline; retitle 17 Nov Nvidia earnings. Earlier note: inside the earlier 14 Nov session both connectors still failed ("Google-Calendar": sign-in required; small-business google-calendar: incompatible auth). Next run: retry first. If it works, add 1 Dec Huang House interview (after a second source) and retitle 17 Nov to "Nvidia earnings (interim CEO)". If it still fails, notify once: it blocks step 7.
 - [ ] Merge PRs: superseded PRs #1–#9 closed 14 Nov; #10 (issue 015) merged by owner.
 - [x] 12 Nov: AI IPO book several times covered (reclassified CTR-02, reverses issue 013 SIG-03). CoreWeave Q3: debt $35B → $47B, net loss $709M, interest $846M (SIG-01).
-- [ ] 16 Nov: Prop. 40 count closes; certification 11 Dec. Watch for reported return moves by relocated billionaires.
+- [x] Prop. 40 failed (AP call 9 Nov, 52.8% no). Certification 11 Dec. Recorded as issue 016 CTR-02.
 - [ ] CoreWeave: confirm the ~15% unsecured-yield figure from a primary bond quote (single AI-translated source).
 - [x] 11 Nov: October CPI +0.4% m/m, core +0.3% (both above forecast). 10-year auction 5.02%, bid-to-cover 2.46, indirect 61.2%. Recorded as SIG-01/02 in issue 013.
 - [ ] Treasury auction primary source: Fiscal Data `auctions_query` returned no rows for 10 Nov on 11 Nov. Retry, or use the TreasuryDirect results PDF, to move SIG-01 to Hard data.
-- [ ] 13 Nov: record October PPI (calendar entry added 10 Nov). A hot print raises 50 bp odds.
+- [x] 13 Nov October PPI recorded in issue 016 (+0.3% m/m, below consensus).
 - [x] Anthropic IPO (10 Nov): range $70–78, 825M shares, up to $64.4B; $26B strategic commitment. Calendar entry moved from 16 Nov to 19 Nov (first trade, reported).
 - [ ] 18–19 Nov: record IPO pricing vs range. Below range = further withdrawal of capital from AI risk.
 - [ ] BCRED Q4 tender: deadline 1 Dec; result in a later SC TO-I/A. Find a primary EDGAR link (AltStreet blocks automated clients).
@@ -93,5 +98,4 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 - [ ] Mid-Nov: Q3 13F filings (hedge funds, Berkshire).
 - [x] CoreWeave Q3 2026 (reported 10 Nov): found 12 Nov; recorded as SIG-01 in issue 014.
 - [ ] Nvidia CEO probe (09 Nov): track board findings. Closed-door congressional briefing requested for 18 Nov (all-day calendar entry added 11 Nov). 9 Nov close $178.67, lowest since 7 Apr. Unverified "FBI investigating" headline excluded 10 Nov; confirm or drop.
-- [ ] Prop. 40 (California billionaire tax): record final certified result; early returns 43–57% against.
 - [ ] Decide: should Intelligence briefs and Scrabble older editions also move to `pages/archive/`?
