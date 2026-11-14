@@ -20,9 +20,15 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 - **Evidence tiers:** Hard data / Corroborated / Thin or watch. Every signal carries a conventional-read line.
 - **Panic meter:** 8 dimensions, 0–100, composite = mean. At least 3 dimensions must use new evidence in a run, or the run says so.
 
+## Standing instructions (owner, 14 Nov 2026)
+
+- The owner is the only user of this repo. Each run checks in its own work: push the run branch, open a PR to `main`, and merge it the same run. No review wait.
+- Start each run's branch from the latest `main`.
+- Do not notify the owner about repo, branch, PR or merge matters. Notify only for (a) a critical bug or error that stops the run, or (b) a market finding that meets step 9.
+
 ## Unusual Wealth Activity run procedure
 
-1. Fetch all open `cspace/*` branches and PRs. Build on the newest unmerged issue, not on `main` alone.
+1. Fetch `main`. If an unmerged `cspace/*` issue branch is newer than `main`, merge it first.
 1a. Read the current page in `pages/` and its reversal conditions.
 2. Search: insider filings, prime-broker positioning, Treasury auctions, FOMC, WGC gold, Berkshire/13F, private-credit gates, wealth-migration.
 3. Exclude: market-moving political posts, single-person remarks, SEO blogs, commercially conflicted sources (hold at Thin).
@@ -33,6 +39,7 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 6. Update `index.html`: current card, Archive row, Links, tally line.
 7. Add all-day primary-calendar events for dated catalysts that could drop a security or the market. Search first to avoid duplicates.
 8. Copy artifacts to Google Drive; add Drive links under Links.
+8a. Commit, push, open the PR, merge it to `main` (standing instructions).
 9. Notify only when the verdict is confirmed, changes, or a market event tests it (e.g. index drop above 3%).
 
 ## Issue register
@@ -59,7 +66,6 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 - [x] Google Drive: connector working 13 Nov. Folder "Unusual Wealth Activity" (https://drive.google.com/drive/folders/1agaZjWGRQWx2aeHr1wXJ2m7htRMM2CMK) holds the current issue as a Google Doc; prior issues go in its `Archive` subfolder. Each run: upload new issue, move the prior Doc to Archive. Issue 015 uploaded; issue 014 moved to Archive.
 - [ ] Drive backfill: copy issues 006–010 into the Drive Archive subfolder.
 - Artifacts: live, updated in place each run (issue 015 on 13 Nov; prior editions archived on site) https://claude.ai/artifact/WdxJt2xVGWtJhpeozHJFJ7 · issue 006 https://claude.ai/artifact/WEd8CJZmHziH7yhZu9Xi4w
-- [ ] Merge PRs: branch `cspace/quirky-galileo-9a78i1` (issue 011) contains all of `cspace/quirky-galileo-rccrxe` (issue 010) and the older run branches. Merge the newest and close the older PRs.
 - [ ] Social sources: no X, LinkedIn, or Reddit access in the run environment. Add a connector or accept web-search-only scope.
 - [x] Berkshire Q3 2026 (7 Nov): cash $377.4B headline, $352.3B ex-rail/utility; buybacks $9.6B. Recorded as CTR-01 in issue 011.
 - [x] Berkshire 10-Q (10 Nov): Q3 equity purchases $2.37B, sales $2.79B (net seller $0.43B) from 9M minus 6M cash-flow lines. Recorded as CTR-01 (narrowed) in issue 012.
@@ -70,7 +76,8 @@ Static dashboard of reports published from Claude sessions. Entry point: `index.
 - [ ] Re-read December hike odds (CME FedWatch) for reversal condition 3. 11 Nov: hot CPI; Logan wants two more hikes; coverage says near-certain. No verified percentage yet.
 - [ ] Decide: adopt proposed reversal condition 4 (S&P 500 record close with VIX < 18). Issue 014: 2.6% below record, VIX 19.46. Without it, the conditions cannot register an equity-led all-clear.
 - [ ] Run timing: the routine fires about 12:45 UTC, before US data and auctions. Consider moving to ~22:00 UTC so each issue includes the day's close and auction results.
-- [ ] Google Calendar: connector returned "needs you to sign in again" on 13 Nov; no entries changed. Re-authenticate (`/mcp`) before the next dated catalyst so drop-risk events can be added.
+- [ ] Google Calendar: owner reconnected it 14 Nov. Inside the 14 Nov session both connectors still failed ("Google-Calendar": sign-in required; small-business google-calendar: incompatible auth). Next run: retry first. If it works, add 1 Dec Huang House interview (after a second source) and retitle 17 Nov to "Nvidia earnings (interim CEO)". If it still fails, notify once: it blocks step 7.
+- [ ] Merge PRs: superseded PRs #1–#9 closed 14 Nov; #10 (issue 015) merged by owner.
 - [x] 12 Nov: AI IPO book several times covered (reclassified CTR-02, reverses issue 013 SIG-03). CoreWeave Q3: debt $35B → $47B, net loss $709M, interest $846M (SIG-01).
 - [ ] 16 Nov: Prop. 40 count closes; certification 11 Dec. Watch for reported return moves by relocated billionaires.
 - [ ] CoreWeave: confirm the ~15% unsecured-yield figure from a primary bond quote (single AI-translated source).
